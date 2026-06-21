@@ -1,34 +1,3 @@
-"""
-SelectCar Bot - یک‌فایلی، ساده، قابل دیباگ سریع.
-هر بار اجرا: اسکرپ دیوار -> فیلتر نویز -> تشخیص قیمت زیر بازار -> ارسال به کانال تلگرام -> خروج.
-بدون حلقه بی‌پایان، بدون scheduler داخلی. زمان‌بندی را GitHub Actions cron انجام می‌دهد.
-"""
-
-import asyncio
-import httpx
-import re
-import os
-import statistics
-from telegram import Bot
-from telegram.error import TelegramError
-
-BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
-CHANNEL_ID = os.getenv("TELEGRAM_CHANNEL_ID")
-
-# --- تنظیمات قابل تغییر ---
-MIN_PRICE = 80_000_000
-MAX_PRICE = 80_000_000_000
-DISCOUNT_THRESHOLD = 0.90   # یعنی قیمت باید حداکثر ۹۰٪ میانگین بازار باشد (۱۰٪ یا بیشتر تخفیف)
-MAX_MESSAGES_PER_RUN = 5
-MIN_SAMPLE_FOR_MEDIAN = 5    # حداقل تعداد آگهی مشابه برای محاسبه قیمت بازار معتبر
-
-REJECT_WORDS = [
-    "اقساط", "قسط", "تسهیلات", "وام", "لیزینگ",
-    "معاوضه", "تهاتر", "عوض",
-    "نمایشگاه", "خریدار حرفه", "واسطه", "کارگزار",
-]
-
-
 PERSIAN_ARABIC_DIGITS = "۰۱۲۳۴۵۶۷۸۹٠١٢٣٤٥٦٧٨٩"
 LATIN_DIGITS = "01234567890123456789"
 DIGIT_MAP = str.maketrans(PERSIAN_ARABIC_DIGITS, LATIN_DIGITS)
