@@ -79,8 +79,16 @@ def extract_model_key(title: str) -> str:
 
 
 async def scrape_divar() -> list:
-    url = "https://api.divar.ir/v8/web-search/Tehran/car"
-    headers = {"User-Agent": "Mozilla/5.0"}
+  url = "https://api.divar.ir/v8/web-search/tehran/car"
+headers = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+    "Accept": "application/json, text/plain, */*",
+    "Accept-Language": "fa-IR,fa;q=0.9,en-US;q=0.8,en;q=0.7",
+    "Content-Type": "application/json",
+    "Origin": "https://divar.ir",
+    "Referer": "https://divar.ir/s/tehran/car",
+}
+
     results = []
 
     try:
