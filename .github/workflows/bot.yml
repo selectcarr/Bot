@@ -1,18 +1,41 @@
 name: SelectCar Bot
+
 on:
   schedule:
-    - cron: '*/30 * * * *'
+    - cron: '0 */6 * * *'
   workflow_dispatch:
+
 jobs:
   run-bot:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: pip install -r requirements.txt
-      - run: python main.py
+
+      - name: Cache SQLite DB
+        uses: actions/cache@v4
+        with:
+          path: selectcar_state.sqlite3
+          key: selectcar-db-${{ runner.os }}
+          restore-keys: |
+            selectcar-db-
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run bot
+        run: python main.py
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+          TELEGRAM_CHANNEL_ID: "@chanelllvip"
+          PRICE_SCOPE: global
+          DISCOUNT_THRESHOLD_PERCENT: "10"
+          MIN_SAMPLE_FOR_MEDIAN: "5"
+          TELEGRAM_PAGES_PER_CHANNEL: "1"
+          MAX_MESSAGES_PER_RUN: "10"
+          CHANNEL_REQUEST_DELAY_SECONDS: "4"
+          SELECTCAR_STATE_DB: selectcar_state.sqlite3
