@@ -398,10 +398,8 @@ async def process_ad_channel(
                 if price is None:
                     reject_reason = "قیمت مشخص نیست یا توافقی است"
 
-            if not reject_reason:
+
                 mileage = extract_mileage(text)
-                if mileage is None:
-                    reject_reason = "کارکرد پیدا نشد"
 
             if reject_reason:
                 save_rejected(con, {
