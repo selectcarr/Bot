@@ -618,16 +618,14 @@ async def detect_and_send_deals(con: sqlite3.Connection, bot: Bot):
         model_key = row["model_key"]
         price = row["price_toman"]
 
-                if already_sent(con, channel, mid):
-                            log.info(f"[debug-deal] SKIP already_sent model={model_key}")
-                            continue
-
+        if already_sent(con, channel, mid):
+            log.info(f"[debug-deal] SKIP already_sent model={model_key}")
+            continue
 
         prices = get_global_prices(con, model_key, exclude_id=row["id"])
-                if len(prices) < MIN_SAMPLE:
-                            log.info(f"[debug-deal] SKIP not_enough_samples model={model_key} have={len(prices)} need={MIN_SAMPLE}")
-                            continue
-
+        if len(prices) < MIN_SAMPLE:
+            log.info(f"[debug-deal] SKIP not_enough_samples model={model_key} have={len(prices)} need={MIN_SAMPLE}")
+            continue
 
         med = median(prices)
         if med == 0:
@@ -635,6 +633,7 @@ async def detect_and_send_deals(con: sqlite3.Connection, bot: Bot):
 
         discount = (med - price) / med
         if discount < DISCOUNT_THRESHOLD:
+            log.info(f"[debug-deal] SKIP low_discount model={model_key} discount={discount*100:.1f}% need={DISCOUNT_THRESHOLD*100:.1f}%")
             continue
 
         zero_price = get_zero_price(con, model_key)
@@ -666,6 +665,7 @@ async def detect_and_send_deals(con: sqlite3.Connection, bot: Bot):
         log.info(f"[deals] FOUND model={model_key} discount={discount*100:.1f}%")
 
     return sent_count
+
 
 
 # ─── Main ─────────────────────────────────────────────────────────────────────
