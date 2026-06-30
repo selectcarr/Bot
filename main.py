@@ -187,6 +187,12 @@ def extract_price(text: str) -> Optional[float]:
         value = billions * 1_000_000_000 + millions * 1_000_000
         if value > 100_000_000:
             return float(value)
+    m = re.search(r"\b(\d{1,3}(?:,\d{3}){2,})\b", text)
+    if m:
+        value = float(m.group(1).replace(",", ""))
+        if value >= 100_000_000:
+            return value
+
 
     # عدد خام بزرگ (بیش از ۱۰۰ میلیون تومان)
     m = re.search(r"\b(\d{9,})\b", text)
