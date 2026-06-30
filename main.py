@@ -684,6 +684,9 @@ async def main():
         # گروه B — منابع قیمت صفر
         for username, display_name in ZERO_PRICE_CHANNELS:
             await process_zero_channel(client, con, username, display_name)
+    rows = con.execute("SELECT model_key, COUNT(*) c FROM listings GROUP BY model_key HAVING c > 1").fetchall()
+    for r in rows:
+        log.info(f"[debug-model] key={r['model_key']} count={r['c']}")
 
     # تشخیص و ارسال دیل
     sent = await detect_and_send_deals(con, bot)
