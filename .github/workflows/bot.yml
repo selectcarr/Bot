@@ -20,7 +20,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: selectcar_state.sqlite3
-          key: selectcar-db-${{ runner.os }}
+          key: selectcar-db-${{ runner.os }}-v2
           restore-keys: |
             selectcar-db-
 
