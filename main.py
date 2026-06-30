@@ -400,6 +400,7 @@ async def process_ad_channel(
 
 
                 mileage = extract_mileage(text)
+            log.info(f"[debug] reason={reject_reason} text={text[:200]}")
 
             if reject_reason:
                 save_rejected(con, {
