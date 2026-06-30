@@ -145,11 +145,14 @@ def extract_title(text: str) -> str:
     lines = [l.strip() for l in text.splitlines() if l.strip()]
     return lines[0] if lines else ""
 
-
 def make_model_key(title: str) -> str:
-    key = title.lower()
-    key = re.sub(r"[^a-z0-9\u0600-\u06ff]+", "_", key)
-    return key.strip("_")
+    text = title.lower()
+    text = re.sub(r"[^\u0600-\u06ffa-z0-9\s]", " ", text)
+    words = text.split()
+    words = [w for w in words if not (w.isdigit() and len(w) == 4)]
+    key_words = words[:3]
+    return "_".join(key_words)
+
 
 
 # ─── Price extraction ─────────────────────────────────────────────────────────
