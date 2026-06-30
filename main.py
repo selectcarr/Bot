@@ -690,6 +690,10 @@ async def main():
     rows = con.execute("SELECT model_key, COUNT(*) c FROM listings GROUP BY model_key HAVING c > 1").fetchall()
     for r in rows:
         log.info(f"[debug-model] key={r['model_key']} count={r['c']}")
+        for r in rows:
+            prices = con.execute("SELECT price_toman FROM listings WHERE model_key=?", (r["model_key"],)).fetchall()
+            price_list = [p["price_toman"] for p in prices]
+            log.info(f"[debug-prices] key={r['model_key']} prices={price_list}")
 
     # تشخیص و ارسال دیل
     sent = await detect_and_send_deals(con, bot)
