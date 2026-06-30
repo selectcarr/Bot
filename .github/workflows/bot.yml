@@ -33,7 +33,7 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHANNEL_ID: "@chanelllvip"
           PRICE_SCOPE: global
-          DISCOUNT_THRESHOLD_PERCENT: "10"
+          DISCOUNT_THRESHOLD_PERCENT: "5"
           MIN_SAMPLE_FOR_MEDIAN: "5"
           TELEGRAM_PAGES_PER_CHANNEL: "1"
           MAX_MESSAGES_PER_RUN: "10"
