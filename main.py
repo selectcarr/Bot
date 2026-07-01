@@ -622,7 +622,8 @@ async def detect_and_send_deals(con: sqlite3.Connection, bot: Bot):
             log.info(f"[debug-deal] SKIP already_sent model={model_key}")
             continue
 
-        prices = get_global_prices(con, model_key, exclude_id=row["id"])
+        prices = get_global_prices(con, model_key)
+
         if len(prices) < MIN_SAMPLE:
             log.info(f"[debug-deal] SKIP not_enough_samples model={model_key} have={len(prices)} need={MIN_SAMPLE}")
             continue
