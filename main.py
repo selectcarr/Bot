@@ -639,7 +639,13 @@ async def detect_and_send_deals(con: sqlite3.Connection, bot: Bot):
             log.info(f"[debug-deal] SKIP low_discount model={model_key} discount={discount*100:.1f}% need={DISCOUNT_THRESHOLD*100:.1f}%")
             continue
 
-        zero_price = get_zero_price(con, model_key)
+       
+     zero_price = get_zero_price(con, model_key)
+               import sqlite3 as _sq
+        clean_url = row["url"].strip().replace("\n","").replace("\r","").replace(" ","")
+        con.execute("UPDATE listings SET url=? WHERE id=?", (clean_url, row["id"]))
+        con.commit()
+
         message_text = build_deal_message(row, med, discount * 100, zero_price)
 
         try:
