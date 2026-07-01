@@ -20,9 +20,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: selectcar_state.sqlite3
-          key: selectcar-db-${{ runner.os }}-v2
+          key: selectcar-db-${{ runner.os }}-v3
           restore-keys: |
-            selectcar-db-${{ runner.os }}-v2
+            selectcar-db-${{ runner.os }}-v3
 
       - name: Install dependencies
         run: pip install -r requirements.txt
