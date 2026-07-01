@@ -34,7 +34,7 @@ jobs:
           TELEGRAM_CHANNEL_ID: "@chanelllvip"
           PRICE_SCOPE: global
           DISCOUNT_THRESHOLD_PERCENT: "7"
-          MIN_SAMPLE_FOR_MEDIAN: "3"
+          MIN_SAMPLE_FOR_MEDIAN: "2"
           TELEGRAM_PAGES_PER_CHANNEL: "1"
           MAX_MESSAGES_PER_RUN: "10"
           CHANNEL_REQUEST_DELAY_SECONDS: "4"
