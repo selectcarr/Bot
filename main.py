@@ -280,6 +280,7 @@ def parse_html_messages(html: str, channel_username: str) -> list[dict]:
 
                 url = f"https://t.me/{channel_username}/{message_id}".strip()
 
+
         results.append({
             "message_id": message_id,
             "text": text,
