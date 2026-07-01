@@ -278,7 +278,8 @@ def parse_html_messages(html: str, channel_username: str) -> list[dict]:
         date_m = MSG_DATE.search(raw_block)
         posted_at = date_m.group(1) if date_m else datetime.now(timezone.utc).isoformat()
 
-                url = f"https://t.me/{channel_username}/{message_id}".strip()
+                url = f"https://t.me/{channel_username}/{message_id}"
+
 
 
         results.append({
