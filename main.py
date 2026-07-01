@@ -625,7 +625,6 @@ async def detect_and_send_deals(con: sqlite3.Connection, bot: Bot):
             continue
 
         prices = get_global_prices(con, model_key)
-
         if len(prices) < MIN_SAMPLE:
             log.info(f"[debug-deal] SKIP not_enough_samples model={model_key} have={len(prices)} need={MIN_SAMPLE}")
             continue
@@ -639,13 +638,11 @@ async def detect_and_send_deals(con: sqlite3.Connection, bot: Bot):
             log.info(f"[debug-deal] SKIP low_discount model={model_key} discount={discount*100:.1f}% need={DISCOUNT_THRESHOLD*100:.1f}%")
             continue
 
-       
-     zero_price = get_zero_price(con, model_key)
-               import sqlite3 as _sq
-        clean_url = row["url"].strip().replace("\n","").replace("\r","").replace(" ","")
+        clean_url = row["url"].strip().replace("\n", "").replace("\r", "")
         con.execute("UPDATE listings SET url=? WHERE id=?", (clean_url, row["id"]))
         con.commit()
 
+        zero_price = get_zero_price(con, model_key)
         message_text = build_deal_message(row, med, discount * 100, zero_price)
 
         try:
@@ -664,7 +661,7 @@ async def detect_and_send_deals(con: sqlite3.Connection, bot: Bot):
                 price_toman, median_price_toman, discount_percent, sent_at)
                VALUES (?,?,?,?,?,?,?,?)""",
             (
-                channel, mid, row["url"], row["title"],
+                channel, mid, clean_url, row["title"],
                 price, med, discount * 100,
                 datetime.now(timezone.utc).isoformat(),
             ),
@@ -674,6 +671,7 @@ async def detect_and_send_deals(con: sqlite3.Connection, bot: Bot):
         log.info(f"[deals] FOUND model={model_key} discount={discount*100:.1f}%")
 
     return sent_count
+
 
 
 
