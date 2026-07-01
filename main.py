@@ -601,7 +601,8 @@ def build_deal_message(
         f"اختلاف آگهی با میانگین کارکرده: {discount_str}\n"
         f"اختلاف آگهی با قیمت صفر: {zero_diff_str}\n"
         f"منبع آگهی: {listing['channel_display_name']}\n"
-        f"لینک آگهی اصلی:\n{listing['url']}\n"
+                f"لینک آگهی اصلی:\n{listing['url'].strip()}\n"
+
         f"شماره تماس فروشنده: {phone}"
     )
 
