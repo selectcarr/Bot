@@ -691,6 +691,8 @@ async def main():
 
     con = init_db(DB_PATH)
     bot = Bot(token=TELEGRAM_BOT_TOKEN)
+    con.execute("DELETE FROM listings")
+    con.commit()
 
     async with httpx.AsyncClient() as client:
 
