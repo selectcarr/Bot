@@ -645,8 +645,11 @@ async def detect_and_send_deals(con: sqlite3.Connection, bot: Bot):
         con.execute("UPDATE listings SET url=? WHERE id=?", (clean_url, row["id"]))
         con.commit()
 
-        zero_price = get_zero_price(con, model_key)
-        message_text = build_deal_message(row, med, discount * 100, zero_price)
+                zero_price = get_zero_price(con, model_key)
+        row_dict = dict(row)
+        row_dict["url"] = "".join(c for c in str(row["url"]) if 32 <= ord(c) < 127 or ord(c) > 127)
+        message_text = build_deal_message(row_dict, med, discount * 100, zero_price)
+
 
         try:
             sent = await bot.send_message(
