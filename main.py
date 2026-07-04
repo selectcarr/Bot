@@ -652,10 +652,13 @@ async def detect_and_send_deals(con: sqlite3.Connection, bot: Bot):
 
 
         try:
+            clean_text = message_text.encode('utf-8').decode('utf-8')
+            clean_text = ''.join(ch if ch >= ' ' or ch == '\n' else '' for ch in clean_text)
             sent = await bot.send_message(
                 chat_id=TELEGRAM_CHANNEL_ID,
-                text=message_text,
+                text=clean_text,
             )
+
             log.info(f"[telegram] SENT message_id={sent.message_id} model={model_key} discount={discount*100:.1f}%")
         except Exception as e:
             log.info(f"[telegram] SEND_FAILED model={model_key} error={e}")
