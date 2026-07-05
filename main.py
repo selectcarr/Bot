@@ -296,6 +296,7 @@ async def fetch_channel_page(
     channel_username: str,
     before_id: Optional[str] = None,
 ) -> str:
+    before_id = str(before_id).strip() if before_id else None
     url = f"https://t.me/s/{channel_username}"
     if before_id:
         url += f"?before={before_id}"
