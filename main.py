@@ -649,7 +649,8 @@ async def detect_and_send_deals(con: sqlite3.Connection, bot: Bot):
         row_dict = dict(row)
         row_dict["url"] = "".join(c for c in str(row["url"]) if 32 <= ord(c) < 127 or ord(c) > 127)
         message_text = build_deal_message(row_dict, med, discount * 100, zero_price)
-
+        if '\n' in message_text or '\r' in message_text:
+                    message_text = message_text.replace('\n', ' ').replace('\r', ' ')
 
         try:
             clean_text = message_text.encode('utf-8').decode('utf-8')
