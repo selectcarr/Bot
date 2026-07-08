@@ -265,7 +265,7 @@ def parse_html_messages(html: str, channel_username: str) -> list[dict]:
         mid_m = MSG_ID.search(raw_block)
         if not mid_m:
             continue
-        message_id = mid_m.group(1).strip()
+        message_id = mid_m.group(1).strip().replace('\n', '').replace('\r', '')
 
         text_m = MSG_TEXT.search(raw_block)
         if not text_m:
