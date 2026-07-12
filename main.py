@@ -1,730 +1,482 @@
-import asyncio
-import logging
-import os
+"""
+main.py — نسخه‌ی تک‌فایلی SelectCar Bot
+
+همه‌ی منطق پروژه (دیتابیس، اسکریپ کانال‌های تلگرام، فیلتر آگهی اقساطی،
+نرمال‌سازی، موتور قیمت‌گذاری) در همین یک فایل قرار داره تا نگه‌داری‌ش
+روی موبایل ساده‌تر باشه.
+
+منابع (کانال‌های تلگرام / سایت‌ها) پایین همین فایل، در متغیر SOURCES تعریف شدن.
+برای اضافه کردن منبع جدید، فقط یه آیتم به لیست SOURCES اضافه کن — نیازی به
+تغییر بقیه‌ی کد نیست.
+
+اجرا: python main.py
+"""
+
 import re
+import hashlib
+import logging
 import sqlite3
-import time
-from datetime import datetime, timezone
-from statistics import median
-from typing import Optional
+from pathlib import Path
+from dataclasses import dataclass, field
+from statistics import mean
 
 import httpx
-from telegram import Bot
-from telegram.constants import ParseMode
 
-# ─── Logging ────────────────────────────────────────────────────────────────
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(message)s",
-)
-log = logging.getLogger(__name__)
+# ============================================================================
+# تنظیمات کلی
+# ============================================================================
 
-# ─── Config ──────────────────────────────────────────────────────────────────
-TELEGRAM_BOT_TOKEN: str = os.environ["TELEGRAM_BOT_TOKEN"]
-TELEGRAM_CHANNEL_ID: str = os.environ.get("TELEGRAM_CHANNEL_ID", "@chanelllvip")
-DISCOUNT_THRESHOLD: float = float(os.environ.get("DISCOUNT_THRESHOLD_PERCENT", "10")) / 100
-MIN_SAMPLE: int = int(os.environ.get("MIN_SAMPLE_FOR_MEDIAN", "5"))
-PAGES_PER_CHANNEL: int = int(os.environ.get("TELEGRAM_PAGES_PER_CHANNEL", "1"))
-MAX_MESSAGES: int = int(os.environ.get("MAX_MESSAGES_PER_RUN", "10"))
-CHANNEL_DELAY: float = float(os.environ.get("CHANNEL_REQUEST_DELAY_SECONDS", "4"))
-DB_PATH: str = os.environ.get("SELECTCAR_STATE_DB", "selectcar_state.sqlite3")
-
-# ─── Channel lists ────────────────────────────────────────────────────────────
-AD_CHANNELS = [
-    ("zh_classic_car", "ZH Classic Car"),
-    ("hmexpo", "HM Expo"),
-    ("formulagallery", "Formula Gallery"),
-    ("bamachintext", "Bamachin Text"),
-    ("otugalericar", "Otu Galeri Car"),
-    ("namayeshgahddarann", "Namayeshgah Daran"),
-    ("Autoplack", "Autoplack"),
-]
-
-ZERO_PRICE_CHANNELS = [
-    ("officialhamrahmechanic", "Hamrah Mechanic"),
-    ("karnameh_com", "Karnameh"),
-    ("khodro45", "Khodro45"),
-]
+DB_PATH = Path(__file__).parent / "data" / "selectcar.db"
+REQUEST_TIMEOUT = 15
+MIN_SAMPLE = 2                 # حداقل تعداد آگهی مشابه برای معتبر بودن میانگین
+DISCOUNT_THRESHOLD = 0.03      # حداقل ۳٪ زیر میانگین برای «دیل مناسب»
 
 HEADERS = {
     "User-Agent": (
-        "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) "
-        "AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
-    ),
-    "Accept-Language": "fa,en;q=0.9",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0 Safari/537.36"
+    )
 }
 
-# ─── DB setup ────────────────────────────────────────────────────────────────
+EXCLUDE_KEYWORDS = [
+    "اقساط", "اقساطی", "لیزینگ", "لیزینگی",
+    "پیش پرداخت", "پیش‌پرداخت", "پیش‌ پرداخت",
+    "ثبت نام", "ثبت‌نام", "قرعه‌کشی", "قرعه کشی",
+    "نقد و اقساط", "چک", "معاوضه با",
+]
 
-def init_db(path: str) -> sqlite3.Connection:
-    con = sqlite3.connect(path)
-    con.row_factory = sqlite3.Row
-    cur = con.cursor()
-    cur.executescript("""
-        CREATE TABLE IF NOT EXISTS processed_messages (
-            channel_username TEXT NOT NULL,
-            message_id       TEXT NOT NULL,
-            url              TEXT,
-            status           TEXT,
-            processed_at     TEXT,
-            PRIMARY KEY (channel_username, message_id)
-        );
-
-        CREATE TABLE IF NOT EXISTS listings (
-            id                   INTEGER PRIMARY KEY AUTOINCREMENT,
-            channel_username     TEXT,
-            channel_display_name TEXT,
-            message_id           TEXT,
-            url                  TEXT,
-            title                TEXT,
-            model_key            TEXT,
-            price_toman          REAL,
-            mileage_km           REAL,
-            contact_phone        TEXT,
-            posted_at            TEXT,
-            raw_text             TEXT,
-            created_at           TEXT
-        );
-
-        CREATE TABLE IF NOT EXISTS rejected_listings (
-            id                   INTEGER PRIMARY KEY AUTOINCREMENT,
-            channel_username     TEXT,
-            channel_display_name TEXT,
-            message_id           TEXT,
-            url                  TEXT,
-            reason               TEXT,
-            raw_text             TEXT,
-            posted_at            TEXT,
-            created_at           TEXT
-        );
-
-        CREATE TABLE IF NOT EXISTS sent_deals (
-            id                  INTEGER PRIMARY KEY AUTOINCREMENT,
-            channel_username    TEXT,
-            message_id          TEXT,
-            url                 TEXT,
-            title               TEXT,
-            price_toman         REAL,
-            median_price_toman  REAL,
-            discount_percent    REAL,
-            sent_at             TEXT
-        );
-
-        CREATE TABLE IF NOT EXISTS zero_price_index (
-            id              INTEGER PRIMARY KEY AUTOINCREMENT,
-            source_name     TEXT,
-            source_type     TEXT,
-            source_url      TEXT,
-            message_id      TEXT,
-            title           TEXT,
-            model_key       TEXT,
-            zero_price_toman REAL,
-            raw_text        TEXT,
-            observed_at     TEXT,
-            created_at      TEXT
-        );
-    """)
-    con.commit()
-    return con
-
-
-# ─── Text helpers ─────────────────────────────────────────────────────────────
-
-FA_DIGITS = str.maketrans("۰۱۲۳۴۵۶۷۸۹٠١٢٣٤٥٦٧٨٩", "01234567890123456789")
-ZWC = re.compile(r"[\u200b\u200c\u200d\u2060\ufeff]")
-
-def normalize_text(text: str) -> str:
-    text = ZWC.sub("", text)
-    text = text.translate(FA_DIGITS)
-    text = text.replace("ك", "ک").replace("ي", "ی")
-    text = re.sub(r"[ \t]+", " ", text)
-    return text.strip()
-
-
-def extract_title(text: str) -> str:
-    lines = [l.strip() for l in text.splitlines() if l.strip()]
-    return lines[0] if lines else ""
-
-def make_model_key(title: str) -> str:
-    text = title.lower()
-    text = re.sub(r"[^\u0600-\u06ffa-z0-9\s]", " ", text)
-    words = text.split()
-    words = [w for w in words if not (w.isdigit() and len(w) == 4)]
-    key_words = words[:3]
-    return "_".join(key_words)
-
-
-
-# ─── Price extraction ─────────────────────────────────────────────────────────
-
-REJECT_PRICE_PATTERNS = re.compile(
-    r"(توافق|تماس\s*بگیر|قیمت\s*توافق|اعلام\s*نشده|بدون\s*قیمت|تماس\s*بگیرید)",
-    re.IGNORECASE,
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
 )
+logger = logging.getLogger("selectcar")
 
-def extract_price(text: str) -> Optional[float]:
-    if REJECT_PRICE_PATTERNS.search(text):
+
+# ============================================================================
+# تعریف منابع — برای اضافه کردن منبع جدید فقط اینجا رو ویرایش کن
+# ============================================================================
+
+@dataclass
+class Source:
+    name: str
+    source_type: str          # "telegram" | "website"
+    patterns: dict
+    channel_id: str | None = None   # برای تلگرام
+    base_url: str | None = None     # برای وب‌سایت
+    exclude_keywords: list = field(default_factory=list)
+
+
+# الگوی regex مشترک برای پیام‌های کانال‌های تلگرام (بر اساس ساختار صفحه‌ی t.me/s)
+TELEGRAM_PATTERNS = {
+    "listing_block": r'<div class="tgme_widget_message_wrap.*?(?=<div class="tgme_widget_message_wrap|$)',
+    "car_name": r'tgme_widget_message_text[^"]*"[^>]*>\s*([^\n<]{3,50})',
+    "price": r'قیمت[^\d]{0,20}([\d,]{5,})\s*تومان',
+    "mileage": r'کارکرد[^\d]{0,20}([\d,]+)\s*کیلومتر',
+    "body_condition": r'وضعیت بدنه[^:\n]*[:：]\s*([^\n<]+)',
+    "technical_health": r'سلامت فنی[^:\n]*[:：]\s*([^\n<]+)',
+    "model_year": r'مدل[^\d]{0,10}(1[34]\d\d)',
+    "ad_link": r'tgme_widget_message_date"\s+href="([^"]+)"',
+}
+
+SOURCES: list[Source] = [
+    Source(
+        name="hmexpo_telegram",
+        source_type="telegram",
+        channel_id="hmexpo",
+        patterns=TELEGRAM_PATTERNS,
+        exclude_keywords=EXCLUDE_KEYWORDS,
+    ),
+    Source(
+        name="formulagallery_telegram",
+        source_type="telegram",
+        channel_id="formulagallery",
+        patterns=TELEGRAM_PATTERNS,
+        exclude_keywords=EXCLUDE_KEYWORDS,
+    ),
+    Source(
+        name="zh_classic_car_telegram",
+        source_type="telegram",
+        channel_id="zh_classic_car",
+        patterns=TELEGRAM_PATTERNS,
+        exclude_keywords=EXCLUDE_KEYWORDS,
+    ),
+    # برای اضافه کردن یه کانال دیگه، همین‌جا یه Source جدید اضافه کن:
+    # Source(
+    #     name="yv_vk_telegram",
+    #     source_type="telegram",
+    #     channel_id="yv_vk",
+    #     patterns=TELEGRAM_PATTERNS,
+    #     exclude_keywords=EXCLUDE_KEYWORDS,
+    # ),
+]
+
+
+# ============================================================================
+# دیتابیس
+# ============================================================================
+
+SCHEMA = """
+CREATE TABLE IF NOT EXISTS listings (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    source_name     TEXT NOT NULL,
+    ad_link         TEXT NOT NULL,
+    ad_hash         TEXT UNIQUE NOT NULL,
+    car_name        TEXT NOT NULL,
+    car_model_year  TEXT,
+    normalized_key  TEXT NOT NULL,
+    price_toman     INTEGER NOT NULL,
+    mileage_km      INTEGER,
+    body_condition  TEXT,
+    technical_health TEXT,
+    first_seen_at   TEXT DEFAULT CURRENT_TIMESTAMP,
+    last_seen_at    TEXT DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS price_history (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    listing_id  INTEGER NOT NULL REFERENCES listings(id),
+    price_toman INTEGER NOT NULL,
+    recorded_at TEXT DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS zero_km_prices (
+    id             INTEGER PRIMARY KEY AUTOINCREMENT,
+    normalized_key TEXT UNIQUE NOT NULL,
+    price_toman    INTEGER NOT NULL,
+    updated_at     TEXT DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_listings_normalized_key ON listings(normalized_key);
+"""
+
+
+def get_connection() -> sqlite3.Connection:
+    DB_PATH.parent.mkdir(parents=True, exist_ok=True)
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+
+def init_db() -> None:
+    conn = get_connection()
+    try:
+        conn.executescript(SCHEMA)
+        conn.commit()
+    finally:
+        conn.close()
+
+
+# ============================================================================
+# اسکرپینگ (تلگرام از طریق t.me/s ، وب‌سایت از طریق request معمولی)
+# ============================================================================
+
+def fetch_html(url: str) -> str | None:
+    """گرفتن HTML یک صفحه با مدیریت کامل خطا (شکست یک منبع کل برنامه رو متوقف نمی‌کنه)."""
+    clean_url = url.strip()
+    try:
+        response = httpx.get(clean_url, headers=HEADERS, timeout=REQUEST_TIMEOUT, follow_redirects=True)
+        response.raise_for_status()
+        return response.text
+    except httpx.TimeoutException:
+        logger.warning(f"تایم‌اوت در دریافت: {clean_url}")
+    except httpx.HTTPStatusError as e:
+        logger.warning(f"خطای HTTP {e.response.status_code} در: {clean_url}")
+    except httpx.RequestError as e:
+        logger.warning(f"خطای اتصال به {clean_url}: {e}")
+    return None
+
+
+def _extract_first(pattern: str, text: str) -> str | None:
+    if not pattern:
+        return None
+    match = re.search(pattern, text)
+    return match.group(1).strip() if match else None
+
+
+def parse_block(block_html: str, patterns: dict, source_name: str) -> dict | None:
+    """استخراج یک آگهی از یک بلوک HTML بر اساس الگوهای regex."""
+    car_name = _extract_first(patterns.get("car_name", ""), block_html)
+    price_raw = _extract_first(patterns.get("price", ""), block_html)
+    ad_link = _extract_first(patterns.get("ad_link", ""), block_html)
+
+    if not car_name or not price_raw or not ad_link:
         return None
 
-    # میلیارد و میلیون توأم: مثل ۱۰ میلیارد و ۵۰۰ میلیون
-    m = re.search(
-        r"(\d+(?:\.\d+)?)\s*میلیارد\s*(?:و\s*)?(\d+(?:\.\d+)?)\s*میلیون",
-        text,
-    )
-    if m:
-        return float(m.group(1)) * 1_000_000_000 + float(m.group(2)) * 1_000_000
-
-    m = re.search(r"(\d+(?:\.\d+)?)\s*میلیارد", text)
-    if m:
-        return float(m.group(1)) * 1_000_000_000
-
-    m = re.search(r"(\d+(?:\.\d+)?)\s*میلیون", text)
-    if m:
-        return float(m.group(1)) * 1_000_000
-
-    # فرمت کوتاه‌شده: 10/500 → ۱۰ میلیارد و ۵۰۰ میلیون
-    m = re.search(r"\b(\d{1,3})/(\d{3})\b", text)
-    if m:
-        billions = int(m.group(1))
-        millions = int(m.group(2))
-        value = billions * 1_000_000_000 + millions * 1_000_000
-        if value > 100_000_000:
-            return float(value)
-    m = re.search(r"\b(\d{1,3}(?:,\d{3}){2,})\b", text)
-    if m:
-        value = float(m.group(1).replace(",", ""))
-        if value >= 100_000_000:
-            return value
-
-
-    # عدد خام بزرگ (بیش از ۱۰۰ میلیون تومان)
-    m = re.search(r"\b(\d{9,})\b", text)
-    if m:
-        return float(m.group(1))
-
-    return None
-
-
-# ─── Mileage extraction ───────────────────────────────────────────────────────
-
-def extract_mileage(text: str) -> Optional[float]:
-    m = re.search(
-        r"(?:کارکرد|كاركرد|کار\s*کرد|کیلومتر|km)[^\d]*(\d[\d,\.]*)",
-        text,
-        re.IGNORECASE,
-    )
-    if m:
-        raw = m.group(1).replace(",", "").replace(".", "")
-        return float(raw)
-    return None
-
-
-# ─── Phone extraction ─────────────────────────────────────────────────────────
-
-def extract_phone(text: str) -> Optional[str]:
-    m = re.search(r"(?<!\d)(0?9\d{9})(?!\d)", text)
-    if m:
-        digits = m.group(1)
-        if not digits.startswith("0"):
-            digits = "0" + digits
-        return digits
-    return None
-
-
-# ─── Rejection check ──────────────────────────────────────────────────────────
-
-REJECT_CONTENT_PATTERNS = re.compile(
-    r"(پیش.?فروش|ثبت.?نام|لیست\s*قیمت|قرعه.?کشی|فروش\s*فوری\s*کارخانه"
-    r"|اعلام\s*موجودی|تحلیل\s*بازار|اخبار\s*خودرو|تبلیغ)",
-    re.IGNORECASE,
-)
-
-def is_ad_content_rejected(text: str) -> Optional[str]:
-    if REJECT_CONTENT_PATTERNS.search(text):
-        return "محتوای نامعتبر (خبر/تبلیغ/پیش‌فروش)"
-    return None
-
-
-# ─── HTML scraper ─────────────────────────────────────────────────────────────
-
-MSG_BLOCK = re.compile(
-    r'<div class="tgme_widget_message_wrap[^>]*>.*?</div>\s*</div>\s*</div>',
-    re.DOTALL,
-)
-MSG_ID = re.compile(r'data-post="[^/]+/(\d+)"')
-MSG_TEXT = re.compile(r'<div class="tgme_widget_message_text[^"]*"[^>]*>(.*?)</div>', re.DOTALL)
-HTML_TAG = re.compile(r"<[^>]+>")
-MSG_DATE = re.compile(r'<time[^>]+datetime="([^"]+)"')
-
-
-def parse_html_messages(html: str, channel_username: str) -> list[dict]:
-    results = []
-    for block in MSG_BLOCK.finditer(html):
-        raw_block = block.group(0)
-
-        mid_m = MSG_ID.search(raw_block)
-        if not mid_m:
-            continue
-        message_id = mid_m.group(1).strip().replace('\n', '').replace('\r', '')
-
-        text_m = MSG_TEXT.search(raw_block)
-        if not text_m:
-            continue
-        raw_html_text = text_m.group(1)
-        text = HTML_TAG.sub("", raw_html_text)
-        text = text.replace("&#33;", "!").replace("&amp;", "&").replace("&lt;", "<").replace("&gt;", ">")
-        text = normalize_text(text)
-
-        date_m = MSG_DATE.search(raw_block)
-        posted_at = date_m.group(1) if date_m else datetime.now(timezone.utc).isoformat()
-
-        url = f"https://t.me/{channel_username}/{message_id}".strip().replace('\n', '').replace('\r', '')
-
-
-
-        results.append({
-            "message_id": message_id,
-            "text": text,
-            "url": url,
-         "posted_at": posted_at,
-        })
-    return results
-
-
-async def fetch_channel_page(
-    client: httpx.AsyncClient,
-    channel_username: str,
-    before_id: Optional[str] = None,
-) -> str:
-    before_id = str(before_id).strip() if before_id else None
-    url = f"https://t.me/s/{channel_username}"
-    if before_id:
-        url += f"?before={before_id}"
-    resp = await client.get(url, headers=HEADERS, timeout=20, follow_redirects=True)
-    resp.raise_for_status()
-    return resp.text
-
-
-# ─── Process one ad channel ──────────────────────────────────────────────────
-
-def already_processed(con: sqlite3.Connection, channel: str, msg_id: str) -> bool:
-    row = con.execute(
-        "SELECT 1 FROM processed_messages WHERE channel_username=? AND message_id=?",
-        (channel, msg_id),
-    ).fetchone()
-    return row is not None
-
-
-def mark_processed(con: sqlite3.Connection, channel: str, msg_id: str, url: str, status: str):
-    con.execute(
-        """INSERT OR REPLACE INTO processed_messages
-           (channel_username, message_id, url, status, processed_at)
-           VALUES (?,?,?,?,?)""",
-        (channel, msg_id, url, status, datetime.now(timezone.utc).isoformat()),
-    )
-    con.commit()
-
-
-def save_listing(con: sqlite3.Connection, data: dict):
-    con.execute(
-        """INSERT INTO listings
-           (channel_username, channel_display_name, message_id, url, title,
-            model_key, price_toman, mileage_km, contact_phone, posted_at, raw_text, created_at)
-           VALUES (?,?,?,?,?,?,?,?,?,?,?,?)""",
-        (
-            data["channel_username"],
-            data["channel_display_name"],
-            data["message_id"],
-            data["url"],
-            data["title"],
-            data["model_key"],
-            data["price_toman"],
-            data["mileage_km"],
-            data.get("contact_phone"),
-            data["posted_at"],
-            data["raw_text"],
-            datetime.now(timezone.utc).isoformat(),
-        ),
-    )
-    con.commit()
-
-
-def save_rejected(con: sqlite3.Connection, data: dict):
-    con.execute(
-        """INSERT INTO rejected_listings
-           (channel_username, channel_display_name, message_id, url,
-            reason, raw_text, posted_at, created_at)
-           VALUES (?,?,?,?,?,?,?,?)""",
-        (
-            data["channel_username"],
-            data["channel_display_name"],
-            data["message_id"],
-            data["url"],
-            data["reason"],
-            data["raw_text"],
-            data["posted_at"],
-            datetime.now(timezone.utc).isoformat(),
-        ),
-    )
-    con.commit()
-
-
-async def process_ad_channel(
-    client: httpx.AsyncClient,
-    con: sqlite3.Connection,
-    username: str,
-    display_name: str,
-) -> tuple[int, int]:
-    accepted = 0
-    rejected = 0
-    before_id: Optional[str] = None
-
-    for _ in range(PAGES_PER_CHANNEL):
-        try:
-            html = await fetch_channel_page(client, username, before_id)
-        except Exception as e:
-            log.info(f"[scrape] channel=@{username} fetch_error={e}")
-            break
-
-        messages = parse_html_messages(html, username)
-        if not messages:
-            break
-
-        messages = messages[:MAX_MESSAGES]
-        before_id = messages[0]["message_id"]
-
-        for msg in messages:
-            mid = msg["message_id"]
-            url = msg["url"]
-            text = msg["text"]
-
-            if already_processed(con, username, mid):
-                continue
-
-            reject_reason: Optional[str] = None
-
-            # محتوای نامعتبر
-            reject_reason = is_ad_content_rejected(text)
-
-            if not reject_reason:
-                price = extract_price(text)
-                if price is None:
-                    reject_reason = "قیمت مشخص نیست یا توافقی است"
-
-
-                mileage = extract_mileage(text)
-            log.info(f"[debug] reason={reject_reason} text={text[:200]}")
-
-            if reject_reason:
-                save_rejected(con, {
-                    "channel_username": username,
-                    "channel_display_name": display_name,
-                    "message_id": mid,
-                    "url": url,
-                    "reason": reject_reason,
-                    "raw_text": text,
-                    "posted_at": msg["posted_at"],
-                })
-                mark_processed(con, username, mid, url, "rejected")
-                rejected += 1
-                continue
-
-            title = extract_title(text)
-            model_key = make_model_key(title)
-            phone = extract_phone(text)
-
-            save_listing(con, {
-                "channel_username": username,
-                "channel_display_name": display_name,
-                "message_id": mid,
-                "url": url,
-                "title": title,
-                "model_key": model_key,
-                "price_toman": price,
-                "mileage_km": mileage,
-                "contact_phone": phone,
-                "posted_at": msg["posted_at"],
-                "raw_text": text,
-            })
-            mark_processed(con, username, mid, url, "accepted")
-            accepted += 1
-
-        await asyncio.sleep(CHANNEL_DELAY)
-
-    log.info(f"[scrape] channel=@{username} accepted={accepted} rejected={rejected}")
-    return accepted, rejected
-
-
-# ─── Process zero price channels ─────────────────────────────────────────────
-
-def already_zero_processed(con: sqlite3.Connection, source: str, msg_id: str) -> bool:
-    row = con.execute(
-        "SELECT 1 FROM zero_price_index WHERE source_name=? AND message_id=?",
-        (source, msg_id),
-    ).fetchone()
-    return row is not None
-
-
-def save_zero_price(con: sqlite3.Connection, data: dict):
-    con.execute(
-        """INSERT INTO zero_price_index
-           (source_name, source_type, source_url, message_id, title,
-            model_key, zero_price_toman, raw_text, observed_at, created_at)
-           VALUES (?,?,?,?,?,?,?,?,?,?)""",
-        (
-            data["source_name"],
-            "telegram",
-            data["source_url"],
-            data["message_id"],
-            data["title"],
-            data["model_key"],
-            data["zero_price_toman"],
-            data["raw_text"],
-            data["observed_at"],
-            datetime.now(timezone.utc).isoformat(),
-        ),
-    )
-    con.commit()
-
-
-async def process_zero_channel(
-    client: httpx.AsyncClient,
-    con: sqlite3.Connection,
-    username: str,
-    display_name: str,
-) -> int:
-    saved = 0
     try:
-        html = await fetch_channel_page(client, username)
-    except Exception as e:
-        log.info(f"[zero] channel=@{username} fetch_error={e}")
-        return 0
+        price_toman = int(price_raw.replace(",", ""))
+    except ValueError:
+        logger.warning(f"[{source_name}] قیمت غیرقابل تبدیل: {price_raw}")
+        return None
 
-    messages = parse_html_messages(html, username)
-    for msg in messages[:MAX_MESSAGES]:
-        mid = msg["message_id"]
-        text = msg["text"]
-        url = msg["url"]
+    mileage_raw = _extract_first(patterns.get("mileage", ""), block_html)
+    mileage_km = int(mileage_raw.replace(",", "")) if mileage_raw else None
 
-        if already_zero_processed(con, username, mid):
-            continue
-
-        price = extract_price(text)
-        if price is None:
-            continue
-
-        title = extract_title(text)
-        model_key = make_model_key(title)
-
-        save_zero_price(con, {
-            "source_name": username,
-            "source_url": url,
-            "message_id": mid,
-            "title": title,
-            "model_key": model_key,
-            "zero_price_toman": price,
-            "raw_text": text,
-            "observed_at": msg["posted_at"],
-        })
-        log.info(f"[zero] updated model={model_key} price={price:,.0f}")
-        saved += 1
-
-    await asyncio.sleep(CHANNEL_DELAY)
-    return saved
+    return {
+        "car_name": car_name,
+        "price_toman": price_toman,
+        "ad_link": ad_link,
+        "mileage_km": mileage_km,
+        "body_condition": _extract_first(patterns.get("body_condition", ""), block_html),
+        "technical_health": _extract_first(patterns.get("technical_health", ""), block_html),
+        "model_year": _extract_first(patterns.get("model_year", ""), block_html),
+        "raw_description": block_html,  # برای بررسی کلمات ممنوعه در کل متن
+    }
 
 
-# ─── Deal detection ───────────────────────────────────────────────────────────
-
-def already_sent(con: sqlite3.Connection, channel: str, msg_id: str) -> bool:
-    row = con.execute(
-        "SELECT 1 FROM sent_deals WHERE channel_username=? AND message_id=?",
-        (channel, msg_id),
-    ).fetchone()
-    return row is not None
-
-
-def get_global_prices(con: sqlite3.Connection, model_key: str, exclude_id: Optional[int] = None) -> list[float]:
-    query = "SELECT price_toman FROM listings WHERE model_key=? AND price_toman > 0"
-    params: list = [model_key]
-    if exclude_id is not None:
-        query += " AND id != ?"
-        params.append(exclude_id)
-    rows = con.execute(query, params).fetchall()
-    return [r["price_toman"] for r in rows]
-
-
-def get_zero_price(con: sqlite3.Connection, model_key: str) -> Optional[float]:
-    row = con.execute(
-        """SELECT zero_price_toman FROM zero_price_index
-           WHERE model_key=? ORDER BY observed_at DESC LIMIT 1""",
-        (model_key,),
-    ).fetchone()
-    return row["zero_price_toman"] if row else None
-
-
-def format_toman(value: float) -> str:
-    if value >= 1_000_000_000:
-        b = value / 1_000_000_000
-        return f"{b:.2f} میلیارد تومان"
-    m = value / 1_000_000
-    return f"{m:.0f} میلیون تومان"
-
-
-def build_deal_message(
-    listing: sqlite3.Row,
-    median_price: float,
-    discount_pct: float,
-    zero_price: Optional[float],
-) -> str:
-    title = listing["title"] or "نامشخص"
-    mileage = f"{int(listing['mileage_km']):,} km" if listing["mileage_km"] is not None else "نامشخص"
-    price_str = format_toman(listing["price_toman"])
-    median_str = format_toman(median_price)
-    discount_str = f"{discount_pct:.1f}٪ پایین‌تر"
-
-    if zero_price is not None:
-        zero_str = format_toman(zero_price)
-        diff_zero = ((listing["price_toman"] - zero_price) / zero_price) * 100
-        if diff_zero < 0:
-            zero_diff_str = f"{abs(diff_zero):.1f}٪ پایین‌تر از قیمت صفر"
-        else:
-            zero_diff_str = f"{abs(diff_zero):.1f}٪ بالاتر از قیمت صفر"
+def scrape_source(source: Source) -> list[dict]:
+    """اسکرپ یک منبع (تلگرام یا وب‌سایت) و برگرداندن لیست آگهی‌های خام."""
+    if source.source_type == "telegram":
+        channel = (source.channel_id or "").strip().lstrip("@")
+        url = f"https://t.me/s/{channel}"
+    elif source.source_type == "website":
+        url = source.base_url
     else:
-        zero_str = "پیدا نشد"
-        zero_diff_str = "نامشخص"
+        logger.warning(f"[{source.name}] نوع منبع ناشناخته: {source.source_type}")
+        return []
 
-    phone = listing["contact_phone"] or "موجود نیست"
+    html = fetch_html(url)
+    if html is None:
+        logger.error(f"[{source.name}] دریافت صفحه ناموفق بود")
+        return []
 
-    return (
-        f"🚘 دیل مناسب خودرو\n\n"
-        f"نام خودرو: {title}\n"
-        f"کارکرد: {mileage}\n"
-        f"قیمت آگهی: {price_str}\n"
-        f"میانگین قیمت کارکرده بین همه کانال‌ها: {median_str}\n"
-        f"قیمت صفر همان خودرو: {zero_str}\n"
-        f"اختلاف آگهی با میانگین کارکرده: {discount_str}\n"
-        f"اختلاف آگهی با قیمت صفر: {zero_diff_str}\n"
-        f"منبع آگهی: {listing['channel_display_name']}\n"
+    block_pattern = source.patterns.get("listing_block")
+    if not block_pattern:
+        logger.error(f"[{source.name}] الگوی listing_block تعریف نشده")
+        return []
+
+    blocks = re.findall(block_pattern, html, flags=re.DOTALL)
+    listings = []
+    for block in blocks:
+        parsed = parse_block(block, source.patterns, source.name)
+        if parsed:
+            listings.append(parsed)
+
+    logger.info(f"[{source.name}] {len(listings)} آگهی خام از {len(blocks)} پیام/بلوک استخراج شد")
+    return listings
 
 
-        f"شماره تماس فروشنده: {phone}"
+# ============================================================================
+# فیلتر آگهی‌های اقساطی/لیزینگ/غیرنقدی
+# ============================================================================
+
+def is_excluded(listing: dict, extra_keywords: list[str]) -> tuple[bool, str | None]:
+    keywords = EXCLUDE_KEYWORDS + extra_keywords
+    searchable_text = " ".join(
+        str(listing.get(field, "") or "")
+        for field in ("car_name", "body_condition", "technical_health", "raw_description")
     )
+    for keyword in keywords:
+        if keyword in searchable_text:
+            return True, keyword
+    return False, None
 
 
-async def detect_and_send_deals(con: sqlite3.Connection, bot: Bot):
-    rows = con.execute(
-        "SELECT * FROM listings ORDER BY created_at DESC"
-    ).fetchall()
+def filter_listings(listings: list[dict], extra_keywords: list[str]) -> tuple[list[dict], list[dict]]:
+    valid, excluded = [], []
+    for listing in listings:
+        excluded_flag, reason = is_excluded(listing, extra_keywords)
+        if excluded_flag:
+            listing["exclude_reason"] = reason
+            excluded.append(listing)
+        else:
+            valid.append(listing)
+    return valid, excluded
 
-    sent_count = 0
-    for row in rows:
-        channel = row["channel_username"]
-        mid = row["message_id"]
-        model_key = row["model_key"]
-        price = row["price_toman"]
 
-        if already_sent(con, channel, mid):
-            log.info(f"[debug-deal] SKIP already_sent model={model_key}")
-            continue
+# ============================================================================
+# نرمال‌سازی اسم خودرو (برای گروه‌بندی آگهی‌های مشابه)
+# ============================================================================
 
-        prices = get_global_prices(con, model_key)
-        if len(prices) < MIN_SAMPLE:
-            log.info(f"[debug-deal] SKIP not_enough_samples model={model_key} have={len(prices)} need={MIN_SAMPLE}")
-            continue
+BRAND_ALIASES = {
+    "peugeot": "پژو", "پژو": "پژو",
+    "samand": "سمند", "سمند": "سمند",
+    "pride": "پراید", "پراید": "پراید",
+    "tiba": "تیبا", "تیبا": "تیبا",
+    "dena": "دنا", "دنا": "دنا",
+    "quick": "کوییک", "کوییک": "کوییک",
+}
 
-        med = median(prices)
-        if med == 0:
-            continue
 
-        discount = (med - price) / med
-        if discount < DISCOUNT_THRESHOLD:
-            log.info(f"[debug-deal] SKIP low_discount model={model_key} discount={discount*100:.1f}% need={DISCOUNT_THRESHOLD*100:.1f}%")
-            continue
+def normalize_car_name(raw_name: str) -> str:
+    text = raw_name.strip().lower()
+    text = re.sub(r"[\u200c\s]+", " ", text)
+    text = re.sub(r"[^\w\u0600-\u06FF\s]", "", text)
+    for alias, standard in BRAND_ALIASES.items():
+        if alias in text:
+            text = text.replace(alias, standard)
+            break
+    return "-".join(text.split())
 
-        clean_url = row["url"].strip().replace("\n", "").replace("\r", "")
-        con.execute("UPDATE listings SET url=? WHERE id=?", (clean_url, row["id"]))
-        con.commit()
 
-        zero_price = get_zero_price(con, model_key)
-        row_dict = dict(row)
-        row_dict["url"] = "".join(c for c in str(row["url"]) if 32 <= ord(c) < 127 or ord(c) > 127)
-        message_text = build_deal_message(row_dict, med, discount * 100, zero_price)
-        if '\n' in message_text or '\r' in message_text:
-                    message_text = message_text.replace('\n', ' ').replace('\r', ' ')
+def build_normalized_key(car_name: str, model_year: str | None) -> str:
+    base_key = normalize_car_name(car_name)
+    return f"{base_key}-{model_year.strip()}" if model_year else base_key
 
-        try:
-            clean_text = message_text.encode('utf-8').decode('utf-8')
-            clean_text = ''.join(ch if ch >= ' ' or ch == '\n' else '' for ch in clean_text)
-            sent = await bot.send_message(
-                chat_id=TELEGRAM_CHANNEL_ID,
-                text=clean_text,
-            )
 
-            log.info(f"[telegram] SENT message_id={sent.message_id} model={model_key} discount={discount*100:.1f}%")
-        except Exception as e:
-            log.info(f"[telegram] SEND_FAILED model={model_key} error={e}")
-            continue
+# ============================================================================
+# ذخیره‌سازی در دیتابیس
+# ============================================================================
 
-        con.execute(
-            """INSERT INTO sent_deals
-               (channel_username, message_id, url, title,
-                price_toman, median_price_toman, discount_percent, sent_at)
-               VALUES (?,?,?,?,?,?,?,?)""",
+def make_ad_hash(ad_link: str) -> str:
+    return hashlib.sha256(ad_link.strip().encode("utf-8")).hexdigest()
+
+
+def save_listing(source_name: str, listing: dict) -> None:
+    ad_link = listing["ad_link"].strip()
+    ad_hash = make_ad_hash(ad_link)
+    normalized_key = build_normalized_key(listing["car_name"], listing.get("model_year"))
+
+    conn = get_connection()
+    try:
+        conn.execute(
+            """
+            INSERT INTO listings (
+                source_name, ad_link, ad_hash, car_name, car_model_year,
+                normalized_key, price_toman, mileage_km,
+                body_condition, technical_health, last_seen_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+            ON CONFLICT(ad_hash) DO UPDATE SET
+                price_toman = excluded.price_toman,
+                mileage_km = excluded.mileage_km,
+                last_seen_at = CURRENT_TIMESTAMP
+            """,
             (
-                channel, mid, clean_url, row["title"],
-                price, med, discount * 100,
-                datetime.now(timezone.utc).isoformat(),
+                source_name, ad_link, ad_hash,
+                listing["car_name"], listing.get("model_year"),
+                normalized_key, listing["price_toman"], listing.get("mileage_km"),
+                listing.get("body_condition"), listing.get("technical_health"),
             ),
         )
-        con.commit()
-        sent_count += 1
-        log.info(f"[deals] FOUND model={model_key} discount={discount*100:.1f}%")
+        conn.commit()
 
-    return sent_count
+        listing_id = conn.execute(
+            "SELECT id FROM listings WHERE ad_hash = ?", (ad_hash,)
+        ).fetchone()["id"]
+        conn.execute(
+            "INSERT INTO price_history (listing_id, price_toman) VALUES (?, ?)",
+            (listing_id, listing["price_toman"]),
+        )
+        conn.commit()
+    except Exception as e:
+        logger.error(f"خطا در ذخیره‌ی آگهی ({ad_link}): {e}")
+    finally:
+        conn.close()
 
 
+# ============================================================================
+# موتور قیمت‌گذاری: میانگین بازار، مقایسه با صفر، تشخیص دیل مناسب
+# ============================================================================
+
+@dataclass
+class DealResult:
+    car_name: str
+    price_toman: int
+    market_avg_price: float | None
+    zero_km_price: int | None
+    diff_from_avg_pct: float | None
+    diff_from_zero_pct: float | None
+    is_good_deal: bool
+    ad_link: str
+    source_name: str
 
 
-# ─── Main ─────────────────────────────────────────────────────────────────────
+def compute_group_average(normalized_key: str) -> tuple[float | None, int]:
+    conn = get_connection()
+    try:
+        rows = conn.execute(
+            "SELECT price_toman FROM listings WHERE normalized_key = ?", (normalized_key,)
+        ).fetchall()
+    finally:
+        conn.close()
+    prices = [row["price_toman"] for row in rows]
+    if len(prices) < MIN_SAMPLE:
+        return None, len(prices)
+    return mean(prices), len(prices)
 
-async def main():
-    log.info("[main] started")
 
-    con = init_db(DB_PATH)
-    bot = Bot(token=TELEGRAM_BOT_TOKEN)
-    con.execute("DELETE FROM listings")
-    con.commit()
+def get_zero_km_price(normalized_key: str) -> int | None:
+    conn = get_connection()
+    try:
+        row = conn.execute(
+            "SELECT price_toman FROM zero_km_prices WHERE normalized_key = ?", (normalized_key,)
+        ).fetchone()
+    finally:
+        conn.close()
+    return row["price_toman"] if row else None
 
-    async with httpx.AsyncClient() as client:
 
-        # گروه A — کانال‌های آگهی
-        total_accepted = 0
-        total_rejected = 0
-        for username, display_name in AD_CHANNELS:
-            a, r = await process_ad_channel(client, con, username, display_name)
-            total_accepted += a
-            total_rejected += r
+def find_good_deals() -> list[DealResult]:
+    conn = get_connection()
+    try:
+        rows = conn.execute("SELECT * FROM listings").fetchall()
+    finally:
+        conn.close()
 
-        log.info(f"[scrape] total_accepted={total_accepted} total_rejected={total_rejected}")
+    results = []
+    for row in rows:
+        normalized_key = row["normalized_key"]
+        avg_price, _ = compute_group_average(normalized_key)
+        zero_price = get_zero_km_price(normalized_key)
+        price = row["price_toman"]
 
-        # گروه B — منابع قیمت صفر
-        for username, display_name in ZERO_PRICE_CHANNELS:
-            await process_zero_channel(client, con, username, display_name)
-    rows = con.execute("SELECT model_key, COUNT(*) c FROM listings GROUP BY model_key HAVING c > 1").fetchall()
-    for r in rows:
-        log.info(f"[debug-model] key={r['model_key']} count={r['c']}")
-        for r in rows:
-            prices = con.execute("SELECT price_toman FROM listings WHERE model_key=?", (r["model_key"],)).fetchall()
-            price_list = [p["price_toman"] for p in prices]
-            log.info(f"[debug-prices] key={r['model_key']} prices={price_list}")
+        diff_from_avg_pct = None
+        is_good_deal = False
+        if avg_price:
+            diff_from_avg_pct = (price - avg_price) / avg_price * 100
+            if price <= avg_price * (1 - DISCOUNT_THRESHOLD):
+                is_good_deal = True
 
-    # تشخیص و ارسال دیل
-    sent = await detect_and_send_deals(con, bot)
-    log.info(f"[deals] sent_deals={sent}")
+        diff_from_zero_pct = (price - zero_price) / zero_price * 100 if zero_price else None
 
-    con.close()
-    log.info("[main] finished")
+        results.append(DealResult(
+            car_name=row["car_name"],
+            price_toman=price,
+            market_avg_price=avg_price,
+            zero_km_price=zero_price,
+            diff_from_avg_pct=diff_from_avg_pct,
+            diff_from_zero_pct=diff_from_zero_pct,
+            is_good_deal=is_good_deal,
+            ad_link=row["ad_link"],
+            source_name=row["source_name"],
+        ))
+
+    good_deals = [r for r in results if r.is_good_deal]
+    good_deals.sort(key=lambda r: r.diff_from_avg_pct or 0)
+    return good_deals
+
+
+# ============================================================================
+# اجرای اصلی
+# ============================================================================
+
+def main() -> None:
+    logger.info("=== شروع اجرای SelectCar Bot ===")
+    init_db()
+
+    for source in SOURCES:
+        try:
+            raw_listings = scrape_source(source)
+            valid, excluded = filter_listings(raw_listings, source.exclude_keywords)
+            logger.info(
+                f"[{source.name}] {len(valid)} آگهی معتبر، "
+                f"{len(excluded)} آگهی حذف‌شده (اقساطی/لیزینگ/...)"
+            )
+            for listing in valid:
+                save_listing(source.name, listing)
+        except Exception as e:
+            # خطای یک منبع نباید کل اجرا رو متوقف کنه
+            logger.error(f"[{source.name}] خطای غیرمنتظره: {e}")
+
+    deals = find_good_deals()
+    logger.info(f"=== {len(deals)} دیل مناسب پیدا شد ===")
+    for deal in deals[:10]:
+        logger.info(
+            f"{deal.car_name} | {deal.price_toman:,} تومان | "
+            f"{deal.diff_from_avg_pct:.1f}% زیر میانگین | {deal.ad_link}"
+        )
+
+    logger.info("=== پایان اجرا ===")
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
