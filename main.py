@@ -233,10 +233,20 @@ def scrape_source(source: Source) -> list[dict]:
         logger.error(f"[{source.name}] دریافت صفحه ناموفق بود")
         return []
 
-    if DEBUG_DUMP_HTML:
-        logger.info(f"[{source.name}] ==== DEBUG: 3000 کاراکتر اول HTML خام ====")
-        logger.info(html[:3000])
-        logger.info(f"[{source.name}] ==== DEBUG: پایان نمونه ====")
+        if DEBUG_DUMP_HTML:
+        logger.info(f"[{source.name}] طول کامل HTML: {len(html)} کاراکتر")
+        wrap_count = html.count("tgme_widget_message_wrap")
+        logger.info(f"[{source.name}] تعداد ظهور 'tgme_widget_message_wrap': {wrap_count}")
+        idx = html.find("tgme_widget_message")
+        if idx == -1:
+            logger.warning(f"[{source.name}] کلاس tgme_widget_message اصلاً پیدا نشد! نمونه از وسط صفحه:")
+            mid = len(html) // 2
+            logger.info(html[mid:mid + 3000])
+        else:
+            logger.info(f"[{source.name}] ==== DEBUG: نمونه از محل شروع پیام‌ها ====")
+            logger.info(html[idx:idx + 3000])
+            logger.info(f"[{source.name}] ==== DEBUG: پایان نمونه ====")
+
 
     block_pattern = source.patterns.get("listing_block")
     if not block_pattern:
