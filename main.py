@@ -224,10 +224,15 @@ def parse_mileage_from_text(text):
 
 
 def parse_model_year(text):
-    m = re.search(r"(?:مدل|سال)\s*[:：]?\s*((?:1[34]\d{2})|(?:20\d{2}))", text)
+    # اعداد فارسی را قبل از تطبیق به انگلیسی تبدیل می‌کنیم، چون بعضی آگهی‌ها
+    # سال را با ارقام فارسی می‌نویسند (مثل «مدل ۲۰۱۵») و بدون این تبدیل، الگوی
+    # ارقام لاتین آن را پیدا نمی‌کرد.
+    ascii_text = text.translate(DIGIT_MAP)
+    m = re.search(r"(?:مدل|سال)\s*[:：]?\s*((?:1[34]\d{2})|(?:20\d{2}))", ascii_text)
     if m:
         return m.group(1)
     return None
+
 
 
 ZERO_KM_PATTERNS = (
