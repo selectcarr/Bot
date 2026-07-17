@@ -28,5 +28,5 @@
     "برلیانس", "لیفان", "جک", "فونیکس", "دیگنیتی", "کوییک آر"
   ],
   "regex_patterns": {},
-  "deal_threshold_percent": 4
+  "deal_threshold_percent": 2
 }
