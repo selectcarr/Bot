@@ -1,0 +1,1 @@
+print("divar module ok")
