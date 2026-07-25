@@ -1,0 +1,291 @@
+name: Divar Deal Service
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "نوع اجرای سیستم دیوار"
+        required: true
+        default: "dry_run"
+        type: choice
+        options:
+          - dry_run
+          - telegram_test
+          - force_live
+
+  schedule:
+    - cron: "30 10 * * *"
+      timezone: "Asia/Tehran"
+
+    - cron: "0,30 11-23 * * *"
+      timezone: "Asia/Tehran"
+
+    - cron: "0,30 0 * * *"
+      timezone: "Asia/Tehran"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: divar-deal-service
+  cancel-in-progress: false
+
+jobs:
+  divar-service:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    env:
+      DIVAR_TELEGRAM_BOT_TOKEN: >-
+        ${{ secrets.DIVAR_TELEGRAM_BOT_TOKEN || secrets.TELEGRAM_BOT_TOKEN }}
+
+      DIVAR_TELEGRAM_CHAT_ID: >-
+        ${{ secrets.DIVAR_TELEGRAM_CHAT_ID }}
+
+      DIVAR_STATE_ENCRYPTION_KEY: >-
+        ${{ secrets.DIVAR_STATE_ENCRYPTION_KEY }}
+
+      DIVAR_TIMEZONE: "Asia/Tehran"
+      DIVAR_RUNS_PER_DAY: "4"
+      DIVAR_SCHEDULE_START: "10:30"
+      DIVAR_SCHEDULE_END: "00:30"
+      DIVAR_MINIMUM_GAP_MINUTES: "90"
+
+      DIVAR_MAX_PAGES: "3"
+      DIVAR_MAX_ADS_PER_RUN: "60"
+      DIVAR_RETENTION_DAYS: "7"
+
+      DIVAR_MIN_SAMPLE_COUNT: "3"
+      DIVAR_MIN_DEAL_PERCENT: "2"
+      DIVAR_MAX_DEAL_PERCENT: "10"
+
+      DIVAR_DATABASE_PATH: >-
+        divar_service/runtime/divar_state.db
+
+      DIVAR_COOKIES_PATH: >-
+        divar_service/runtime/cookies.json
+
+      DIVAR_LOG_PATH: >-
+        divar_service/runtime/divar_service.log
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+          cache-dependency-path: requirements-divar.txt
+
+      - name: Install Divar dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-divar.txt
+
+      - name: Select execution mode
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then
+            MANUAL_ACTION="${{ github.event.inputs.action }}"
+
+            case "${MANUAL_ACTION}" in
+              dry_run)
+                echo "DIVAR_ACTION=force" >> "${GITHUB_ENV}"
+                echo "DIVAR_DRY_RUN=true" >> "${GITHUB_ENV}"
+                ;;
+
+              telegram_test)
+                echo "DIVAR_ACTION=telegram_test" >> "${GITHUB_ENV}"
+                echo "DIVAR_DRY_RUN=false" >> "${GITHUB_ENV}"
+                ;;
+
+              force_live)
+                echo "DIVAR_ACTION=force" >> "${GITHUB_ENV}"
+                echo "DIVAR_DRY_RUN=false" >> "${GITHUB_ENV}"
+                ;;
+
+              *)
+                echo "Invalid manual action."
+                exit 1
+                ;;
+            esac
+
+          else
+            echo "DIVAR_ACTION=scheduled" >> "${GITHUB_ENV}"
+            echo "DIVAR_DRY_RUN=false" >> "${GITHUB_ENV}"
+          fi
+
+      - name: Restore encrypted Divar state
+        id: restore
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ -z "${DIVAR_STATE_ENCRYPTION_KEY}" ]]; then
+            echo "DIVAR_STATE_ENCRYPTION_KEY is missing."
+            exit 1
+          fi
+
+          mkdir -p divar_service/runtime
+
+          if git ls-remote \
+            --exit-code \
+            --heads \
+            origin \
+            divar-state \
+            >/dev/null 2>&1
+          then
+            git fetch \
+              origin \
+              divar-state:refs/remotes/origin/divar-state
+
+            if git cat-file \
+              -e \
+              origin/divar-state:divar-runtime/runtime.tar.gz.enc \
+              2>/dev/null
+            then
+              git show \
+                origin/divar-state:divar-runtime/runtime.tar.gz.enc \
+                > /tmp/divar-runtime.tar.gz.enc
+
+              openssl enc \
+                -d \
+                -aes-256-cbc \
+                -pbkdf2 \
+                -in /tmp/divar-runtime.tar.gz.enc \
+                -out /tmp/divar-runtime.tar.gz \
+                -pass env:DIVAR_STATE_ENCRYPTION_KEY
+
+              tar \
+                -xzf /tmp/divar-runtime.tar.gz \
+                -C divar_service/runtime
+
+              echo "Previous Divar state restored."
+            fi
+          else
+            echo "No previous Divar state exists."
+          fi
+
+          rm -f \
+            divar_service/runtime/execution.lock
+
+      - name: Run Divar service
+        run: |
+          python -m divar_service
+
+      - name: Save encrypted Divar state
+        if: >-
+          ${{ always() && steps.restore.outcome == 'success' }}
+
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          rm -f \
+            divar_service/runtime/execution.lock
+
+          mkdir -p \
+            divar_service/runtime
+
+          tar \
+            -czf /tmp/divar-runtime.tar.gz \
+            -C divar_service/runtime \
+            .
+
+          openssl enc \
+            -aes-256-cbc \
+            -salt \
+            -pbkdf2 \
+            -in /tmp/divar-runtime.tar.gz \
+            -out /tmp/divar-runtime.tar.gz.enc \
+            -pass env:DIVAR_STATE_ENCRYPTION_KEY
+
+          git config \
+            user.name \
+            "github-actions[bot]"
+
+          git config \
+            user.email \
+            "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git fetch \
+            origin \
+            divar-state:refs/remotes/origin/divar-state \
+            || true
+
+          rm -rf \
+            /tmp/divar-state-worktree
+
+          if git show-ref \
+            --verify \
+            --quiet \
+            refs/remotes/origin/divar-state
+          then
+            git worktree add \
+              -B divar-state \
+              /tmp/divar-state-worktree \
+              origin/divar-state
+
+          else
+            git worktree add \
+              --detach \
+              /tmp/divar-state-worktree \
+              HEAD
+
+            cd /tmp/divar-state-worktree
+
+            git switch \
+              --orphan \
+              divar-state
+
+            git rm \
+              -rf \
+              . \
+              || true
+
+            cd "${GITHUB_WORKSPACE}"
+          fi
+
+          mkdir -p \
+            /tmp/divar-state-worktree/divar-runtime
+
+          cp \
+            /tmp/divar-runtime.tar.gz.enc \
+            /tmp/divar-state-worktree/divar-runtime/runtime.tar.gz.enc
+
+          cat > /tmp/divar-state-worktree/README.md <<'EOF'
+          # Divar Runtime State
+
+          This branch contains only the encrypted runtime
+          state of the independent Divar deal service.
+
+          Do not edit or delete the encrypted state file.
+          EOF
+
+          cd /tmp/divar-state-worktree
+
+          git add \
+            README.md \
+            divar-runtime/runtime.tar.gz.enc
+
+          if git diff \
+            --cached \
+            --quiet
+          then
+            echo "State has not changed."
+            exit 0
+          fi
+
+          git commit \
+            -m "Update encrypted Divar runtime state"
+
+          git push \
+            origin \
+            HEAD:divar-state
