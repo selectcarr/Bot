@@ -36,11 +36,8 @@ jobs:
     timeout-minutes: 20
 
     env:
-      DIVAR_TELEGRAM_BOT_TOKEN: >-
-        ${{ secrets.DIVAR_TELEGRAM_BOT_TOKEN || secrets.TELEGRAM_BOT_TOKEN }}
-
-      DIVAR_TELEGRAM_CHAT_ID: >-
-        ${{ secrets.DIVAR_TELEGRAM_CHAT_ID }}
+      DIVAR_TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      DIVAR_TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
 
       DIVAR_STATE_ENCRYPTION_KEY: >-
         ${{ secrets.DIVAR_STATE_ENCRYPTION_KEY }}
