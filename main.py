@@ -535,9 +535,6 @@ def maybe_send_daily_price_list(cfg, bot_token, chat_id):
         print("[info] لیست روزانه قبلاً امروز فرستاده شده؛ دوباره پست نمی‌شود.")
         return yv_price_table
 
-    if not is_within_daily_window():
-        print("[info] الان خارج از بازه‌ی مجاز (۱۲:۳۰ تا ۱۵:۳۰) است؛ فعلاً پست نمی‌شود.")
-        return yv_price_table
 
     admin_line = f"\n\n<b>ادمین پشتیبانی : {support_admin}</b>"
 
