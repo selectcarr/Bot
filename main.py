@@ -384,7 +384,7 @@ def analyze_listings(listings, threshold_percent):
                 i["avg_price_group"] = round(avg_price)
                 i["diff_percent_vs_avg"] = round(diff_percent, 1)
                 i["group_size"] = len(items)
-                                if threshold_percent <= diff_percent <= 12:
+    if threshold_percent <= diff_percent <= 12:
                     deals.append(i)
 
 
