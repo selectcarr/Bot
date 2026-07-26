@@ -501,15 +501,8 @@ def strip_source_signature(text):
 
 
 def maybe_send_daily_price_list(cfg, bot_token, chat_id):
-    """
-    فقط بین ساعت ۱۲:۳۰ تا ۱۵:۳۰ به وقت ایران، و فقط یک‌بار در روز، متن دو پست
-    (لیست پرفروش و لیست ارز/طلا) را -- بدون امضای کانال مرجع و با آدرس
-    ادمین پشتیبانی خودمان در انتها -- به کانال کاربر می‌فرستد.
-    خروجی: جدول قیمت پرفروش برای استفاده در فیلد «قیمت صفر» (ممکن است خالی باشد).
-    این جدول همیشه ساخته و برگردانده می‌شود، حتی خارج از بازه‌ی زمانی مجاز،
-    چون فیلد «قیمت صفر» توی هر دیل به آن نیاز دارد.
-    """
     daily_channel = cfg.get("daily_price_channel")
+    zero_channels = cfg.get("zero_price_channels", [daily_channel] if daily_channel else [])
     support_admin = cfg.get("support_admin", "@chanelll_vip")
     if not daily_channel:
         return {}
@@ -518,24 +511,43 @@ def maybe_send_daily_price_list(cfg, bot_token, chat_id):
     today = today_iran_date_str()
 
     yv_price_table = {}
+    combined_price_table = {}
 
-    try:
-        html = fetch_channel_html(daily_channel)
-        messages = parse_channel_messages(html, daily_channel)
-    except Exception as e:
-        print(f"[warn] خطا در گرفتن کانال قیمت روزانه {daily_channel}: {e}", file=sys.stderr)
-        return {}
+    # خوندن همه کانال‌های قیمت صفر
+    all_messages = []
+    for ch in zero_channels:
+        try:
+            html = fetch_channel_html(ch)
+            messages = parse_channel_messages(html, ch)
+            all_messages.extend(messages)
+        except Exception as e:
+            print(f"[warn] خطا در گرفتن کانال {ch}: {e}", file=sys.stderr)
 
-    price_msg = find_latest_message_with_keywords(messages, PRICE_LIST_KEYWORDS)
-    currency_msg = find_latest_message_with_keywords(messages, CURRENCY_KEYWORDS)
+    # پیدا کردن لیست قیمت از yv_vk
+    yv_messages = [m for m in all_messages if m["channel"] == daily_channel]
+    price_msg = find_latest_message_with_keywords(yv_messages, PRICE_LIST_KEYWORDS)
+    currency_msg = find_latest_message_with_keywords(yv_messages, CURRENCY_KEYWORDS)
 
     if price_msg:
         yv_price_table = build_yv_price_table(price_msg["text"], cfg["car_models"])
+        combined_price_table.update(yv_price_table)
+
+    # پیدا کردن قیمت از KHODRO_AKHBAR
+    akhbar_messages = [m for m in all_messages if m["channel"] != daily_channel]
+    akhbar_price_msg = find_latest_message_with_keywords(
+        akhbar_messages, ("پرفروش", "بازار")
+    ) or (akhbar_messages[0] if akhbar_messages else None)
+
+    if akhbar_price_msg:
+        akhbar_table = build_yv_price_table(akhbar_price_msg["text"], cfg["car_models"])
+        # فقط خودروهایی که در yv_vk نبودن اضافه میشن
+        for model, price in akhbar_table.items():
+            if model not in combined_price_table:
+                combined_price_table[model] = price
 
     if state.get("last_daily_post_date") == today:
         print("[info] لیست روزانه قبلاً امروز فرستاده شده؛ دوباره پست نمی‌شود.")
-        return yv_price_table
-
+        return combined_price_table
 
     admin_line = f"\n\n<b>ادمین پشتیبانی : {support_admin}</b>"
 
@@ -549,15 +561,28 @@ def maybe_send_daily_price_list(cfg, bot_token, chat_id):
         clean_text = strip_source_signature(currency_msg["text"]) + admin_line
         if send_telegram_message(bot_token, chat_id, clean_text, parse_mode="HTML"):
             sent_something = True
+        time.sleep(0.5)
+
+    # ارسال لیست KHODRO_AKHBAR اگه خودروی جدیدی داشت
+    if akhbar_price_msg and combined_price_table:
+        extra_models = {k: v for k, v in combined_price_table.items() if k not in yv_price_table}
+        if extra_models:
+            extra_text = "📋 قیمت خودروهای تکمیلی\n━━━━━━━━━━━━━━━━\n"
+            for model, price in extra_models.items():
+                extra_text += f"🚗 {model} — {price//1_000_000:,} میلیون\n"
+            extra_text += admin_line
+            if send_telegram_message(bot_token, chat_id, extra_text, parse_mode="HTML"):
+                sent_something = True
 
     if sent_something:
         state["last_daily_post_date"] = today
         save_daily_state(state)
-        print("[info] لیست روزانه قیمت/ارز با موفقیت به کانال فرستاده شد.")
+        print("[info] لیست روزانه با موفقیت فرستاده شد.")
     else:
-        print("[warn] هیچ پست مناسبی برای لیست روزانه پیدا نشد.")
+        print("[warn] هیچ پست مناسبی پیدا نشد.")
 
-    return yv_price_table
+    return combined_price_table
+
 
 
 def main():
