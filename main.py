@@ -348,7 +348,6 @@ def format_deal_message(listing, link, yv_price_table, support_admin):
     lines = [
         f"نام خودرو : {listing['car_name']}",
         f"مدل خودرو : {listing['model_year'] or 'نامشخص'}",
-        f"قیمت صفر : {format_toman(zero_price)}",
         f"قیمت میانگین این مدل : {format_toman(listing['avg_price_group'])}",
         f"قیمت این خودرو : {format_toman(listing['price'])}",
         f"درصد قیمت زیر میانگین : {listing['diff_percent_vs_avg']}٪",
