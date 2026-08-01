@@ -8,7 +8,6 @@ class VehicleAd:
     ad_id: str
     brand: str
     model: str
-    trim: str
     year: int
     price: int
     url: str
