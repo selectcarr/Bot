@@ -7,9 +7,10 @@ class TelegramSenderError(Exception):
 
 
 class TelegramSender:
-    def __init__(self):
-        self.token = os.getenv("DIVAR_TELEGRAM_BOT_TOKEN")
-        self.chat_id = os.getenv("DIVAR_TELEGRAM_CHAT_ID")
+    def __init__(self, token=None, chat_id=None):
+        # اگر از app.py مقدار اومد استفاده کن
+        self.token = token or os.getenv("DIVAR_TELEGRAM_BOT_TOKEN")
+        self.chat_id = chat_id or os.getenv("DIVAR_TELEGRAM_CHAT_ID")
 
         if not self.token or not self.chat_id:
             raise TelegramSenderError("Telegram config missing")
