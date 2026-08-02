@@ -158,7 +158,7 @@ class AdsRepository:
                     ad.ad_id,
                     ad.brand,
                     ad.model,
-                    ad.trim,
+                    None
                     ad.year,
                     ad.price,
                     ad.url,
