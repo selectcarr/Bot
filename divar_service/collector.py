@@ -211,7 +211,7 @@ class IncrementalCollector:
             ad_id=item.ad_id,
             brand=extracted_vehicle.brand,
             model=extracted_vehicle.model,
-            trim=extracted_vehicle.trim,
+            # trim=some_value  ← حذفش کن
             year=extracted_vehicle.year,
             price=price,
             url=item.url,
