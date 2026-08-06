@@ -60,8 +60,35 @@ def extract_vehicle(
     )
 
     if not combined_text:
-        return None
+    import re
 
+def _extract_mileage(text: str) -> int | None:
+    m = re.search(r'(\d{1,3}(?:[,\s]\d{3})+|\d+)\s*کیلومتر', text)
+    if not m:
+        return None
+    value = m.group(1).replace(',', '').replace(' ', '')
+    return int(value)
+
+
+def _extract_trim(text: str) -> str | None:
+    trims = [
+        "دنده ای",
+        "اتومات",
+        "اتوماتیک",
+        "تیپ 2",
+        "تیپ 3",
+        "تیپ 5",
+        "پانوراما",
+        "سقف فلز",
+        "فول",
+        "نیمه فول",
+    ]
+    for t in trims:
+        if t in text:
+            return t
+    return None    
+        return None
+        
     brand = _extract_brand(
         combined_text,
         structured_brand,
