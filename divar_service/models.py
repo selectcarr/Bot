@@ -12,6 +12,8 @@ class VehicleAd:
     price: int
     url: str
     title: str = ""
+    mileage: int | None
+    trim: str | None
 
     def __post_init__(self) -> None:
         if not self.ad_id.strip():
