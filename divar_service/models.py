@@ -39,7 +39,6 @@ class VehicleAd:
         return (
             self.brand.strip(),
             self.model.strip(),
-            self.trim.strip(),
             self.year,
         )
 
