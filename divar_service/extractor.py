@@ -85,8 +85,7 @@ def _extract_trim(text: str) -> str | None:
     ]
     for t in trims:
         if t in text:
-            return t
-    return None    
+            return t  
         return None
         
     brand = _extract_brand(
@@ -146,12 +145,13 @@ def _extract_trim(text: str) -> str | None:
     ):
         return None
 
-    return ExtractedVehicle(
-        brand=brand,
-        model=model,
-        trim=trim,
-        year=year,
-    )
+return ExtractedVehicle(
+    brand=brand,
+    model=model,
+    year=year,
+    mileage=_extract_mileage(title + " " + description),
+    trim=_extract_trim(title + " " + description),
+)
 
 
 def _extract_brand(
