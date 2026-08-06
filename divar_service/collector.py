@@ -208,9 +208,11 @@ class IncrementalCollector:
             return None
 
         return VehicleAd(
-            ad_id=item.ad_id,
-            brand=extracted_vehicle.brand,
-            model=extracted_vehicle.model,
+    ad_id=item.ad_id,
+    brand=extracted_vehicle.brand,
+    model=extracted_vehicle.model,
+    trim=extracted_vehicle.trim,
+    mileage=extracted_vehicle.mileage,
             # trim=some_value  ← حذفش کن
             year=extracted_vehicle.year,
             price=price,
