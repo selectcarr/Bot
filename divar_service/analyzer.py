@@ -2,7 +2,9 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 
-from divar_service.deal_finder import find_deals
+from divar_service.deal_finder import (
+    find_deals,
+)
 from divar_service.models import (
     DealCandidate,
     VehicleAd,
@@ -27,44 +29,46 @@ class DealAnalyzer:
         current_ad_ids: set[str] | None = None,
     ) -> list[DealCandidate]:
         """
-        Analyze recent advertisements using the
-        centralized deal_finder logic.
+        Analyze recent advertisements using the project rules.
 
         Comparison is based on:
 
-        brand + model + trim + year
-
-        and mileage similarity is handled by
-        deal_finder.py using ±10,000 km.
+            brand + model + trim + year
         """
-
-        ads_list = list(ads)
-
         candidates = find_deals(
-            ads_list
+            ads,
+            min_sample_count=(
+                self.settings.min_sample_count
+            ),
+            min_deal_percent=(
+                self.settings.min_deal_percent
+            ),
+            max_deal_percent=(
+                self.settings.max_deal_percent
+            ),
         )
 
         filtered_candidates: list[
             DealCandidate
         ] = []
 
-        for candidate in candidates:
+        sent_ids = (
+            self.sent_repository.get_sent_ids(
+                candidate.ad.ad_id
+                for candidate in candidates
+            )
+        )
 
+        for candidate in candidates:
             ad = candidate.ad
 
-            # فقط آگهی‌های همین اجرای فعلی
-            # برای ارسال Deal بررسی شوند.
             if (
                 current_ad_ids is not None
                 and ad.ad_id not in current_ad_ids
             ):
                 continue
 
-            # آگهی‌ای که قبلاً ارسال شده
-            # دوباره ارسال نشود.
-            if self.sent_repository.was_sent(
-                ad.ad_id
-            ):
+            if ad.ad_id in sent_ids:
                 continue
 
             filtered_candidates.append(
@@ -85,7 +89,6 @@ class DealAnalyzer:
     def select_best(
         candidates: Iterable[DealCandidate],
     ) -> DealCandidate | None:
-
         candidate_list = list(
             candidates
         )
@@ -98,5 +101,6 @@ class DealAnalyzer:
             key=lambda candidate: (
                 candidate.diff_percent,
                 -candidate.ad.price,
+                candidate.ad.ad_id,
             ),
         )

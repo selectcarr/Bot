@@ -9,7 +9,9 @@ from datetime import (
 )
 from zoneinfo import ZoneInfo
 
-from divar_service.config.settings import Settings
+from divar_service.config.settings import (
+    Settings,
+)
 from divar_service.storage.schedule_repository import (
     ScheduledRun,
     ScheduleRepository,
@@ -32,9 +34,6 @@ class DailyScheduler:
         self.random = random.SystemRandom()
 
     def get_local_now(self) -> datetime:
-        """
-        Return the current time in the configured timezone.
-        """
         return datetime.now(
             self.timezone
         )
@@ -44,8 +43,8 @@ class DailyScheduler:
         now: datetime | None = None,
     ) -> date:
         """
-        Times from 00:00 through 00:30 belong to
-        the previous day's Divar schedule.
+        Times from 00:00 through 00:30 belong to the
+        previous day's Divar schedule.
         """
         local_now = self._to_local(
             now
@@ -68,13 +67,23 @@ class DailyScheduler:
         schedule_date: date,
     ) -> list[ScheduledRun]:
         """
-        Generate and save today's random schedule
-        only when it does not already exist.
+        Ensure one complete four-run schedule exists.
+
+        A partial schedule is discarded and regenerated. The
+        generated time-of-day signature must differ from the
+        previous schedule date.
         """
-        if not self.repository.has_schedule(
+        existing_runs = self.repository.list_for_date(
             schedule_date
-        ):
-            run_times = self._generate_run_times(
+        )
+
+        if len(existing_runs) != self.settings.runs_per_day:
+            if existing_runs:
+                self.repository.delete_for_date(
+                    schedule_date
+                )
+
+            run_times = self._generate_distinct_run_times(
                 schedule_date
             )
 
@@ -93,15 +102,10 @@ class DailyScheduler:
         grace_minutes: int = 35,
     ) -> ScheduledRun | None:
         """
-        Return one due scheduled run.
+        Return at most one due scheduled run.
 
-        Shortly after midnight, the previous day's
-        schedule is also checked. This prevents a
-        delayed GitHub Actions job from missing a run
-        scheduled between 00:00 and 00:30.
-
-        Runs older than the allowed grace period are
-        closed and will not be executed back-to-back.
+        Missed runs older than the grace window are closed and
+        are never executed back-to-back as compensation.
         """
         if grace_minutes < 1:
             raise ValueError(
@@ -112,10 +116,8 @@ class DailyScheduler:
             now
         )
 
-        primary_schedule_date = (
-            self.get_schedule_date(
-                local_now
-            )
+        primary_schedule_date = self.get_schedule_date(
+            local_now
         )
 
         schedule_dates = [
@@ -163,12 +165,11 @@ class DailyScheduler:
             self.repository.mark_stale_as_executed(
                 schedule_date=schedule_date,
                 before_time=oldest_allowed_time,
+                executed_at=local_now,
             )
 
-            scheduled_runs = (
-                self.repository.list_for_date(
-                    schedule_date
-                )
+            scheduled_runs = self.repository.list_for_date(
+                schedule_date
             )
 
             for scheduled_run in scheduled_runs:
@@ -189,9 +190,6 @@ class DailyScheduler:
         scheduled_run: ScheduledRun,
         now: datetime | None = None,
     ) -> bool:
-        """
-        Mark one scheduled run as executed.
-        """
         return self.repository.mark_executed(
             scheduled_run=scheduled_run,
             executed_at=self._to_local(
@@ -199,15 +197,60 @@ class DailyScheduler:
             ),
         )
 
+    def close_remaining_runs(
+        self,
+        schedule_date: date,
+        now: datetime | None = None,
+    ) -> int:
+        """
+        Close every remaining run for the schedule date.
+        """
+        self.ensure_daily_schedule(
+            schedule_date
+        )
+
+        return self.repository.mark_remaining_as_executed(
+            schedule_date=schedule_date,
+            executed_at=self._to_local(
+                now
+            ),
+        )
+
+    def _generate_distinct_run_times(
+        self,
+        schedule_date: date,
+    ) -> list[datetime]:
+        previous_runs = self.repository.list_for_date(
+            schedule_date
+            - timedelta(days=1)
+        )
+
+        previous_signature = self._schedule_signature(
+            run.scheduled_for
+            for run in previous_runs
+        )
+
+        for _ in range(500):
+            run_times = self._generate_run_times(
+                schedule_date
+            )
+
+            if (
+                not previous_signature
+                or self._schedule_signature(run_times)
+                != previous_signature
+            ):
+                return run_times
+
+        raise RuntimeError(
+            "Could not generate a schedule different "
+            "from the previous day."
+        )
+
     def _generate_run_times(
         self,
         schedule_date: date,
     ) -> list[datetime]:
-        """
-        Generate four random run times between
-        10:30 and 00:30 with the configured
-        minimum distance between runs.
-        """
         start_time = self._parse_time(
             self.settings.schedule_start
         )
@@ -315,9 +358,6 @@ class DailyScheduler:
         self,
         value: datetime | None,
     ) -> datetime:
-        """
-        Convert a datetime to the configured timezone.
-        """
         if value is None:
             return self.get_local_now()
 
@@ -331,12 +371,22 @@ class DailyScheduler:
         )
 
     @staticmethod
+    def _schedule_signature(
+        run_times,
+    ) -> tuple[str, ...]:
+        return tuple(
+            sorted(
+                run_time.strftime(
+                    "%H:%M"
+                )
+                for run_time in run_times
+            )
+        )
+
+    @staticmethod
     def _parse_time(
         value: str,
     ) -> time:
-        """
-        Parse a time in HH:MM format.
-        """
         try:
             hour_text, minute_text = (
                 value.strip().split(
@@ -345,17 +395,9 @@ class DailyScheduler:
                 )
             )
 
-            hour = int(
-                hour_text
-            )
-
-            minute = int(
-                minute_text
-            )
-
             return time(
-                hour=hour,
-                minute=minute,
+                hour=int(hour_text),
+                minute=int(minute_text),
             )
 
         except (

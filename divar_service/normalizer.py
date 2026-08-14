@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 import re
 from typing import Mapping
 
@@ -13,11 +14,15 @@ DIGIT_TRANSLATION = str.maketrans(
     ENGLISH_DIGITS + ENGLISH_DIGITS,
 )
 
-PRICE_SEPARATORS_PATTERN = re.compile(
-    r"[\s,،٬._\-]+"
+INTEGER_SEPARATORS_PATTERN = re.compile(
+    r"[\s,،٬._]+"
 )
 
 WHITESPACE_PATTERN = re.compile(r"\s+")
+
+# A Unicode letter: a word character that is neither
+# a digit nor an underscore.
+LETTER_CHARACTER = r"[^\W\d_]"
 
 
 def normalize_digits(value: object) -> str:
@@ -27,7 +32,9 @@ def normalize_digits(value: object) -> str:
     if value is None:
         return ""
 
-    return str(value).translate(DIGIT_TRANSLATION)
+    return str(value).translate(
+        DIGIT_TRANSLATION
+    )
 
 
 def normalize_whitespace(value: object) -> str:
@@ -48,7 +55,10 @@ def normalize_whitespace(value: object) -> str:
 
 def normalize_for_match(value: object) -> str:
     """
-    Prepare text for safe brand/model/trim matching.
+    Prepare text for conservative brand/model/trim matching.
+
+    Letter/digit boundaries are separated so strings such as
+    "405تیوفایو", "مدل1402" and "تیپ5" can be matched safely.
     """
     text = normalize_whitespace(value).lower()
 
@@ -74,30 +84,58 @@ def normalize_for_match(value: object) -> str:
         text,
     )
 
+    text = re.sub(
+        (
+            rf"(?<={LETTER_CHARACTER})(?=\d)"
+            rf"|(?<=\d)(?={LETTER_CHARACTER})"
+        ),
+        " ",
+        text,
+    )
+
     return normalize_whitespace(text)
 
 
 def parse_integer(value: object) -> int | None:
     """
-    Extract a positive integer from formatted text.
-    """
-    text = normalize_digits(value)
+    Parse one non-negative integer conservatively.
 
-    if not text:
+    Text containing labels or multiple unrelated numeric fields
+    is rejected instead of concatenating every digit in the text.
+    """
+    if value is None or isinstance(value, bool):
         return None
 
-    cleaned = PRICE_SEPARATORS_PATTERN.sub(
+    if isinstance(value, int):
+        return value if value >= 0 else None
+
+    if isinstance(value, float):
+        if not math.isfinite(value) or not value.is_integer():
+            return None
+
+        integer_value = int(value)
+        return integer_value if integer_value >= 0 else None
+
+    text = normalize_digits(value).strip()
+
+    if not text or text.startswith("-"):
+        return None
+
+    if not re.fullmatch(
+        r"\+?[0-9\s,،٬._]+",
+        text,
+    ):
+        return None
+
+    if text.startswith("+"):
+        text = text[1:]
+
+    cleaned = INTEGER_SEPARATORS_PATTERN.sub(
         "",
         text,
     )
 
-    cleaned = re.sub(
-        r"[^\d]",
-        "",
-        cleaned,
-    )
-
-    if not cleaned:
+    if not cleaned.isdigit():
         return None
 
     try:
@@ -203,28 +241,44 @@ def find_alias(
 
 
 def build_vehicle_key(
-    brand: str,
-    model: str,
-    trim: str,
-    year: int,
+    brand: object,
+    model: object,
+    trim: object,
+    year: object,
 ) -> tuple[str, str, str, int]:
     """
-    Build the exact vehicle market key.
+    Build the canonical market-comparison key:
+
+        brand + model + trim + year
     """
-    normalized_brand = normalize_whitespace(brand)
-    normalized_model = normalize_whitespace(model)
-    normalized_trim = normalize_whitespace(trim)
+    normalized_brand = normalize_for_match(
+        brand
+    )
+    normalized_model = normalize_for_match(
+        model
+    )
+    normalized_trim = normalize_for_match(
+        trim
+    )
 
     if not normalized_brand:
-        raise ValueError("brand cannot be empty.")
+        raise ValueError(
+            "brand cannot be empty."
+        )
 
     if not normalized_model:
-        raise ValueError("model cannot be empty.")
+        raise ValueError(
+            "model cannot be empty."
+        )
 
-    normalized_year = normalize_year(year)
+    normalized_year = normalize_year(
+        year
+    )
 
     if normalized_year is None:
-        raise ValueError("year is invalid.")
+        raise ValueError(
+            "year is invalid."
+        )
 
     return (
         normalized_brand,

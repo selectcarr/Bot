@@ -2,10 +2,11 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from divar_service.normalizer import (
+    build_vehicle_key,
+)
 
-# =============================
-# مدل آگهی خودرو
-# =============================
+
 @dataclass(frozen=True, slots=True)
 class VehicleAd:
     ad_id: str
@@ -17,73 +18,144 @@ class VehicleAd:
 
     title: str = ""
     mileage: int | None = None
-    trim: str | None = None
+    trim: str = ""
 
-    # -------------------------
-    # Validation
-    # -------------------------
     def __post_init__(self) -> None:
-        if not self.ad_id.strip():
-            raise ValueError("ad_id cannot be empty.")
+        clean_ad_id = str(
+            self.ad_id or ""
+        ).strip()
+        clean_brand = str(
+            self.brand or ""
+        ).strip()
+        clean_model = str(
+            self.model or ""
+        ).strip()
+        clean_url = str(
+            self.url or ""
+        ).strip()
+        clean_title = str(
+            self.title or ""
+        ).strip()
+        clean_trim = str(
+            self.trim or ""
+        ).strip()
 
-        if not self.brand.strip():
-            raise ValueError("brand cannot be empty.")
+        if not clean_ad_id:
+            raise ValueError(
+                "ad_id cannot be empty."
+            )
 
-        if not self.model.strip():
-            raise ValueError("model cannot be empty.")
+        if not clean_brand:
+            raise ValueError(
+                "brand cannot be empty."
+            )
+
+        if not clean_model:
+            raise ValueError(
+                "model cannot be empty."
+            )
 
         if self.year <= 0:
-            raise ValueError("year must be positive.")
+            raise ValueError(
+                "year must be positive."
+            )
 
         if self.price <= 0:
-            raise ValueError("price must be positive.")
+            raise ValueError(
+                "price must be positive."
+            )
 
-        if not self.url.strip():
-            raise ValueError("url cannot be empty.")
+        if not clean_url:
+            raise ValueError(
+                "url cannot be empty."
+            )
 
-    # -------------------------
-    # کلید پایه (قدیمی)
-    # -------------------------
+        object.__setattr__(
+            self,
+            "ad_id",
+            clean_ad_id,
+        )
+        object.__setattr__(
+            self,
+            "brand",
+            clean_brand,
+        )
+        object.__setattr__(
+            self,
+            "model",
+            clean_model,
+        )
+        object.__setattr__(
+            self,
+            "url",
+            clean_url,
+        )
+        object.__setattr__(
+            self,
+            "title",
+            clean_title,
+        )
+        object.__setattr__(
+            self,
+            "trim",
+            clean_trim,
+        )
+
     @property
-    def base_key(self) -> tuple[str, str, int]:
+    def base_key(
+        self,
+    ) -> tuple[str, str, int]:
         return (
             self.brand.strip().lower(),
             self.model.strip().lower(),
             self.year,
         )
 
-    # -------------------------
-    # کلید دقیق (جدید - مهم)
-    # -------------------------
     @property
-    def comparison_key(self) -> tuple:
+    def comparison_key(
+        self,
+    ) -> tuple[str, str, str, int]:
         """
-        کلید نهایی برای مقایسه بازار
+        Exact market group:
+
+            brand + model + trim + year
         """
-        return (
-            self.brand.strip().lower(),
-            self.model.strip().lower(),
-            self.year,
-            (self.trim or "").strip().lower(),
+        return build_vehicle_key(
+            brand=self.brand,
+            model=self.model,
+            trim=self.trim,
+            year=self.year,
         )
 
 
-# =============================
-# خروجی دیل واقعی
-# =============================
 @dataclass(frozen=True, slots=True)
 class DealCandidate:
     ad: VehicleAd
-    market_median: int
+    market_average: int
     diff_percent: float
     sample_count: int
 
     def __post_init__(self) -> None:
-        if self.market_median <= 0:
-            raise ValueError("market_median must be positive.")
+        if self.market_average <= 0:
+            raise ValueError(
+                "market_average must be positive."
+            )
 
         if self.diff_percent < 0:
-            raise ValueError("diff_percent cannot be negative.")
+            raise ValueError(
+                "diff_percent cannot be negative."
+            )
 
         if self.sample_count < 1:
-            raise ValueError("sample_count must be at least 1.")
+            raise ValueError(
+                "sample_count must be at least 1."
+            )
+
+    @property
+    def market_median(self) -> int:
+        """
+        Backward-compatible alias for older callers.
+
+        The current business rule uses arithmetic average.
+        """
+        return self.market_average

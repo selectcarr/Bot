@@ -1,18 +1,23 @@
 from __future__ import annotations
 
+from divar_service.normalizer import (
+    build_vehicle_key,
+)
 
-def build_comparison_key(ad) -> tuple[str, str, str, int]:
+
+def build_comparison_key(
+    ad,
+) -> tuple[str, str, str, int]:
     """
-    Exact vehicle identity used for price comparison.
+    Build the exact vehicle identity used for market comparison:
 
-    Mileage is intentionally NOT part of this key.
-    Mileage similarity is handled separately in pricing.py
-    using the ±10,000 km rule.
+        brand + model + trim + year
+
+    Mileage is intentionally not part of the comparison key.
     """
-
-    return (
-        (ad.brand or "").strip().lower(),
-        (ad.model or "").strip().lower(),
-        (ad.trim or "").strip().lower(),
-        ad.year,
+    return build_vehicle_key(
+        brand=ad.brand,
+        model=ad.model,
+        trim=ad.trim,
+        year=ad.year,
     )
