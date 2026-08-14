@@ -16,18 +16,23 @@ BLOCKED_PHRASES = (
     "لیزینگ",
     "پیش پرداخت",
     "پیش‌پرداخت",
+    "بدون پیش پرداخت",
+    "بدون پیش‌پرداخت",
     "تحویل اقساطی",
     "فروش شرایطی",
     "شرایط ویژه پرداخت",
-    "بدون پیش پرداخت",
     "حواله",
     "فروش حواله",
     "قیمت توافقی",
     "توافقی",
     "برای اطلاع از قیمت",
     "تماس بگیرید",
+    "تماس برای قیمت",
     "قیمت تماس",
     "قیمت در تماس",
+    "قیمت نامشخص",
+    "قیمت مشخص نیست",
+    "قیمت صفر",
 )
 
 
@@ -49,7 +54,9 @@ def contains_blocked_phrase(
     )
 
     for phrase in BLOCKED_PHRASES:
-        normalized_phrase = normalize_for_match(phrase)
+        normalized_phrase = normalize_for_match(
+            phrase
+        )
 
         if normalized_phrase in combined_text:
             return phrase
@@ -63,9 +70,11 @@ def validate_ad(
     price: object,
 ) -> FilterResult:
     """
-    Apply the first-stage ad filters.
+    Apply the first-stage advertisement filters.
     """
-    normalized_title = normalize_for_match(title)
+    normalized_title = normalize_for_match(
+        title
+    )
 
     if not normalized_title:
         return FilterResult(
@@ -81,10 +90,14 @@ def validate_ad(
     if blocked_phrase:
         return FilterResult(
             accepted=False,
-            reason=f"blocked_phrase:{blocked_phrase}",
+            reason=(
+                f"blocked_phrase:{blocked_phrase}"
+            ),
         )
 
-    normalized_price = normalize_price(price)
+    normalized_price = normalize_price(
+        price
+    )
 
     if normalized_price is None:
         return FilterResult(

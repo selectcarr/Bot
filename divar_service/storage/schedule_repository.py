@@ -4,7 +4,9 @@ from dataclasses import dataclass
 from datetime import date, datetime
 from typing import Iterable
 
-from divar_service.storage.database import Database
+from divar_service.storage.database import (
+    Database,
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -16,25 +18,55 @@ class ScheduledRun:
 
 
 class ScheduleRepository:
-    def __init__(self, database: Database) -> None:
+    def __init__(
+        self,
+        database: Database,
+    ) -> None:
         self.database = database
 
     def has_schedule(
         self,
         schedule_date: date,
     ) -> bool:
+        return self.count_for_date(
+            schedule_date
+        ) > 0
+
+    def count_for_date(
+        self,
+        schedule_date: date,
+    ) -> int:
         with self.database.connect() as connection:
             row = connection.execute(
                 """
-                SELECT 1
+                SELECT COUNT(*)
                 FROM divar_daily_schedule
                 WHERE schedule_date = ?
-                LIMIT 1
                 """,
                 (schedule_date.isoformat(),),
             ).fetchone()
 
-        return row is not None
+        if row is None:
+            return 0
+
+        return int(
+            row[0]
+        )
+
+    def delete_for_date(
+        self,
+        schedule_date: date,
+    ) -> int:
+        with self.database.connect() as connection:
+            cursor = connection.execute(
+                """
+                DELETE FROM divar_daily_schedule
+                WHERE schedule_date = ?
+                """,
+                (schedule_date.isoformat(),),
+            )
+
+        return cursor.rowcount
 
     def save_schedule(
         self,
@@ -152,11 +184,17 @@ class ScheduleRepository:
         self,
         schedule_date: date,
         before_time: datetime,
+        executed_at: datetime | None = None,
     ) -> int:
         """
-        اجرای ازدست‌رفته را بسته‌شده علامت می‌زند
-        تا بعداً پشت‌سرهم جبران نشود.
+        Close missed runs so they are not executed back-to-back.
         """
+        closed_at = (
+            executed_at
+            if executed_at is not None
+            else before_time
+        )
+
         with self.database.connect() as connection:
             cursor = connection.execute(
                 """
@@ -169,13 +207,44 @@ class ScheduleRepository:
                   AND run_time < ?
                 """,
                 (
-                    before_time.isoformat(
+                    closed_at.isoformat(
                         timespec="seconds"
                     ),
                     schedule_date.isoformat(),
                     before_time.isoformat(
                         timespec="minutes"
                     ),
+                ),
+            )
+
+        return cursor.rowcount
+
+    def mark_remaining_as_executed(
+        self,
+        schedule_date: date,
+        executed_at: datetime,
+    ) -> int:
+        """
+        Close all unexecuted runs for one schedule date.
+
+        This is used as a conservative cooldown after a confirmed
+        Divar blocking or verification response.
+        """
+        with self.database.connect() as connection:
+            cursor = connection.execute(
+                """
+                UPDATE divar_daily_schedule
+                SET
+                    executed = 1,
+                    executed_at = ?
+                WHERE schedule_date = ?
+                  AND executed = 0
+                """,
+                (
+                    executed_at.isoformat(
+                        timespec="seconds"
+                    ),
+                    schedule_date.isoformat(),
                 ),
             )
 

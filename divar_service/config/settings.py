@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import os
 from dataclasses import dataclass
 from pathlib import Path
@@ -42,12 +44,31 @@ def get_bool(name: str, default: bool) -> bool:
     if value is None or value.strip() == "":
         return default
 
-    return value.strip().lower() in {
+    normalized = value.strip().lower()
+
+    true_values = {
         "1",
         "true",
         "yes",
         "on",
     }
+
+    false_values = {
+        "0",
+        "false",
+        "no",
+        "off",
+    }
+
+    if normalized in true_values:
+        return True
+
+    if normalized in false_values:
+        return False
+
+    raise ValueError(
+        f"{name} must be a boolean value."
+    )
 
 
 @dataclass(frozen=True)
@@ -67,6 +88,8 @@ class Settings:
     min_deal_percent: float
     max_deal_percent: float
 
+    initial_request_delay_min: int
+    initial_request_delay_max: int
     first_page_delay_min: int
     first_page_delay_max: int
     next_page_delay_min: int
@@ -139,6 +162,14 @@ def load_settings() -> Settings:
             10.0,
         ),
 
+        initial_request_delay_min=get_int(
+            "DIVAR_INITIAL_REQUEST_DELAY_MIN",
+            20,
+        ),
+        initial_request_delay_max=get_int(
+            "DIVAR_INITIAL_REQUEST_DELAY_MAX",
+            120,
+        ),
         first_page_delay_min=get_int(
             "DIVAR_FIRST_PAGE_DELAY_MIN",
             2,
@@ -213,6 +244,11 @@ def validate_settings(settings: Settings) -> None:
             "DIVAR_RUNS_PER_DAY must be exactly 4."
         )
 
+    if settings.minimum_gap_minutes < 1:
+        raise ValueError(
+            "DIVAR_MINIMUM_GAP_MINUTES must be positive."
+        )
+
     if not 1 <= settings.max_pages <= 3:
         raise ValueError(
             "DIVAR_MAX_PAGES must be between 1 and 3."
@@ -243,21 +279,34 @@ def validate_settings(settings: Settings) -> None:
             "Deal percentage settings are invalid."
         )
 
-    if (
-        settings.first_page_delay_min
-        > settings.first_page_delay_max
-    ):
-        raise ValueError(
-            "First-page delay range is invalid."
-        )
+    delay_ranges = (
+        (
+            "Initial-request delay",
+            settings.initial_request_delay_min,
+            settings.initial_request_delay_max,
+        ),
+        (
+            "First-page delay",
+            settings.first_page_delay_min,
+            settings.first_page_delay_max,
+        ),
+        (
+            "Next-page delay",
+            settings.next_page_delay_min,
+            settings.next_page_delay_max,
+        ),
+    )
 
-    if (
-        settings.next_page_delay_min
-        > settings.next_page_delay_max
-    ):
-        raise ValueError(
-            "Next-page delay range is invalid."
-        )
+    for label, minimum, maximum in delay_ranges:
+        if minimum < 0 or maximum < 0:
+            raise ValueError(
+                f"{label} values cannot be negative."
+            )
+
+        if minimum > maximum:
+            raise ValueError(
+                f"{label} range is invalid."
+            )
 
     if settings.request_timeout_seconds < 5:
         raise ValueError(

@@ -91,12 +91,28 @@ ON divar_execution_history (
 """
 
 
+# These records were created by confirmed historical parser/detail
+# bugs and are safe to remove without deleting the remaining state.
+KNOWN_INVALID_AD_IDS = (
+    "206",
+    "405",
+    "ga-hk1Fn",
+)
+
+
 class Database:
-    def __init__(self, database_path: Path | str) -> None:
-        self.database_path = Path(database_path)
+    def __init__(
+        self,
+        database_path: Path | str,
+    ) -> None:
+        self.database_path = Path(
+            database_path
+        )
 
     @contextmanager
-    def connect(self) -> Iterator[sqlite3.Connection]:
+    def connect(
+        self,
+    ) -> Iterator[sqlite3.Connection]:
         self.database_path.parent.mkdir(
             parents=True,
             exist_ok=True,
@@ -139,6 +155,10 @@ class Database:
                 DATABASE_SCHEMA
             )
 
+            self._repair_known_invalid_data(
+                connection
+            )
+
     def cleanup_old_data(
         self,
         retention_days: int,
@@ -148,13 +168,16 @@ class Database:
                 "retention_days must be at least 1."
             )
 
-        date_modifier = f"-{retention_days} days"
+        date_modifier = (
+            f"-{retention_days} days"
+        )
 
         with self.connect() as connection:
             connection.execute(
                 """
                 DELETE FROM divar_ads
-                WHERE last_seen < datetime('now', ?)
+                WHERE datetime(last_seen)
+                    < datetime('now', ?)
                 """,
                 (date_modifier,),
             )
@@ -162,7 +185,8 @@ class Database:
             connection.execute(
                 """
                 DELETE FROM divar_sent_ads
-                WHERE sent_at < datetime('now', ?)
+                WHERE datetime(sent_at)
+                    < datetime('now', ?)
                 """,
                 (date_modifier,),
             )
@@ -170,7 +194,8 @@ class Database:
             connection.execute(
                 """
                 DELETE FROM divar_daily_schedule
-                WHERE schedule_date < date('now', ?)
+                WHERE date(schedule_date)
+                    < date('now', ?)
                 """,
                 (date_modifier,),
             )
@@ -178,7 +203,8 @@ class Database:
             connection.execute(
                 """
                 DELETE FROM divar_execution_history
-                WHERE started_at < datetime('now', ?)
+                WHERE datetime(started_at)
+                    < datetime('now', ?)
                 """,
                 (date_modifier,),
             )
@@ -190,7 +216,35 @@ class Database:
                     "SELECT 1"
                 ).fetchone()
 
-            return result is not None and result[0] == 1
+            return (
+                result is not None
+                and result[0] == 1
+            )
 
         except sqlite3.Error:
             return False
+
+    @staticmethod
+    def _repair_known_invalid_data(
+        connection: sqlite3.Connection,
+    ) -> None:
+        placeholders = ",".join(
+            "?"
+            for _ in KNOWN_INVALID_AD_IDS
+        )
+
+        connection.execute(
+            f"""
+            DELETE FROM divar_ads
+            WHERE ad_id IN ({placeholders})
+            """,
+            KNOWN_INVALID_AD_IDS,
+        )
+
+        connection.execute(
+            f"""
+            DELETE FROM divar_sent_ads
+            WHERE ad_id IN ({placeholders})
+            """,
+            KNOWN_INVALID_AD_IDS,
+        )

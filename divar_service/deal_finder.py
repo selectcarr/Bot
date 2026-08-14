@@ -1,205 +1,199 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from statistics import median
+from collections.abc import Iterable
 
-from divar_service.comparison import build_comparison_key
-from divar_service.models import VehicleAd, DealCandidate
+from divar_service.comparison import (
+    build_comparison_key,
+)
+from divar_service.config.vehicle_catalog import (
+    get_trims,
+    is_valid_vehicle,
+)
+from divar_service.models import (
+    DealCandidate,
+    VehicleAd,
+)
 
-
-# ============================================================
-# تنظیمات تشخیص Deal
-# ============================================================
-
-# حداقل درصد ارزان‌تر بودن نسبت به بازار
-MIN_DISCOUNT_PERCENT = 15.0
-
-# حداقل تعداد آگهی مشابه برای محاسبه بازار
-MIN_GROUP_SIZE = 3
-
-# حداکثر اختلاف کارکرد قابل قبول
-MAX_MILEAGE_DIFF = 10_000
-
-
-# ============================================================
-# گروه‌بندی خودروها
-# ============================================================
 
 def group_ads(
-    ads: list[VehicleAd],
-) -> dict[tuple, list[VehicleAd]]:
-    groups: dict[tuple, list[VehicleAd]] = defaultdict(list)
+    ads: Iterable[VehicleAd],
+) -> dict[
+    tuple[str, str, str, int],
+    list[VehicleAd],
+]:
+    groups: dict[
+        tuple[str, str, str, int],
+        list[VehicleAd],
+    ] = defaultdict(list)
 
     for ad in ads:
-        key = build_comparison_key(ad)
-        groups[key].append(ad)
-
-    return groups
-
-
-# ============================================================
-# پیدا کردن خودروهای مشابه بر اساس کارکرد
-# ============================================================
-
-def filter_by_mileage(
-    base_ad: VehicleAd,
-    ads: list[VehicleAd],
-) -> list[VehicleAd]:
-
-    if base_ad.mileage is None:
-        return []
-
-    result: list[VehicleAd] = []
-
-    for ad in ads:
-        if ad.mileage is None:
+        if not _is_eligible_ad(ad):
             continue
 
-        if abs(ad.mileage - base_ad.mileage) <= MAX_MILEAGE_DIFF:
-            result.append(ad)
+        groups[
+            build_comparison_key(ad)
+        ].append(ad)
 
-    return result
+    return dict(groups)
 
-
-# ============================================================
-# حذف قیمت‌های پرت
-# ============================================================
-
-def remove_outliers(
-    prices: list[int],
-) -> list[int]:
-
-    if len(prices) < 5:
-        return prices
-
-    ordered = sorted(prices)
-
-    q1_index = len(ordered) // 4
-    q3_index = (len(ordered) * 3) // 4
-
-    q1 = ordered[q1_index]
-    q3 = ordered[q3_index]
-
-    iqr = q3 - q1
-
-    if iqr == 0:
-        return prices
-
-    lower = q1 - 1.5 * iqr
-    upper = q3 + 1.5 * iqr
-
-    return [
-        price
-        for price in prices
-        if lower <= price <= upper
-    ]
-
-
-# ============================================================
-# محاسبه درصد اختلاف قیمت
-# ============================================================
 
 def calc_diff_percent(
     price: int,
-    market_price: int,
+    market_average: float,
 ) -> float:
-
-    if market_price <= 0:
+    if market_average <= 0:
         return 0.0
 
     return (
-        (market_price - price)
-        / market_price
+        (market_average - price)
+        / market_average
         * 100
     )
 
 
-# ============================================================
-# پیدا کردن Deal
-# ============================================================
-
 def find_deals(
-    ads: list[VehicleAd],
+    ads: Iterable[VehicleAd],
+    *,
+    min_sample_count: int = 3,
+    min_deal_percent: float = 2.0,
+    max_deal_percent: float = 10.0,
 ) -> list[DealCandidate]:
+    """
+    Find one candidate at most from each exact vehicle group.
+
+    Business rules:
+
+    - Group by brand + model + trim + year.
+    - Count each ad_id once.
+    - Require at least min_sample_count unique advertisements.
+    - Use arithmetic average of all valid prices.
+    - Evaluate only the cheapest advertisement in the group.
+    - Accept discounts inclusively between the configured
+      minimum and maximum percentages.
+    """
+    if min_sample_count < 3:
+        raise ValueError(
+            "min_sample_count cannot be less than 3."
+        )
+
+    if not (
+        0
+        <= min_deal_percent
+        < max_deal_percent
+        <= 100
+    ):
+        raise ValueError(
+            "Deal percentage limits are invalid."
+        )
 
     deals: list[DealCandidate] = []
 
-    groups = group_ads(ads)
+    for group in group_ads(ads).values():
+        unique_ads = _deduplicate_by_ad_id(
+            group
+        )
 
-    for group in groups.values():
-
-        # برای تشکیل بازار حداقل 3 نمونه لازم است.
-        if len(group) < MIN_GROUP_SIZE:
+        if len(unique_ads) < min_sample_count:
             continue
 
-        for ad in group:
+        prices = [
+            ad.price
+            for ad in unique_ads
+            if ad.price > 0
+        ]
 
-            # فقط خودروهای با کارکرد مشخص
-            # قابل مقایسه هستند.
-            if ad.mileage is None:
-                continue
+        if len(prices) < min_sample_count:
+            continue
 
-            similar_ads = filter_by_mileage(
-                ad,
-                group,
-            )
+        market_average = (
+            sum(prices)
+            / len(prices)
+        )
 
-            if len(similar_ads) < MIN_GROUP_SIZE:
-                continue
+        if market_average <= 0:
+            continue
 
-            prices = [
-                item.price
-                for item in similar_ads
-                if item.price > 0
-            ]
-
-            if len(prices) < MIN_GROUP_SIZE:
-                continue
-
-            # حذف قیمت‌های غیرعادی
-            clean_prices = remove_outliers(prices)
-
-            if len(clean_prices) < MIN_GROUP_SIZE:
-                continue
-
-            # Median نسبت به Average برای بازار خودرو
-            # مقاوم‌تر است.
-            market_price = int(
-                median(clean_prices)
-            )
-
-            if market_price <= 0:
-                continue
-
-            # خود آگهی نباید مساوی یا گران‌تر از بازار باشد.
-            if ad.price >= market_price:
-                continue
-
-            diff_percent = calc_diff_percent(
+        cheapest_ad = min(
+            unique_ads,
+            key=lambda ad: (
                 ad.price,
-                market_price,
+                ad.ad_id,
+            ),
+        )
+
+        diff_percent = calc_diff_percent(
+            cheapest_ad.price,
+            market_average,
+        )
+
+        if diff_percent < min_deal_percent:
+            continue
+
+        if diff_percent > max_deal_percent:
+            continue
+
+        deals.append(
+            DealCandidate(
+                ad=cheapest_ad,
+                market_average=int(
+                    round(market_average)
+                ),
+                diff_percent=round(
+                    diff_percent,
+                    2,
+                ),
+                sample_count=len(
+                    unique_ads
+                ),
             )
+        )
 
-            # فقط Deal واقعی‌تر وارد خروجی شود.
-            if diff_percent < MIN_DISCOUNT_PERCENT:
-                continue
-
-            deals.append(
-                DealCandidate(
-                    ad=ad,
-                    market_average=market_price,
-                    diff_percent=round(
-                        diff_percent,
-                        1,
-                    ),
-                    sample_count=len(clean_prices),
-                )
-            )
-
-    # قوی‌ترین Dealها اول
     deals.sort(
-        key=lambda deal: deal.diff_percent,
-        reverse=True,
+        key=lambda deal: (
+            -deal.diff_percent,
+            deal.ad.price,
+            deal.ad.ad_id,
+        )
     )
 
     return deals
+
+
+def _deduplicate_by_ad_id(
+    ads: Iterable[VehicleAd],
+) -> list[VehicleAd]:
+    unique_ads: dict[str, VehicleAd] = {}
+
+    for ad in ads:
+        # Repository data is normally unique already. Assignment
+        # keeps the last occurrence if a caller passes duplicates.
+        unique_ads[ad.ad_id] = ad
+
+    return list(
+        unique_ads.values()
+    )
+
+
+def _is_eligible_ad(
+    ad: VehicleAd,
+) -> bool:
+    if not ad.ad_id.strip():
+        return False
+
+    if ad.price <= 0:
+        return False
+
+    available_trims = get_trims(
+        ad.brand,
+        ad.model,
+    )
+
+    if available_trims and not ad.trim:
+        return False
+
+    return is_valid_vehicle(
+        brand=ad.brand,
+        model=ad.model,
+        trim=ad.trim,
+    )

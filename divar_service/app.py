@@ -31,6 +31,7 @@ from divar_service.storage.execution_repository import (
 )
 from divar_service.storage.schedule_repository import (
     ScheduleRepository,
+    ScheduledRun,
 )
 from divar_service.storage.sent_repository import (
     SentRepository,
@@ -111,27 +112,25 @@ def run_service(
         database
     )
 
-    schedule_repository = (
-        ScheduleRepository(
-            database
-        )
+    schedule_repository = ScheduleRepository(
+        database
     )
 
-    execution_repository = (
-        ExecutionRepository(
-            database
-        )
+    execution_repository = ExecutionRepository(
+        database
     )
 
-    telegram_sender = TelegramSender(
-        settings
+    scheduler = DailyScheduler(
+        settings=settings,
+        repository=schedule_repository,
     )
 
     if action == "telegram_test":
-        result = (
-            telegram_sender
-            .send_test_message()
+        telegram_sender = TelegramSender(
+            settings
         )
+
+        result = telegram_sender.send_test_message()
 
         LOGGER.info(
             "Telegram test finished. "
@@ -143,17 +142,10 @@ def run_service(
 
         return
 
-    scheduled_run = None
+    scheduled_run: ScheduledRun | None = None
 
     if action == "scheduled":
-        scheduler = DailyScheduler(
-            settings=settings,
-            repository=schedule_repository,
-        )
-
-        scheduled_run = (
-            scheduler.get_due_run()
-        )
+        scheduled_run = scheduler.get_due_run()
 
         if scheduled_run is None:
             LOGGER.info(
@@ -176,56 +168,76 @@ def run_service(
             scheduled_run.scheduled_for,
         )
 
-    execution_id = (
-        execution_repository.start(
-            scheduled_for=(
-                scheduled_run.scheduled_for
-                if scheduled_run is not None
-                else None
-            )
+    execution_id = execution_repository.start(
+        scheduled_for=(
+            scheduled_run.scheduled_for
+            if scheduled_run is not None
+            else None
         )
     )
 
-    collection_result: (
-        CollectionResult | None
-    ) = None
-
+    collection_result: CollectionResult | None = None
     deals_found = 0
 
     try:
-        with DivarClient(
-            settings
-        ) as divar_client:
+        with DivarClient(settings) as divar_client:
             collector = IncrementalCollector(
                 settings=settings,
                 client=divar_client,
                 ads_repository=ads_repository,
             )
 
-            collection_result = (
-                collector.collect()
-            )
+            collection_result = collector.collect()
 
         LOGGER.info(
             (
                 "Collection finished: "
                 "pages=%s seen=%s saved=%s "
                 "rejected=%s duplicate=%s "
-                "stop_reason=%s"
+                "blocked=%s stop_reason=%s"
             ),
             collection_result.pages_requested,
             collection_result.ads_seen,
             collection_result.ads_saved,
             collection_result.ads_rejected,
             collection_result.duplicate_found,
+            collection_result.blocked,
             collection_result.stop_reason,
         )
 
-        recent_ads = (
-            ads_repository.list_recent(
-                retention_days=(
-                    settings.retention_days
-                )
+        if collection_result.blocked:
+            closed_runs = _close_schedule_after_block(
+                scheduler=scheduler,
+                scheduled_run=scheduled_run,
+            )
+
+            execution_repository.finish(
+                execution_id=execution_id,
+                status="blocked",
+                ads_seen=collection_result.ads_seen,
+                ads_saved=collection_result.ads_saved,
+                deals_found=0,
+                error_message=(
+                    collection_result.error_message
+                ),
+            )
+
+            LOGGER.warning(
+                (
+                    "Divar blocking response detected. "
+                    "Run stopped and remaining daily "
+                    "runs were closed | closed_runs=%s | "
+                    "error=%s"
+                ),
+                closed_runs,
+                collection_result.error_message,
+            )
+
+            return
+
+        recent_ads = ads_repository.list_recent(
+            retention_days=(
+                settings.retention_days
             )
         )
 
@@ -237,8 +249,7 @@ def run_service(
         candidates = analyzer.analyze(
             ads=recent_ads,
             current_ad_ids=set(
-                collection_result
-                .current_ad_ids
+                collection_result.current_ad_ids
             ),
         )
 
@@ -255,7 +266,11 @@ def run_service(
             candidates
         )
 
-        final_status = "success"
+        final_status = (
+            "dry_run"
+            if settings.dry_run
+            else "success"
+        )
 
         if best_deal is None:
             LOGGER.info(
@@ -263,10 +278,12 @@ def run_service(
             )
 
         else:
-            send_result = (
-                telegram_sender.send_deal(
-                    best_deal
-                )
+            telegram_sender = TelegramSender(
+                settings
+            )
+
+            send_result = telegram_sender.send_deal(
+                best_deal
             )
 
             LOGGER.info(
@@ -285,22 +302,20 @@ def run_service(
                     best_deal
                 )
 
-            if send_result.dry_run:
-                final_status = "dry_run"
-
         execution_repository.finish(
             execution_id=execution_id,
             status=final_status,
-            ads_seen=(
-                collection_result.ads_seen
-            ),
-            ads_saved=(
-                collection_result.ads_saved
-            ),
+            ads_seen=collection_result.ads_seen,
+            ads_saved=collection_result.ads_saved,
             deals_found=deals_found,
         )
 
     except DivarBlockedError as exc:
+        closed_runs = _close_schedule_after_block(
+            scheduler=scheduler,
+            scheduled_run=scheduled_run,
+        )
+
         execution_repository.finish(
             execution_id=execution_id,
             status="blocked",
@@ -319,8 +334,12 @@ def run_service(
         )
 
         LOGGER.warning(
-            "Divar blocked or verification "
-            "response detected. Run stopped: %s",
+            (
+                "Divar blocked or verification response "
+                "detected. Run stopped | closed_runs=%s | "
+                "error=%s"
+            ),
+            closed_runs,
             exc,
         )
 
@@ -349,6 +368,21 @@ def run_service(
         raise
 
 
+def _close_schedule_after_block(
+    scheduler: DailyScheduler,
+    scheduled_run: ScheduledRun | None,
+) -> int:
+    schedule_date = (
+        scheduled_run.schedule_date
+        if scheduled_run is not None
+        else scheduler.get_schedule_date()
+    )
+
+    return scheduler.close_remaining_runs(
+        schedule_date
+    )
+
+
 def configure_logging(
     settings: Settings,
 ) -> None:
@@ -374,10 +408,7 @@ def configure_logging(
         )
     )
 
-    console_handler = (
-        logging.StreamHandler()
-    )
-
+    console_handler = logging.StreamHandler()
     console_handler.setFormatter(
         formatter
     )

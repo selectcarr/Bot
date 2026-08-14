@@ -6,6 +6,8 @@ from typing import Mapping
 
 from divar_service.config.aliases import (
     BRAND_ALIASES,
+    CONTEXT_ONLY_TRIMS,
+    CONTEXTUAL_TRIM_ALIASES,
     MODEL_ALIASES,
     TRIM_ALIASES,
 )
@@ -16,6 +18,7 @@ from divar_service.config.vehicle_catalog import (
     is_valid_vehicle,
 )
 from divar_service.normalizer import (
+    build_vehicle_key,
     find_alias,
     normalize_for_match,
     normalize_whitespace,
@@ -35,11 +38,11 @@ class ExtractedVehicle:
     def vehicle_key(
         self,
     ) -> tuple[str, str, str, int]:
-        return (
-            self.brand,
-            self.model,
-            self.trim,
-            self.year,
+        return build_vehicle_key(
+            brand=self.brand,
+            model=self.model,
+            trim=self.trim,
+            year=self.year,
         )
 
 
@@ -54,16 +57,18 @@ def extract_vehicle(
     """
     Extract an exact vehicle classification.
 
-    Brand + model + year are required.
+    Brand + model + year are always required.
 
-    Trim is required only when the vehicle catalog defines
-    multiple trims for that vehicle.
-
-    Mileage is extracted when available.
+    Trim is required when the vehicle catalog defines trims
+    for that brand/model. Vehicles with no catalog trims use
+    an empty trim string.
     """
-
-    title_text = str(title or "")
-    description_text = str(description or "")
+    title_text = normalize_whitespace(
+        title
+    )
+    description_text = normalize_whitespace(
+        description
+    )
 
     combined_text = normalize_whitespace(
         f"{title_text} {description_text}"
@@ -87,15 +92,21 @@ def extract_vehicle(
         return None
 
     if not brand:
-        brand = _infer_unique_brand(model)
+        brand = _infer_unique_brand(
+            model
+        )
 
     if not brand:
         return None
 
-    if model not in get_models_for_brand(brand):
+    if model not in get_models_for_brand(
+        brand
+    ):
         return None
 
-    year = normalize_year(structured_year)
+    year = normalize_year(
+        structured_year
+    )
 
     if year is None:
         year = _extract_year_from_text(
@@ -106,7 +117,7 @@ def extract_vehicle(
         return None
 
     trim = _extract_trim(
-        text=combined_text,
+        title=title_text,
         brand=brand,
         model=model,
         structured_trim=structured_trim,
@@ -117,8 +128,6 @@ def extract_vehicle(
         model,
     )
 
-    # اگر خودرو در کاتالوگ دارای چند تیپ باشد،
-    # بدون تشخیص تیپ دقیق وارد مقایسه نمی‌شود.
     if available_trims and not trim:
         return None
 
@@ -147,14 +156,7 @@ def _extract_mileage(
 ) -> int | None:
     """
     Extract mileage from advertisement text.
-
-    Examples:
-        کارکرد 130000
-        کارکرد 130,000
-        کارکرد ۱۳۰٬۰۰۰ کیلومتر
-        130000 کیلومتر
     """
-
     normalized_text = normalize_for_match(
         text
     )
@@ -162,7 +164,6 @@ def _extract_mileage(
     if not normalized_text:
         return None
 
-    # صفر کیلومتر
     if re.search(
         r"کارکرد\s*[:：]?\s*صفر",
         normalized_text,
@@ -171,10 +172,10 @@ def _extract_mileage(
 
     patterns = (
         r"کارکرد\s*[:：]?\s*"
-        r"([0-9۰-۹][0-9۰-۹,،٬.\s]{0,15})"
+        r"([0-9][0-9,،٬.\s]{0,15})"
         r"\s*(?:کیلومتر|کیلو|km)?",
 
-        r"([0-9۰-۹][0-9۰-۹,،٬.\s]{2,15})"
+        r"([0-9][0-9,،٬.\s]{2,15})"
         r"\s*(?:کیلومتر|کیلو|km)",
     )
 
@@ -199,13 +200,6 @@ def _extract_mileage(
             .replace(" ", "")
         )
 
-        raw = raw.translate(
-            str.maketrans(
-                "۰۱۲۳۴۵۶۷۸۹",
-                "0123456789",
-            )
-        )
-
         if not raw.isdigit():
             continue
 
@@ -221,7 +215,6 @@ def _extract_brand(
     text: str,
     structured_brand: object,
 ) -> str | None:
-
     structured_value = _canonical_from_values(
         structured_brand,
         _all_brands(),
@@ -249,7 +242,6 @@ def _extract_model(
     brand: str | None,
     structured_model: object,
 ) -> str | None:
-
     valid_models = (
         get_models_for_brand(brand)
         if brand
@@ -284,12 +276,17 @@ def _extract_model(
 
 
 def _extract_trim(
-    text: str,
+    title: str,
     brand: str,
     model: str,
     structured_trim: object,
 ) -> str:
+    """
+    Extract trim conservatively from the advertisement title.
 
+    The full card text is intentionally not used here because
+    prices and other numeric metadata can resemble numeric trims.
+    """
     valid_trims = get_trims(
         brand,
         model,
@@ -306,17 +303,10 @@ def _extract_trim(
     if structured_value:
         return structured_value
 
-    trim_aliases: dict[str, str] = {}
-
-    for alias, canonical_value in (
-        TRIM_ALIASES.items()
-    ):
-        if canonical_value in valid_trims:
-            trim_aliases[alias] = canonical_value
-
-    # خود نام استاندارد تیپ‌ها نیز قابل تطبیق باشد.
-    for trim in valid_trims:
-        trim_aliases[trim] = trim
+    trim_aliases = _filter_aliases_by_values(
+        TRIM_ALIASES,
+        valid_trims,
+    )
 
     alias_match = find_alias(
         structured_trim,
@@ -326,9 +316,36 @@ def _extract_trim(
     if alias_match:
         return alias_match
 
+    contextual_aliases = (
+        CONTEXTUAL_TRIM_ALIASES.get(
+            (brand, model),
+            {},
+        )
+    )
+
+    contextual_match = find_alias(
+        title,
+        contextual_aliases,
+    )
+
+    if contextual_match:
+        return contextual_match
+
+    # Add exact canonical trim names only when they are not
+    # too broad, too short, or purely numeric.
+    safe_aliases = dict(
+        trim_aliases
+    )
+
+    for trim in valid_trims:
+        if trim in CONTEXT_ONLY_TRIMS:
+            continue
+
+        safe_aliases[trim] = trim
+
     alias_match = find_alias(
-        text,
-        trim_aliases,
+        title,
+        safe_aliases,
     )
 
     return alias_match or ""
@@ -337,7 +354,6 @@ def _extract_trim(
 def _extract_year_from_text(
     text: object,
 ) -> int | None:
-
     normalized_text = normalize_for_match(
         text
     )
@@ -357,7 +373,9 @@ def _extract_year_from_text(
         )
 
         for match in matches:
-            year = normalize_year(match)
+            year = normalize_year(
+                match
+            )
 
             if year is not None:
                 return year
@@ -368,7 +386,9 @@ def _extract_year_from_text(
     )
 
     for match in four_digit_matches:
-        year = normalize_year(match)
+        year = normalize_year(
+            match
+        )
 
         if year is not None:
             return year
@@ -379,7 +399,6 @@ def _extract_year_from_text(
 def _infer_unique_brand(
     model: str,
 ) -> str | None:
-
     matching_brands = {
         vehicle.brand
         for vehicle in VEHICLE_CATALOG
@@ -389,14 +408,15 @@ def _infer_unique_brand(
     if len(matching_brands) != 1:
         return None
 
-    return next(iter(matching_brands))
+    return next(
+        iter(matching_brands)
+    )
 
 
 def _canonical_from_values(
     value: object,
     valid_values: tuple[str, ...],
 ) -> str | None:
-
     normalized_value = normalize_for_match(
         value
     )
@@ -422,8 +442,9 @@ def _filter_aliases_by_values(
     aliases: Mapping[str, str],
     valid_values: tuple[str, ...],
 ) -> dict[str, str]:
-
-    valid_set = set(valid_values)
+    valid_set = set(
+        valid_values
+    )
 
     return {
         alias: canonical_value
@@ -434,7 +455,6 @@ def _filter_aliases_by_values(
 
 
 def _all_brands() -> tuple[str, ...]:
-
     return tuple(
         dict.fromkeys(
             vehicle.brand
@@ -444,7 +464,6 @@ def _all_brands() -> tuple[str, ...]:
 
 
 def _all_models() -> tuple[str, ...]:
-
     return tuple(
         dict.fromkeys(
             vehicle.model

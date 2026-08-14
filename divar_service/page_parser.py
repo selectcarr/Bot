@@ -37,14 +37,6 @@ MILEAGE_PATTERN = re.compile(
 
 @dataclass(frozen=True, slots=True)
 class SearchResultItem:
-    """
-    Raw advertisement data extracted from a
-    Divar search-results page.
-
-    This class intentionally does not classify the
-    vehicle. Vehicle classification belongs to extractor.py.
-    """
-
     ad_id: str
     title: str
     raw_text: str
@@ -57,19 +49,6 @@ class SearchResultItem:
 def extract_search_items(
     html: str,
 ) -> list[SearchResultItem]:
-    """
-    Extract advertisement cards from a Divar
-    search-results HTML page.
-
-    Advertisement identity is taken from the stable
-    token at the end of the /v/<slug>/<ad-id> path.
-
-    Query parameters and fragments are removed from
-    stored advertisement URLs.
-
-    Duplicate advertisement IDs are removed.
-    """
-
     if not isinstance(html, str):
         LOGGER.warning(
             "Search parser received non-string HTML | type=%s",
@@ -132,7 +111,7 @@ def extract_search_items(
             duplicate_id += 1
             continue
 
-        title, raw_text = _extract_card_text(
+        title, raw_text, text_parts = _extract_card_text(
             link
         )
 
@@ -143,8 +122,8 @@ def extract_search_items(
             empty_title += 1
             continue
 
-        price = _extract_price(
-            raw_text
+        price = _extract_price_from_parts(
+            text_parts
         )
 
         year = _extract_year(
@@ -199,20 +178,6 @@ def extract_search_items(
 def _extract_ad_id(
     href: str,
 ) -> str | None:
-    """
-    Extract the stable Divar advertisement token.
-
-    Current URL example:
-
-        /v/405تیوفایو/ga-piTfC?tracker_session_id=...
-
-    Result:
-
-        ga-piTfC
-
-    The human-readable slug is not used as ad_id.
-    """
-
     if not href:
         return None
 
@@ -258,12 +223,6 @@ def _extract_ad_id(
 def _canonicalize_ad_url(
     href: str,
 ) -> str | None:
-    """
-    Build a stable absolute Divar URL.
-
-    Tracking query parameters and fragments are removed.
-    """
-
     if not href:
         return None
 
@@ -301,15 +260,7 @@ def _canonicalize_ad_url(
 
 def _extract_card_text(
     link,
-) -> tuple[str, str]:
-    """
-    Extract visible text from one advertisement card.
-
-    The parser keeps the visible text relatively intact
-    because downstream vehicle extraction may need
-    information other than the title.
-    """
-
+) -> tuple[str, str, list[str]]:
     text_parts: list[str] = []
 
     for text in link.stripped_strings:
@@ -323,10 +274,8 @@ def _extract_card_text(
             )
 
     if not text_parts:
-        return "", ""
+        return "", "", []
 
-    # Remove exact duplicate fragments while preserving
-    # their original order.
     unique_parts = list(
         dict.fromkeys(
             text_parts
@@ -341,21 +290,32 @@ def _extract_card_text(
         unique_parts
     )
 
-    return title, raw_text
+    return title, raw_text, unique_parts
+
+
+def _extract_price_from_parts(
+    text_parts: list[str],
+) -> int | None:
+    """
+    Extract price from one visible card fragment at a time.
+
+    This prevents model, trim, or year digits in the title from
+    being joined with the separate price fragment.
+    """
+    for text_part in reversed(text_parts):
+        price = _extract_price(
+            text_part
+        )
+
+        if price is not None:
+            return price
+
+    return None
 
 
 def _extract_title(
     text_parts: list[str],
 ) -> str:
-    """
-    Select a probable advertisement title.
-
-    Divar may change its card markup, therefore this
-    intentionally avoids relying on CSS classes.
-
-    Price and mileage-only fragments are ignored.
-    """
-
     ignored_exact = {
         "تومان",
         "توافقی",
@@ -396,14 +356,6 @@ def _extract_title(
 def _extract_price(
     text: str,
 ) -> int | None:
-    """
-    Extract price in تومان.
-
-    Example:
-        ۱,۲۷۰,۰۰۰,۰۰۰ تومان
-        -> 1270000000
-    """
-
     if not text:
         return None
 
@@ -435,8 +387,6 @@ def _extract_price(
             if value > 0:
                 return value
 
-    # بعضی کارت‌ها ممکن است قیمت را بدون
-    # کلمه «تومان» نمایش دهند.
     return _extract_standalone_price(
         normalized
     )
@@ -445,14 +395,6 @@ def _extract_price(
 def _extract_standalone_price(
     text: str,
 ) -> int | None:
-    """
-    Conservative fallback for price extraction.
-
-    The range is intentionally broad enough for
-    vehicle prices but avoids interpreting small
-    numbers such as model years as prices.
-    """
-
     candidates = re.findall(
         r"(?<!\d)"
         r"([0-9]{3,15})"
@@ -479,28 +421,6 @@ def _extract_standalone_price(
 def _extract_year(
     text: str,
 ) -> int | None:
-    """
-    Extract a vehicle model year.
-
-    Supported forms include:
-
-        مدل ۱۴۰۲
-        مدل: 1402
-        سال ۱۴۰۰
-        ۱۴۰۰ مدل
-        1402
-
-    Two-digit years are accepted only when they are
-    explicitly associated with «مدل» or «سال».
-
-    Example:
-        مدل 97 -> 97
-
-    Conversion of two-digit years into the canonical
-    year representation is intentionally left to
-    normalize_year() in extractor.py.
-    """
-
     if not text:
         return None
 
@@ -528,7 +448,6 @@ def _extract_year(
 
         return None
 
-    # مستقل چهاررقمی شمسی
     matches = re.findall(
         r"(?<!\d)"
         r"(13\d{2}|14\d{2})"
@@ -551,16 +470,6 @@ def _extract_year(
 def _extract_mileage(
     text: str,
 ) -> int | None:
-    """
-    Extract mileage from a search card.
-
-    Examples:
-
-        کارکرد 130000
-        کارکرد 130,000
-        کارکرد ۱۳۰٬۰۰۰ کیلومتر
-    """
-
     if not text:
         return None
 
@@ -631,11 +540,6 @@ def _looks_like_mileage(
 def _normalize_digits(
     text: str,
 ) -> str:
-    """
-    Normalize Persian/Arabic digits and common
-    Persian characters.
-    """
-
     return (
         text.translate(
             str.maketrans(
@@ -657,11 +561,6 @@ def _normalize_digits(
 def _clean_text(
     text: str,
 ) -> str:
-    """
-    Normalize whitespace and remove zero-width
-    non-joiner characters.
-    """
-
     return re.sub(
         r"\s+",
         " ",
