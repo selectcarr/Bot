@@ -1,0 +1,315 @@
+name: Accurate Average System B
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "System B action"
+        required: true
+        default: "self_test"
+        type: choice
+        options:
+          - self_test
+          - diagnostic
+          - dry_run
+          - live
+          - telegram_test
+
+      sources:
+        description: "Optional comma-separated sources, e.g. telegram or bama,sheypoor"
+        required: false
+        default: ""
+        type: string
+
+  schedule:
+    - cron: "17 */3 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: accurate-average-system-b
+  cancel-in-progress: false
+
+jobs:
+  accurate-average:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    env:
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+
+      ACCURATE_STATE_ENCRYPTION_KEY: >-
+        ${{ secrets.ACCURATE_STATE_ENCRYPTION_KEY }}
+
+      ACCURATE_RUNTIME_DIR: accurate_average_runtime
+
+      ACCURATE_MIN_SAMPLES: "4"
+      ACCURATE_MAX_SAMPLES: "10"
+
+      ACCURATE_DEAL_THRESHOLD_PERCENT: "4"
+
+      ACCURATE_MAX_MESSAGES_PER_RUN: "1"
+
+      ACCURATE_REQUEST_TIMEOUT_SECONDS: "30"
+
+      ACCURATE_INITIAL_DELAY_MIN: "20"
+      ACCURATE_INITIAL_DELAY_MAX: "120"
+
+      ACCURATE_BLOCK_COOLDOWN_HOURS: "24"
+
+      ACCURATE_MAX_WEB_SOURCES_PER_RUN: "3"
+
+      ACCURATE_SOURCE_TELEGRAM_ENABLED: "true"
+      ACCURATE_SOURCE_DIVAR_ENABLED: "true"
+      ACCURATE_SOURCE_BAMA_ENABLED: "true"
+      ACCURATE_SOURCE_KHODRO45_ENABLED: "true"
+      ACCURATE_SOURCE_FORMULA_ENABLED: "true"
+      ACCURATE_SOURCE_SHEYPOOR_ENABLED: "true"
+      ACCURATE_SOURCE_KARNAMEH_ENABLED: "true"
+      ACCURATE_SOURCE_HAMRAH_MECHANIC_ENABLED: "true"
+
+      ACCURATE_INTERVAL_TELEGRAM_HOURS: "3"
+      ACCURATE_INTERVAL_DIVAR_HOURS: "12"
+      ACCURATE_INTERVAL_BAMA_HOURS: "6"
+      ACCURATE_INTERVAL_KHODRO45_HOURS: "12"
+      ACCURATE_INTERVAL_FORMULA_HOURS: "12"
+      ACCURATE_INTERVAL_SHEYPOOR_HOURS: "6"
+      ACCURATE_INTERVAL_KARNAMEH_HOURS: "6"
+      ACCURATE_INTERVAL_HAMRAH_MECHANIC_HOURS: "12"
+
+      ACCURATE_LIVE_ENABLED: >-
+        ${{ vars.ACCURATE_LIVE_ENABLED || 'false' }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-accurate.txt
+
+      - name: Install System B dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-accurate.txt
+
+      - name: Select execution mode
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then
+            ACTION="${{ github.event.inputs.action }}"
+            SOURCES="${{ github.event.inputs.sources }}"
+          else
+            ACTION="scheduled"
+            SOURCES=""
+          fi
+
+          echo "ACCURATE_ACTION=${ACTION}" >> "${GITHUB_ENV}"
+          echo "ACCURATE_SOURCES=${SOURCES}" >> "${GITHUB_ENV}"
+
+      - name: Preflight compile and self-test
+        run: |
+          python -m py_compile accurate_average_collectors.py
+          python -m py_compile accurate_average_service.py
+          python accurate_average_service.py --self-test
+
+      - name: Restore encrypted System B state
+        id: restore
+        if: >-
+          env.ACCURATE_ACTION != 'self_test' &&
+          env.ACCURATE_ACTION != 'telegram_test'
+
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ -z "${ACCURATE_STATE_ENCRYPTION_KEY}" ]]; then
+            echo "ACCURATE_STATE_ENCRYPTION_KEY is missing."
+            exit 1
+          fi
+
+          mkdir -p accurate_average_runtime
+
+          if git ls-remote \
+            --exit-code \
+            --heads \
+            origin \
+            accurate-average-state \
+            >/dev/null 2>&1
+          then
+
+            git fetch \
+              origin \
+              accurate-average-state:refs/remotes/origin/accurate-average-state
+
+            if git cat-file \
+              -e \
+              origin/accurate-average-state:accurate-average/runtime.tar.gz.enc \
+              2>/dev/null
+            then
+
+              git show \
+                origin/accurate-average-state:accurate-average/runtime.tar.gz.enc \
+                > /tmp/accurate-runtime.tar.gz.enc
+
+              openssl enc \
+                -d \
+                -aes-256-cbc \
+                -pbkdf2 \
+                -in /tmp/accurate-runtime.tar.gz.enc \
+                -out /tmp/accurate-runtime.tar.gz \
+                -pass env:ACCURATE_STATE_ENCRYPTION_KEY
+
+              tar \
+                -xzf /tmp/accurate-runtime.tar.gz \
+                -C accurate_average_runtime
+
+              echo "Previous System B state restored."
+            fi
+
+          else
+            echo "No previous System B state exists."
+          fi
+
+      - name: Run System B
+        run: |
+          python accurate_average_service.py
+
+      - name: Upload System B diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: accurate-average-diagnostics-${{ github.run_id }}
+
+          path: |
+            accurate_average_runtime/diagnostics/
+            accurate_average_runtime/accurate_average.log
+
+          if-no-files-found: ignore
+          retention-days: 5
+
+      - name: Save encrypted System B state
+        if: >-
+          ${{ always() &&
+              steps.restore.outcome == 'success' &&
+              env.ACCURATE_ACTION != 'diagnostic' &&
+              env.ACCURATE_ACTION != 'self_test' &&
+              env.ACCURATE_ACTION != 'telegram_test' }}
+
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ -z "${ACCURATE_STATE_ENCRYPTION_KEY}" ]]; then
+            echo "ACCURATE_STATE_ENCRYPTION_KEY is missing."
+            exit 1
+          fi
+
+          mkdir -p accurate_average_runtime
+
+          tar \
+            -czf /tmp/accurate-runtime.tar.gz \
+            -C accurate_average_runtime \
+            .
+
+          openssl enc \
+            -aes-256-cbc \
+            -salt \
+            -pbkdf2 \
+            -in /tmp/accurate-runtime.tar.gz \
+            -out /tmp/accurate-runtime.tar.gz.enc \
+            -pass env:ACCURATE_STATE_ENCRYPTION_KEY
+
+          git config \
+            user.name \
+            "github-actions[bot]"
+
+          git config \
+            user.email \
+            "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git fetch \
+            origin \
+            accurate-average-state:refs/remotes/origin/accurate-average-state \
+            || true
+
+          rm -rf \
+            /tmp/accurate-average-state-worktree
+
+          if git show-ref \
+            --verify \
+            --quiet \
+            refs/remotes/origin/accurate-average-state
+          then
+
+            git worktree add \
+              -B accurate-average-state \
+              /tmp/accurate-average-state-worktree \
+              origin/accurate-average-state
+
+          else
+
+            git worktree add \
+              --detach \
+              /tmp/accurate-average-state-worktree \
+              HEAD
+
+            cd /tmp/accurate-average-state-worktree
+
+            git switch \
+              --orphan \
+              accurate-average-state
+
+            git rm \
+              -rf \
+              . \
+              || true
+
+            cd "${GITHUB_WORKSPACE}"
+          fi
+
+          mkdir -p \
+            /tmp/accurate-average-state-worktree/accurate-average
+
+          cp \
+            /tmp/accurate-runtime.tar.gz.enc \
+            /tmp/accurate-average-state-worktree/accurate-average/runtime.tar.gz.enc
+
+          cat > /tmp/accurate-average-state-worktree/README.md <<'EOF'
+          # Accurate Average System B State
+
+          This branch contains only encrypted runtime state for System B.
+
+          It is independent from the current Telegram and Divar systems.
+          EOF
+
+          cd /tmp/accurate-average-state-worktree
+
+          git add \
+            README.md \
+            accurate-average/runtime.tar.gz.enc
+
+          if git diff \
+            --cached \
+            --quiet
+          then
+            echo "System B state has not changed."
+            exit 0
+          fi
+
+          git commit \
+            -m "Update Accurate Average System B state"
+
+          git push \
+            origin \
+            HEAD:accurate-average-state
