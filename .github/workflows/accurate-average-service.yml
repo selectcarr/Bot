@@ -45,7 +45,7 @@ jobs:
 
       ACCURATE_RUNTIME_DIR: accurate_average_runtime
 
-      ACCURATE_MIN_SAMPLES: "4"
+      ACCURATE_MIN_SAMPLES: "3"
       ACCURATE_MAX_SAMPLES: "10"
 
       ACCURATE_DEAL_THRESHOLD_PERCENT: "2"
