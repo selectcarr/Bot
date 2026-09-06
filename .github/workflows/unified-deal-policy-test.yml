@@ -1,0 +1,59 @@
+name: Unified Deal Policy Test
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test-policy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Compile unified runner
+        run: |
+          python -m py_compile unified_deal_policy_runner.py
+
+      - name: Test unified deal range
+        run: |
+          python - <<'PY'
+          import unified_deal_policy_runner as policy
+
+          cases = {
+              0.0: False,
+              1.99: False,
+              2.0: True,
+              5.0: True,
+              10.0: True,
+              15.0: True,
+              15.01: False,
+              30.0: False,
+          }
+
+          for value, expected in cases.items():
+              actual = policy._in_range(value)
+
+              print(
+                  f"discount={value}% "
+                  f"expected={expected} "
+                  f"actual={actual}"
+              )
+
+              if actual != expected:
+                  raise SystemExit(
+                      f"Policy test failed for {value}%"
+                  )
+
+          print(
+              "Unified Deal Policy 2%-15%: OK"
+          )
+          PY
