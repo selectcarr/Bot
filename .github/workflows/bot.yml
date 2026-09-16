@@ -1,0 +1,33 @@
+name: Repository Validation
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Compile core Python files
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile accurate_average_collectors.py
+          python -m py_compile accurate_average_service.py
+          python -m py_compile source_normalizers.py
+          python -m py_compile universal_deal_engine.py
+      - name: Run offline normalizer self-test
+        run: python source_normalizers.py
+      - name: Run offline universal deal engine self-test
+        run: python universal_deal_engine.py
+      - name: Run System B offline self-test
+        run: python accurate_average_service.py --self-test
