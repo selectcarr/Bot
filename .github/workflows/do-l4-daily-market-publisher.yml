@@ -1,0 +1,183 @@
+name: DO_L4 Daily Market Publisher
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Manual mode"
+        required: true
+        default: "self_test"
+        type: choice
+        options:
+          - self_test
+          - cars
+          - rates_12
+          - rates_18
+      dry_run:
+        description: "Print transformed post without sending"
+        required: true
+        default: true
+        type: boolean
+      force:
+        description: "Ignore duplicate-send state for this manual run"
+        required: true
+        default: false
+        type: boolean
+  schedule:
+    # Iran/Tehran is UTC+03:30.
+    # Hourly zero-car scan at minute 12.
+    - cron: "12 * * * *"
+    # 12:00 Tehran = 08:30 UTC.
+    - cron: "30 8 * * *"
+    # 18:00 Tehran = 14:30 UTC.
+    - cron: "30 14 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: do-l4-daily-market-publisher
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      MARKET_STATE_PATH: daily_market_runtime/state.json
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-market-channel.txt
+
+      - name: Install dependencies
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-market-channel.txt
+
+      - name: Resolve execution mode
+        id: mode
+        shell: bash
+        run: |
+          set -euo pipefail
+          MODE=""
+          SLOT=""
+          DRY_RUN="false"
+          FORCE="false"
+
+          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then
+            MANUAL_MODE="${{ github.event.inputs.mode }}"
+            DRY_RUN="${{ github.event.inputs.dry_run }}"
+            FORCE="${{ github.event.inputs.force }}"
+            case "${MANUAL_MODE}" in
+              self_test) MODE="self_test" ;;
+              cars) MODE="cars" ;;
+              rates_12) MODE="rates"; SLOT="12" ;;
+              rates_18) MODE="rates"; SLOT="18" ;;
+              *) echo "Unknown mode"; exit 2 ;;
+            esac
+          else
+            case "${{ github.event.schedule }}" in
+              "12 * * * *") MODE="cars" ;;
+              "30 8 * * *") MODE="rates"; SLOT="12" ;;
+              "30 14 * * *") MODE="rates"; SLOT="18" ;;
+              *) echo "Unknown schedule"; exit 2 ;;
+            esac
+          fi
+
+          echo "mode=${MODE}" >> "${GITHUB_OUTPUT}"
+          echo "slot=${SLOT}" >> "${GITHUB_OUTPUT}"
+          echo "dry_run=${DRY_RUN}" >> "${GITHUB_OUTPUT}"
+          echo "force=${FORCE}" >> "${GITHUB_OUTPUT}"
+
+      - name: Compile and self-test
+        run: |
+          set -euo pipefail
+          python -m py_compile daily_market_channel.py
+          python daily_market_channel.py --mode self_test
+
+      - name: Restore Stage 6 state
+        if: steps.mode.outputs.mode != 'self_test'
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p daily_market_runtime
+          if git ls-remote --exit-code --heads origin daily-market-state >/dev/null 2>&1; then
+            git fetch origin daily-market-state:refs/remotes/origin/daily-market-state
+            if git cat-file -e origin/daily-market-state:state.json 2>/dev/null; then
+              git show origin/daily-market-state:state.json > "${MARKET_STATE_PATH}"
+              echo "Stage 6 state restored."
+            fi
+          else
+            echo "No previous Stage 6 state."
+          fi
+
+      - name: Run Stage 6 publisher
+        if: steps.mode.outputs.mode != 'self_test'
+        shell: bash
+        run: |
+          set -euo pipefail
+          ARGS=(--mode "${{ steps.mode.outputs.mode }}" --state "${MARKET_STATE_PATH}")
+          if [[ -n "${{ steps.mode.outputs.slot }}" ]]; then
+            ARGS+=(--slot "${{ steps.mode.outputs.slot }}")
+          fi
+          if [[ "${{ steps.mode.outputs.dry_run }}" == "true" ]]; then
+            ARGS+=(--dry-run)
+          fi
+          if [[ "${{ steps.mode.outputs.force }}" == "true" ]]; then
+            ARGS+=(--force)
+          fi
+          python daily_market_channel.py "${ARGS[@]}"
+
+      - name: Save Stage 6 state
+        if: >-
+          ${{ steps.mode.outputs.mode != 'self_test' &&
+              steps.mode.outputs.dry_run != 'true' &&
+              hashFiles('daily_market_runtime/state.json') != '' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin daily-market-state:refs/remotes/origin/daily-market-state || true
+          rm -rf /tmp/daily-market-state-worktree
+
+          if git show-ref --verify --quiet refs/remotes/origin/daily-market-state; then
+            git worktree add -B daily-market-state /tmp/daily-market-state-worktree origin/daily-market-state
+          else
+            git worktree add --detach /tmp/daily-market-state-worktree HEAD
+            cd /tmp/daily-market-state-worktree
+            git switch --orphan daily-market-state
+            git rm -rf . || true
+            cd "${GITHUB_WORKSPACE}"
+          fi
+
+          cp "${MARKET_STATE_PATH}" /tmp/daily-market-state-worktree/state.json
+          cat > /tmp/daily-market-state-worktree/README.md <<'EOF'
+          # Daily Market Publisher State
+
+          Runtime state for the independent @DO_L4 market publisher.
+          Stores only public source post IDs, dates, and Telegram message IDs.
+          EOF
+
+          cd /tmp/daily-market-state-worktree
+          git add README.md state.json
+          if git diff --cached --quiet; then
+            echo "Stage 6 state unchanged."
+            exit 0
+          fi
+          git commit -m "Update daily market publisher state"
+          git push origin HEAD:daily-market-state
