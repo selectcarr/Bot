@@ -1,5 +1,13 @@
 {
-  "car_sent_dates": {},
+  "car_sent_dates": {
+    "2026-09-21": {
+      "message_ids": [
+        563
+      ],
+      "sent_at": "2026-09-21T19:22:21.954065+03:30",
+      "source_post_id": 51567
+    }
+  },
   "market_slots": {
     "2026-09-21:12": {
       "message_ids": [
