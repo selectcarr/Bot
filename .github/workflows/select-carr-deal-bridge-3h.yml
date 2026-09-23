@@ -1,0 +1,88 @@
+name: Select Carr Deal Bridge 3H
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "47 */3 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: select-carr-deal-bridge
+  cancel-in-progress: false
+
+jobs:
+  bridge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      ACCURATE_STATE_ENCRYPTION_KEY: ${{ secrets.ACCURATE_STATE_ENCRYPTION_KEY }}
+      SELECT_CARR_DATA_SECRET: ${{ secrets.SELECT_CARR_DATA_SECRET }}
+      SELECT_CARR_SYSTEM_B_DB: accurate_average_runtime/accurate_average.db
+      SELECT_CARR_ENCRYPTED_DB: private_data/select_carr_banks.sqlite3.enc
+
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install encryption dependency
+        run: python -m pip install --disable-pip-version-check cryptography
+
+      - name: Restore encrypted System B state read-only
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -z "${ACCURATE_STATE_ENCRYPTION_KEY}" ]]; then
+            echo "ACCURATE_STATE_ENCRYPTION_KEY is missing."
+            exit 1
+          fi
+
+          mkdir -p accurate_average_runtime
+
+          git fetch origin accurate-average-state:refs/remotes/origin/accurate-average-state
+
+          git show origin/accurate-average-state:accurate-average/runtime.tar.gz.enc \
+            > /tmp/accurate-runtime.tar.gz.enc
+
+          openssl enc -d -aes-256-cbc -pbkdf2 \
+            -in /tmp/accurate-runtime.tar.gz.enc \
+            -out /tmp/accurate-runtime.tar.gz \
+            -pass env:ACCURATE_STATE_ENCRYPTION_KEY
+
+          tar -xzf /tmp/accurate-runtime.tar.gz -C accurate_average_runtime
+
+          test -f accurate_average_runtime/accurate_average.db
+
+      - name: Compile bridge
+        run: python -m py_compile select_carr_deal_bridge.py
+
+      - name: Bridge System B deals into Select Carr bank
+        run: python select_carr_deal_bridge.py
+
+      - name: Commit encrypted Select Carr bank
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git add private_data/select_carr_banks.sqlite3.enc
+
+          if git diff --cached --quiet; then
+            echo "No Select Carr bank changes."
+            exit 0
+          fi
+
+          git config user.name "select-carr-bot"
+          git config user.email "actions@users.noreply.github.com"
+
+          git commit -m "Bridge System B deals into Select Carr bank"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
