@@ -1,0 +1,209 @@
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+name: Select Carr Stage 3
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["Select Carr Market Engine"]
+    types: [completed]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: select-carr-stage3
+  cancel-in-progress: false
+
+jobs:
+  stage3:
+    if: >-
+      ${{
+        github.event_name == 'workflow_dispatch' ||
+        github.event.workflow_run.conclusion == 'success'
+      }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    env:
+      ACCURATE_STATE_ENCRYPTION_KEY: ${{ secrets.ACCURATE_STATE_ENCRYPTION_KEY }}
+      SELECT_CARR_DATA_SECRET: ${{ secrets.SELECT_CARR_DATA_SECRET }}
+      SELECT_CARR_STAGE3_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      SELECT_CARR_STAGE3_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      SELECT_CARR_MARKET_DB: select_carr_market_runtime/select_carr_market.sqlite3
+      SELECT_CARR_ENCRYPTED_DB: private_data/select_carr_banks.sqlite3.enc
+      SELECT_CARR_MATCH_DEAL_MAX_AGE_HOURS: "168"
+
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install encryption dependency
+        run: python -m pip install --disable-pip-version-check cryptography
+
+      - name: Compile and self-test Stage 3
+        run: |
+          set -euo pipefail
+          python -m py_compile select_carr_stage3.py
+          python select_carr_stage3.py --self-test
+
+      - name: Restore Select Carr market state read-only
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ -z "${ACCURATE_STATE_ENCRYPTION_KEY}" ]]; then
+            echo "ACCURATE_STATE_ENCRYPTION_KEY is missing."
+            exit 1
+          fi
+
+          rm -rf select_carr_market_runtime
+          mkdir -p select_carr_market_runtime
+
+          git fetch origin select-carr-market-state:refs/remotes/origin/select-carr-market-state
+
+          git show origin/select-carr-market-state:select-carr-market/runtime.tar.gz.enc \
+            > /tmp/select-carr-market-runtime.tar.gz.enc
+
+          openssl enc -d -aes-256-cbc -pbkdf2 \
+            -in /tmp/select-carr-market-runtime.tar.gz.enc \
+            -out /tmp/select-carr-market-runtime.tar.gz \
+            -pass env:ACCURATE_STATE_ENCRYPTION_KEY
+
+          tar -xzf /tmp/select-carr-market-runtime.tar.gz \
+            -C select_carr_market_runtime
+
+          test -f select_carr_market_runtime/select_carr_market.sqlite3
+
+      - name: Run Stage 3
+        run: python select_carr_stage3.py
+
+      - name: Commit encrypted Select Carr bank
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git add private_data/select_carr_banks.sqlite3.enc
+
+          if git diff --cached --quiet; then
+            echo "No Select Carr bank changes."
+            exit 0
+          fi
+
+          git config user.name "select-carr-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git commit -m "Update Select Carr Stage 3 state"
+          git pull --rebase origin main
+          git push origin HEAD:main
