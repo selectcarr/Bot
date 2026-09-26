@@ -1,0 +1,60 @@
+name: Select Carr Readonly Deal Diagnosis
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      ACCURATE_STATE_ENCRYPTION_KEY: ${{ secrets.ACCURATE_STATE_ENCRYPTION_KEY }}
+      ACCURATE_RUNTIME_DIR: accurate_average_runtime
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Restore encrypted System B state read-only
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -z "${ACCURATE_STATE_ENCRYPTION_KEY}" ]]; then
+            echo "ACCURATE_STATE_ENCRYPTION_KEY is missing."
+            exit 1
+          fi
+
+          mkdir -p accurate_average_runtime
+          git fetch origin accurate-average-state:refs/remotes/origin/accurate-average-state
+          git show origin/accurate-average-state:accurate-average/runtime.tar.gz.enc > /tmp/accurate-runtime.tar.gz.enc
+
+          openssl enc -d -aes-256-cbc -pbkdf2 \
+            -in /tmp/accurate-runtime.tar.gz.enc \
+            -out /tmp/accurate-runtime.tar.gz \
+            -pass env:ACCURATE_STATE_ENCRYPTION_KEY
+
+          tar -xzf /tmp/accurate-runtime.tar.gz -C accurate_average_runtime
+
+      - name: Compile analyzer
+        run: python -m py_compile select_carr_readonly_deal_diagnosis.py
+
+      - name: Run read-only diagnosis
+        run: python select_carr_readonly_deal_diagnosis.py
+
+      - name: Upload diagnosis
+        uses: actions/upload-artifact@v4
+        with:
+          name: select-carr-readonly-deal-diagnosis-${{ github.run_id }}
+          path: accurate_average_runtime/diagnostics/select_carr_readonly_deal_diagnosis.json
+          if-no-files-found: error
+          retention-days: 5
