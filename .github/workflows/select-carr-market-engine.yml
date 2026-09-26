@@ -1,0 +1,160 @@
+name: Select Carr Market Engine
+
+on:
+  workflow_run:
+    workflows: ["Accurate Average System B"]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: select-carr-market-engine
+  cancel-in-progress: false
+
+jobs:
+  market-engine:
+    if: >-
+      ${{
+        github.event_name == 'workflow_dispatch' ||
+        github.event.workflow_run.conclusion == 'success'
+      }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      ACCURATE_STATE_ENCRYPTION_KEY: >-
+        ${{ secrets.ACCURATE_STATE_ENCRYPTION_KEY }}
+      ACCURATE_RUNTIME_DIR: accurate_average_runtime
+      SELECT_CARR_MARKET_RUNTIME_DIR: select_carr_market_runtime
+      SELECT_CARR_MARKET_ALLOW_SEND: "true"
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Compile and comprehensive self-test
+        run: |
+          set -euo pipefail
+          python -m py_compile select_carr_market_engine.py
+          python select_carr_market_engine.py --self-test
+
+      - name: Restore System B state read-only
+        id: restore_system
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "${ACCURATE_STATE_ENCRYPTION_KEY}"
+
+          rm -rf accurate_average_runtime
+          mkdir -p accurate_average_runtime
+
+          git fetch origin accurate-average-state:refs/remotes/origin/accurate-average-state
+          git show origin/accurate-average-state:accurate-average/runtime.tar.gz.enc \
+            > /tmp/accurate-runtime.tar.gz.enc
+
+          openssl enc -d -aes-256-cbc -pbkdf2 \
+            -in /tmp/accurate-runtime.tar.gz.enc \
+            -out /tmp/accurate-runtime.tar.gz \
+            -pass env:ACCURATE_STATE_ENCRYPTION_KEY
+
+          tar -xzf /tmp/accurate-runtime.tar.gz -C accurate_average_runtime
+
+          test -f accurate_average_runtime/accurate_average.db
+          test -f accurate_average_runtime/listing_observations.sqlite3
+
+      - name: Restore Select Carr market state
+        id: restore_market
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf select_carr_market_runtime
+          mkdir -p select_carr_market_runtime
+
+          if git ls-remote --exit-code --heads origin select-carr-market-state >/dev/null 2>&1
+          then
+            git fetch origin select-carr-market-state:refs/remotes/origin/select-carr-market-state
+            if git cat-file -e origin/select-carr-market-state:select-carr-market/runtime.tar.gz.enc 2>/dev/null
+            then
+              git show origin/select-carr-market-state:select-carr-market/runtime.tar.gz.enc \
+                > /tmp/select-carr-market-runtime.tar.gz.enc
+              openssl enc -d -aes-256-cbc -pbkdf2 \
+                -in /tmp/select-carr-market-runtime.tar.gz.enc \
+                -out /tmp/select-carr-market-runtime.tar.gz \
+                -pass env:ACCURATE_STATE_ENCRYPTION_KEY
+              tar -xzf /tmp/select-carr-market-runtime.tar.gz \
+                -C select_carr_market_runtime
+            fi
+          fi
+
+      - name: Run Select Carr market engine
+        id: engine
+        run: |
+          set -euo pipefail
+          python select_carr_market_engine.py
+
+      - name: Save encrypted Select Carr market state
+        if: ${{ always() && steps.restore_system.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "${ACCURATE_STATE_ENCRYPTION_KEY}"
+
+          mkdir -p select_carr_market_runtime
+          tar -czf /tmp/select-carr-market-runtime.tar.gz \
+            -C select_carr_market_runtime .
+
+          openssl enc -aes-256-cbc -salt -pbkdf2 \
+            -in /tmp/select-carr-market-runtime.tar.gz \
+            -out /tmp/select-carr-market-runtime.tar.gz.enc \
+            -pass env:ACCURATE_STATE_ENCRYPTION_KEY
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git fetch origin select-carr-market-state:refs/remotes/origin/select-carr-market-state || true
+          rm -rf /tmp/select-carr-market-state-worktree
+
+          if git show-ref --verify --quiet refs/remotes/origin/select-carr-market-state
+          then
+            git worktree add -B select-carr-market-state \
+              /tmp/select-carr-market-state-worktree \
+              origin/select-carr-market-state
+          else
+            git worktree add --detach /tmp/select-carr-market-state-worktree HEAD
+            cd /tmp/select-carr-market-state-worktree
+            git switch --orphan select-carr-market-state
+            git rm -rf . || true
+            cd "${GITHUB_WORKSPACE}"
+          fi
+
+          mkdir -p /tmp/select-carr-market-state-worktree/select-carr-market
+          cp /tmp/select-carr-market-runtime.tar.gz.enc \
+            /tmp/select-carr-market-state-worktree/select-carr-market/runtime.tar.gz.enc
+
+          cat > /tmp/select-carr-market-state-worktree/README.md <<'EOF'
+          # Select Carr Market State
+          Encrypted state for the independent 20-day Select Carr market engine.
+          EOF
+
+          cd /tmp/select-carr-market-state-worktree
+          git add README.md select-carr-market/runtime.tar.gz.enc
+
+          if git diff --cached --quiet
+          then
+            echo "Select Carr market state has not changed."
+            exit 0
+          fi
+
+          git commit -m "Update Select Carr market state"
+          git push origin HEAD:select-carr-market-state
