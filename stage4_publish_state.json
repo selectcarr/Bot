@@ -24,6 +24,18 @@
       "content_key": "market:2026-09-30",
       "post_id": "6abd56b6d94b607cf6092b97",
       "published_at": "2026-09-30T18:36:47.903553+00:00"
+    },
+    "select_carr|cars:2026-09-30": {
+      "channel": "select_carr",
+      "content_key": "cars:2026-09-30",
+      "post_id": "6abd5ce7b13d27f490507251",
+      "published_at": "2026-09-30T19:03:13.829631+00:00"
+    },
+    "select_carrr|cars:2026-09-30": {
+      "channel": "select_carrr",
+      "content_key": "cars:2026-09-30",
+      "post_id": "6abd5cf2f0f3b40f40ef5c93",
+      "published_at": "2026-09-30T19:03:24.321233+00:00"
     }
   }
 }
