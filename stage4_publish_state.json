@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "published": {
+    "select_carr|opportunity:4ec42efb5bc38d0c9a10c504312182c620f4b2a1c030b4b0b7d2d30028998afb": {
+      "channel": "select_carr",
+      "content_key": "opportunity:4ec42efb5bc38d0c9a10c504312182c620f4b2a1c030b4b0b7d2d30028998afb",
+      "post_id": "6abd3aeeb5b6f849a5804212",
+      "published_at": "2026-09-30T16:38:14.381211+00:00"
+    },
+    "select_carrr|opportunity:4ec42efb5bc38d0c9a10c504312182c620f4b2a1c030b4b0b7d2d30028998afb": {
+      "channel": "select_carrr",
+      "content_key": "opportunity:4ec42efb5bc38d0c9a10c504312182c620f4b2a1c030b4b0b7d2d30028998afb",
+      "post_id": "6abd3af6b5b6f849a580436c",
+      "published_at": "2026-09-30T16:38:21.865950+00:00"
+    }
+  }
+}
