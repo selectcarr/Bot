@@ -1,0 +1,18 @@
+{
+  "version": "2.2.0",
+  "generated_at": "2026-09-30T16:38:01.412127+00:00",
+  "stories": [
+    {
+      "kind": "opportunity",
+      "key": "opportunity:4ec42efb5bc38d0c9a10c504312182c620f4b2a1c030b4b0b7d2d30028998afb",
+      "path": "stage4_runtime/story_opportunity.jpeg"
+    }
+  ],
+  "market_post": null,
+  "car_price_key": null,
+  "car_price_slides": [],
+  "buy_request_story": {
+    "enabled": false,
+    "reason": "no_explicit_public_consent_source"
+  }
+}
