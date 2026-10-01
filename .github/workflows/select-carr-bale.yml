@@ -1,0 +1,260 @@
+name: Select Carr Bale Publisher
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "Bale action"
+        required: true
+        default: "check_bale"
+        type: choice
+        options:
+          - check_bale
+          - publish_latest
+
+  workflow_run:
+    workflows:
+      - "Select Carr Stage 4"
+    types:
+      - completed
+
+permissions:
+  contents: write
+
+concurrency:
+  group: select-carr-bale-publisher
+  cancel-in-progress: false
+
+jobs:
+  bale:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
+
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    env:
+      SELECT_CARR_BALE_BOT_TOKEN: ${{ secrets.SELECT_CARR_BALE_BOT_TOKEN }}
+
+      SELECT_CARR_BALE_CHAT_ID: ${{ secrets.SELECT_CARR_BALE_CHAT_ID }}
+
+      SELECT_CARR_STAGE4_MEDIA_BRANCH: select-carr-stage4-media
+
+      STAGE4_OUTPUT_DIR: stage4_runtime
+
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Compile Bale publisher
+        run: |
+          set -euo pipefail
+          python -m py_compile select_carr_bale_publisher.py
+
+      - name: Check Bale connection
+        if: >-
+          github.event_name == 'workflow_dispatch' &&
+          github.event.inputs.action == 'check_bale'
+        run: |
+          set -euo pipefail
+          python select_carr_bale_publisher.py check
+
+      - name: Restore latest Stage 4 manifest and states
+        id: restore
+        if: >-
+          github.event_name == 'workflow_run' ||
+          github.event.inputs.action == 'publish_latest'
+        shell: bash
+
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+
+          TRIGGER_CREATED_AT: ${{ github.event.workflow_run.created_at }}
+
+        run: |
+          set -euo pipefail
+
+          mkdir -p stage4_runtime
+
+          if ! git fetch origin \
+            select-carr-stage4-media:refs/remotes/origin/select-carr-stage4-media
+          then
+            echo "should_publish=false" >> "${GITHUB_OUTPUT}"
+            exit 0
+          fi
+
+          if ! git show \
+            origin/select-carr-stage4-media:manifest.json \
+            > stage4_runtime/manifest.json
+          then
+            echo "should_publish=false" >> "${GITHUB_OUTPUT}"
+            exit 0
+          fi
+
+          git show \
+            origin/select-carr-stage4-media:stage4_publish_state.json \
+            > stage4_runtime/publish_state.json \
+            2>/dev/null \
+            || true
+
+          git show \
+            origin/select-carr-stage4-media:bale_publish_state.json \
+            > stage4_runtime/bale_publish_state.json \
+            2>/dev/null \
+            || true
+
+          if [[ "${EVENT_NAME}" == "workflow_dispatch" ]]; then
+            echo "should_publish=true" >> "${GITHUB_OUTPUT}"
+            exit 0
+          fi
+
+          python - <<'PY'
+          import json
+          import os
+          from datetime import datetime, timedelta, timezone
+          from pathlib import Path
+
+          manifest = json.loads(
+              Path(
+                  "stage4_runtime/manifest.json"
+              ).read_text(
+                  encoding="utf-8"
+              )
+          )
+
+          generated_raw = str(
+              manifest.get(
+                  "generated_at"
+              )
+              or ""
+          ).strip()
+
+          trigger_raw = str(
+              os.environ.get(
+                  "TRIGGER_CREATED_AT"
+              )
+              or ""
+          ).strip()
+
+          def parse(value: str):
+
+              if not value:
+                  return None
+
+              dt = datetime.fromisoformat(
+                  value.replace(
+                      "Z",
+                      "+00:00",
+                  )
+              )
+
+              if dt.tzinfo is None:
+
+                  dt = dt.replace(
+                      tzinfo=timezone.utc
+                  )
+
+              return dt.astimezone(
+                  timezone.utc
+              )
+
+          generated = parse(
+              generated_raw
+          )
+
+          trigger = parse(
+              trigger_raw
+          )
+
+          should = bool(
+              generated
+              and trigger
+              and generated
+              >= trigger
+              - timedelta(
+                  minutes=10
+              )
+          )
+
+          with open(
+              os.environ[
+                  "GITHUB_OUTPUT"
+              ],
+              "a",
+              encoding="utf-8",
+          ) as f:
+
+              f.write(
+                  "should_publish="
+                  + (
+                      "true"
+                      if should
+                      else "false"
+                  )
+                  + "\n"
+              )
+          PY
+
+      - name: Publish latest Stage 4 content to Bale
+        if: >-
+          steps.restore.outputs.should_publish == 'true'
+        run: |
+          set -euo pipefail
+          python select_carr_bale_publisher.py publish --mode auto
+
+      - name: Persist Bale publish state
+        if: >-
+          always() &&
+          steps.restore.outputs.should_publish == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ ! -f stage4_runtime/bale_publish_state.json ]]; then
+            echo "No Bale publish state to persist."
+            exit 0
+          fi
+
+          rm -rf /tmp/select-carr-stage4-media
+
+          git fetch origin \
+            select-carr-stage4-media:refs/remotes/origin/select-carr-stage4-media
+
+          git worktree add \
+            -B select-carr-stage4-media \
+            /tmp/select-carr-stage4-media \
+            origin/select-carr-stage4-media
+
+          cp \
+            stage4_runtime/bale_publish_state.json \
+            /tmp/select-carr-stage4-media/bale_publish_state.json
+
+          cd /tmp/select-carr-stage4-media
+
+          git config \
+            user.name \
+            "select-carr-bot"
+
+          git config \
+            user.email \
+            "actions@users.noreply.github.com"
+
+          git add \
+            bale_publish_state.json
+
+          git commit \
+            -m "Update Select Carr Bale publish state" \
+            || true
+
+          git push \
+            origin \
+            HEAD:select-carr-stage4-media
