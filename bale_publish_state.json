@@ -1,0 +1,89 @@
+{
+  "version": 1,
+  "published": {
+    "bale|cars:2026-10-01": {
+      "result": [
+        {
+          "message_id": 2,
+          "from": {
+            "id": 1342369143,
+            "is_bot": true,
+            "first_name": "",
+            "last_name": ""
+          },
+          "date": 1790861212,
+          "chat": {
+            "id": 0,
+            "type": "group",
+            "photo": null
+          },
+          "media_group_id": "2914316153120150016"
+        },
+        {
+          "message_id": 3,
+          "from": {
+            "id": 1342369143,
+            "is_bot": true,
+            "first_name": "",
+            "last_name": ""
+          },
+          "date": 1790861212,
+          "chat": {
+            "id": 0,
+            "type": "group",
+            "photo": null
+          },
+          "media_group_id": "2914316153120150016"
+        },
+        {
+          "message_id": 8,
+          "from": {
+            "id": 1342369143,
+            "is_bot": true,
+            "first_name": "",
+            "last_name": ""
+          },
+          "date": 1790861212,
+          "chat": {
+            "id": 0,
+            "type": "group",
+            "photo": null
+          },
+          "media_group_id": "2914316153120150016"
+        },
+        {
+          "message_id": 9,
+          "from": {
+            "id": 1342369143,
+            "is_bot": true,
+            "first_name": "",
+            "last_name": ""
+          },
+          "date": 1790861212,
+          "chat": {
+            "id": 0,
+            "type": "group",
+            "photo": null
+          },
+          "media_group_id": "2914316153120150016"
+        },
+        {
+          "message_id": 10,
+          "from": {
+            "id": 1342369143,
+            "is_bot": true,
+            "first_name": "",
+            "last_name": ""
+          },
+          "date": 1790861212,
+          "chat": {
+            "id": 0,
+            "type": "group",
+            "photo": null
+          },
+          "media_group_id": "2914316153120150016"
+        }
+      ]
+    }
+  }
+}
