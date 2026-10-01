@@ -36,6 +36,18 @@
       "content_key": "cars:2026-09-30",
       "post_id": "6abd5cf2f0f3b40f40ef5c93",
       "published_at": "2026-09-30T19:03:24.321233+00:00"
+    },
+    "select_carr|cars:2026-10-01": {
+      "channel": "select_carr",
+      "content_key": "cars:2026-10-01",
+      "post_id": "6abe3f6cf9db557f4936bdb9",
+      "published_at": "2026-10-01T11:09:42.688063+00:00"
+    },
+    "select_carrr|cars:2026-10-01": {
+      "channel": "select_carrr",
+      "content_key": "cars:2026-10-01",
+      "post_id": "6abe3f76160ef0fb5a9dd176",
+      "published_at": "2026-10-01T11:09:53.155469+00:00"
     }
   },
   "story_cursors": {
