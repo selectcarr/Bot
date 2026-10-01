@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "published": {
     "select_carr|opportunity:4ec42efb5bc38d0c9a10c504312182c620f4b2a1c030b4b0b7d2d30028998afb": {
       "channel": "select_carr",
@@ -37,5 +37,18 @@
       "post_id": "6abd5cf2f0f3b40f40ef5c93",
       "published_at": "2026-09-30T19:03:24.321233+00:00"
     }
-  }
+  },
+  "story_cursors": {
+    "opportunity": {
+      "at": "2026-10-01T10:30:55.125501+00:00",
+      "key": "a199b44ebe7c64dd427beda9c6a0267886f220bf118331c2e7fb329f94e53fc8"
+    },
+    "buy_request": {
+      "at": "2026-09-27T21:18:59.149837+00:00",
+      "key": "BUY-1790540704392-s6ydw5"
+    }
+  },
+  "story_last_published_at": null,
+  "story_queue_initialized": true,
+  "story_queue_initialized_at": "2026-10-01T11:06:51.865589+00:00"
 }
