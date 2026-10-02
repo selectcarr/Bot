@@ -72,6 +72,18 @@
       "content_key": "cars:2026-10-02",
       "post_id": "6abfd9ba92cd4a475eb5d001",
       "published_at": "2026-10-02T16:20:20.397216+00:00"
+    },
+    "select_carr|buy_request:r1:BUY-1790890740303-tiltct": {
+      "channel": "select_carr",
+      "content_key": "buy_request:r1:BUY-1790890740303-tiltct",
+      "post_id": "6abfdc168ab404f933008b65",
+      "published_at": "2026-10-02T16:30:24.802896+00:00"
+    },
+    "select_carrr|buy_request:r1:BUY-1790890740303-tiltct": {
+      "channel": "select_carrr",
+      "content_key": "buy_request:r1:BUY-1790890740303-tiltct",
+      "post_id": "6abfdc21373007cd24eae23d",
+      "published_at": "2026-10-02T16:30:35.443174+00:00"
     }
   },
   "story_cursors": {
@@ -80,11 +92,11 @@
       "key": "a199b44ebe7c64dd427beda9c6a0267886f220bf118331c2e7fb329f94e53fc8"
     },
     "buy_request": {
-      "at": "2026-09-27T21:18:59.149837+00:00",
-      "key": "BUY-1790540704392-s6ydw5"
+      "at": "2026-10-02T00:45:56.714750+00:00",
+      "key": "BUY-1790890740303-tiltct"
     }
   },
-  "story_last_published_at": null,
+  "story_last_published_at": "2026-10-02T16:30:35.443672+00:00",
   "story_queue_initialized": true,
   "story_queue_initialized_at": "2026-10-01T11:06:51.865589+00:00"
 }
