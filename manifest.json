@@ -1,20 +1,9 @@
 {
   "version": "2.6.0",
   "render_revision": "r7",
-  "generated_at": "2026-10-02T16:30:11.162472+00:00",
+  "generated_at": "2026-10-02T20:05:30.501882+00:00",
   "mode": "story_queue",
-  "stories": [
-    {
-      "kind": "buy_request",
-      "key": "buy_request:r1:BUY-1790890740303-tiltct",
-      "path": "stage4_runtime/story_buy_request.jpeg",
-      "cursor_after": {
-        "kind": "buy_request",
-        "at": "2026-10-02T00:45:56.714750+00:00",
-        "key": "BUY-1790890740303-tiltct"
-      }
-    }
-  ],
+  "stories": [],
   "market_post": null,
   "car_price_key": null,
   "car_price_slides": [],
@@ -22,5 +11,5 @@
     "enabled": true,
     "source": "sc_intake_submissions"
   },
-  "story_queue_status": "story_ready"
+  "story_queue_status": "outside_allowed_window"
 }
