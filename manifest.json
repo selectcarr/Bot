@@ -1,15 +1,22 @@
 {
   "version": "2.6.0",
   "render_revision": "r7",
-  "generated_at": "2026-10-02T14:23:45.280877+00:00",
-  "mode": "story_queue",
+  "generated_at": "2026-10-02T14:26:09.795899+00:00",
+  "mode": "market",
   "stories": [],
-  "market_post": null,
+  "market_post": {
+    "key": "market:2026-10-02",
+    "path": "stage4_runtime/post_market.jpeg",
+    "source_post_id": "52154",
+    "source_published_at": "2026-10-01T18:16:37+00:00",
+    "source_tehran_date": "2026-10-01",
+    "fallback_previous_day": true
+  },
   "car_price_key": null,
   "car_price_slides": [],
   "buy_request_story": {
     "enabled": true,
     "source": "sc_intake_submissions"
   },
-  "story_queue_status": "outside_allowed_window"
+  "source_posts_scanned": 238
 }
