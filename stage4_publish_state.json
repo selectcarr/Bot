@@ -48,6 +48,18 @@
       "content_key": "cars:2026-10-01",
       "post_id": "6abe3f76160ef0fb5a9dd176",
       "published_at": "2026-10-01T11:09:53.155469+00:00"
+    },
+    "select_carr|market:2026-10-02": {
+      "channel": "select_carr",
+      "content_key": "market:2026-10-02",
+      "post_id": "6abfbf138eb909c659e0e9f2",
+      "published_at": "2026-10-02T14:26:38.251178+00:00"
+    },
+    "select_carrr|market:2026-10-02": {
+      "channel": "select_carrr",
+      "content_key": "market:2026-10-02",
+      "post_id": "6abfbf1ee11203baed2ababe",
+      "published_at": "2026-10-02T14:26:46.707592+00:00"
     }
   },
   "story_cursors": {
