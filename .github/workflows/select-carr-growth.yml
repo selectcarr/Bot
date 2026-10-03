@@ -1,0 +1,472 @@
+name: Select Carr Growth Engine
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "Growth engine action"
+        required: true
+        default: "check"
+        type: choice
+        options:
+          - check
+          - sync
+          - report_preview
+          - report_send
+          - content_preview
+          - content_send
+          - outcome
+
+      entity_id:
+        description: "Outcome entity/lead ID (only for outcome)"
+        required: false
+        default: ""
+        type: string
+
+      stage:
+        description: "Outcome stage"
+        required: false
+        default: "contacted"
+        type: choice
+        options:
+          - contacted
+          - qualified
+          - negotiating
+          - closed_won
+          - closed_lost
+
+      value:
+        description: "Optional deal value in toman"
+        required: false
+        default: ""
+        type: string
+
+      note:
+        description: "Optional outcome note"
+        required: false
+        default: ""
+        type: string
+
+  schedule:
+    # هر 3 ساعت یک بار:
+    # رویدادها، قیف و آمار Buffer به‌روز می‌شوند.
+    - cron: "17 0,3,6,9,12,15,18,21 * * *"
+
+    # ساعت 23:40 تهران:
+    # گزارش مدیریتی روزانه به VIP ارسال می‌شود.
+    - cron: "10 20 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: select-carr-growth-engine
+  cancel-in-progress: false
+
+jobs:
+  growth:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    env:
+      BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
+      BUFFER_API_URL: https://api.buffer.com
+
+      SELECT_CARR_DATA_SECRET: ${{ secrets.SELECT_CARR_DATA_SECRET }}
+
+      SELECT_CARR_STAGE3_BOT_TOKEN: >-
+        ${{ secrets.SELECT_CARR_STAGE3_BOT_TOKEN }}
+
+      SELECT_CARR_STAGE3_CHAT_ID: >-
+        ${{ secrets.SELECT_CARR_STAGE3_CHAT_ID }}
+
+      SELECT_CARR_ENCRYPTED_DB: >-
+        private_data/select_carr_banks.sqlite3.enc
+
+      SELECT_CARR_MARKET_DB: >-
+        select_carr_market_runtime/select_carr_market.sqlite3
+
+      SELECT_CARR_SOURCE_CHANNEL_URL: >-
+        https://t.me/s/DO_L4
+
+      SELECT_CARR_GROWTH_RUNTIME_DIR: >-
+        growth_runtime
+
+      SELECT_CARR_STAGE4_PUBLISH_STATE: >-
+        growth_inputs/stage4_publish_state.json
+
+      SELECT_CARR_BALE_PUBLISH_STATE: >-
+        growth_inputs/bale_publish_state.json
+
+      ACCURATE_STATE_ENCRYPTION_KEY: >-
+        ${{ secrets.ACCURATE_STATE_ENCRYPTION_KEY }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Resolve action
+        id: resolve
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          EVENT_SCHEDULE: ${{ github.event.schedule }}
+          MANUAL_ACTION: ${{ github.event.inputs.action }}
+        run: |
+          set -euo pipefail
+
+          if [[ "${EVENT_NAME}" == "schedule" ]]; then
+            case "${EVENT_SCHEDULE}" in
+              "17 0,3,6,9,12,15,18,21 * * *")
+                action="sync"
+                ;;
+
+              "10 20 * * *")
+                action="report_send"
+                ;;
+
+              *)
+                echo "Unknown schedule: ${EVENT_SCHEDULE}"
+                exit 1
+                ;;
+            esac
+          else
+            action="${MANUAL_ACTION:-check}"
+          fi
+
+          case "${action}" in
+            check|sync|report_preview|report_send|content_preview|content_send|outcome)
+              ;;
+            *)
+              echo "Unsupported action: ${action}"
+              exit 1
+              ;;
+          esac
+
+          echo "action=${action}" >> "${GITHUB_OUTPUT}"
+          echo "Resolved action=${action}"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          set -euo pipefail
+
+          python -m pip install \
+            --disable-pip-version-check \
+            cryptography \
+            beautifulsoup4
+
+      - name: Compile growth engine
+        run: |
+          set -euo pipefail
+
+          python -m py_compile \
+            select_carr_growth_engine.py
+
+      - name: Restore growth state
+        if: >-
+          steps.resolve.outputs.action != 'check'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mkdir -p growth_runtime
+
+          git fetch origin \
+            select-carr-growth-state:refs/remotes/origin/select-carr-growth-state \
+            || true
+
+          if git show-ref \
+            --verify \
+            --quiet \
+            refs/remotes/origin/select-carr-growth-state
+          then
+            git show \
+              origin/select-carr-growth-state:growth.sqlite3 \
+              > growth_runtime/growth.sqlite3 \
+              2>/dev/null \
+              || true
+
+            git show \
+              origin/select-carr-growth-state:daily_report.txt \
+              > growth_runtime/daily_report.txt \
+              2>/dev/null \
+              || true
+
+            git show \
+              origin/select-carr-growth-state:content_suggestion.txt \
+              > growth_runtime/content_suggestion.txt \
+              2>/dev/null \
+              || true
+          fi
+
+      - name: Restore Stage 4 and Bale states
+        if: >-
+          steps.resolve.outputs.action == 'sync' ||
+          steps.resolve.outputs.action == 'report_preview' ||
+          steps.resolve.outputs.action == 'report_send' ||
+          steps.resolve.outputs.action == 'content_preview' ||
+          steps.resolve.outputs.action == 'content_send'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mkdir -p growth_inputs
+
+          git fetch origin \
+            select-carr-stage4-media:refs/remotes/origin/select-carr-stage4-media \
+            || true
+
+          if git show-ref \
+            --verify \
+            --quiet \
+            refs/remotes/origin/select-carr-stage4-media
+          then
+            git show \
+              origin/select-carr-stage4-media:stage4_publish_state.json \
+              > growth_inputs/stage4_publish_state.json \
+              2>/dev/null \
+              || true
+
+            git show \
+              origin/select-carr-stage4-media:bale_publish_state.json \
+              > growth_inputs/bale_publish_state.json \
+              2>/dev/null \
+              || true
+          fi
+
+      - name: Restore Select Carr market state
+        if: >-
+          steps.resolve.outputs.action == 'sync' ||
+          steps.resolve.outputs.action == 'report_preview' ||
+          steps.resolve.outputs.action == 'report_send' ||
+          steps.resolve.outputs.action == 'content_preview' ||
+          steps.resolve.outputs.action == 'content_send'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ -z "${ACCURATE_STATE_ENCRYPTION_KEY}" ]]; then
+            echo "ACCURATE_STATE_ENCRYPTION_KEY is missing."
+            exit 1
+          fi
+
+          rm -rf select_carr_market_runtime
+          mkdir -p select_carr_market_runtime
+
+          git fetch origin \
+            select-carr-market-state:refs/remotes/origin/select-carr-market-state
+
+          git show \
+            origin/select-carr-market-state:select-carr-market/runtime.tar.gz.enc \
+            > /tmp/select-carr-market-runtime.tar.gz.enc
+
+          openssl enc \
+            -d \
+            -aes-256-cbc \
+            -pbkdf2 \
+            -in /tmp/select-carr-market-runtime.tar.gz.enc \
+            -out /tmp/select-carr-market-runtime.tar.gz \
+            -pass env:ACCURATE_STATE_ENCRYPTION_KEY
+
+          tar -xzf \
+            /tmp/select-carr-market-runtime.tar.gz \
+            -C select_carr_market_runtime
+
+          test -f \
+            select_carr_market_runtime/select_carr_market.sqlite3
+
+      - name: Run check
+        if: >-
+          steps.resolve.outputs.action == 'check'
+        run: |
+          set -euo pipefail
+
+          python \
+            select_carr_growth_engine.py \
+            check
+
+      - name: Run sync
+        if: >-
+          steps.resolve.outputs.action == 'sync'
+        run: |
+          set -euo pipefail
+
+          python \
+            select_carr_growth_engine.py \
+            sync
+
+      - name: Preview management report
+        if: >-
+          steps.resolve.outputs.action == 'report_preview'
+        run: |
+          set -euo pipefail
+
+          python \
+            select_carr_growth_engine.py \
+            report_preview
+
+      - name: Send management report
+        if: >-
+          steps.resolve.outputs.action == 'report_send'
+        run: |
+          set -euo pipefail
+
+          python \
+            select_carr_growth_engine.py \
+            report_send
+
+      - name: Preview content decision
+        if: >-
+          steps.resolve.outputs.action == 'content_preview'
+        run: |
+          set -euo pipefail
+
+          python \
+            select_carr_growth_engine.py \
+            content_preview
+
+      - name: Send content decision to VIP
+        if: >-
+          steps.resolve.outputs.action == 'content_send'
+        run: |
+          set -euo pipefail
+
+          python \
+            select_carr_growth_engine.py \
+            content_send
+
+      - name: Record funnel outcome
+        if: >-
+          steps.resolve.outputs.action == 'outcome'
+        shell: bash
+        env:
+          ENTITY_ID: ${{ github.event.inputs.entity_id }}
+          OUTCOME_STAGE: ${{ github.event.inputs.stage }}
+          OUTCOME_VALUE: ${{ github.event.inputs.value }}
+          OUTCOME_NOTE: ${{ github.event.inputs.note }}
+        run: |
+          set -euo pipefail
+
+          args=(
+            outcome
+            --entity-id "${ENTITY_ID}"
+            --stage "${OUTCOME_STAGE}"
+            --note "${OUTCOME_NOTE}"
+          )
+
+          if [[ -n "${OUTCOME_VALUE}" ]]; then
+            args+=(
+              --value
+              "${OUTCOME_VALUE}"
+            )
+          fi
+
+          python \
+            select_carr_growth_engine.py \
+            "${args[@]}"
+
+      - name: Persist growth state
+        if: >-
+          always() &&
+          steps.resolve.outputs.action != 'check' &&
+          hashFiles('growth_runtime/growth.sqlite3') != ''
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git config \
+            user.name \
+            "select-carr-bot"
+
+          git config \
+            user.email \
+            "actions@users.noreply.github.com"
+
+          rm -rf \
+            /tmp/select-carr-growth-state
+
+          git fetch origin \
+            select-carr-growth-state:refs/remotes/origin/select-carr-growth-state \
+            || true
+
+          if git show-ref \
+            --verify \
+            --quiet \
+            refs/remotes/origin/select-carr-growth-state
+          then
+            git worktree add \
+              -B select-carr-growth-state \
+              /tmp/select-carr-growth-state \
+              origin/select-carr-growth-state
+          else
+            git worktree add \
+              --detach \
+              /tmp/select-carr-growth-state \
+              HEAD
+
+            cd \
+              /tmp/select-carr-growth-state
+
+            git switch \
+              --orphan \
+              select-carr-growth-state
+
+            git rm \
+              -rf . \
+              || true
+
+            cd \
+              "${GITHUB_WORKSPACE}"
+          fi
+
+          cp \
+            growth_runtime/growth.sqlite3 \
+            /tmp/select-carr-growth-state/growth.sqlite3
+
+          if [[ -f growth_runtime/daily_report.txt ]]; then
+            cp \
+              growth_runtime/daily_report.txt \
+              /tmp/select-carr-growth-state/daily_report.txt
+          fi
+
+          if [[ -f growth_runtime/content_suggestion.txt ]]; then
+            cp \
+              growth_runtime/content_suggestion.txt \
+              /tmp/select-carr-growth-state/content_suggestion.txt
+          fi
+
+          if [[ -f growth_runtime/diagnostics.json ]]; then
+            cp \
+              growth_runtime/diagnostics.json \
+              /tmp/select-carr-growth-state/diagnostics.json
+          fi
+
+          cd \
+            /tmp/select-carr-growth-state
+
+          git add -A
+
+          git commit \
+            -m "Update Select Carr growth state" \
+            || true
+
+          git push \
+            origin \
+            HEAD:select-carr-growth-state
+
+      - name: Upload growth diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: select-carr-growth-${{ github.run_id }}
+          path: |
+            growth_runtime/
+          if-no-files-found: ignore
