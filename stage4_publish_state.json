@@ -84,6 +84,18 @@
       "content_key": "buy_request:r1:BUY-1790890740303-tiltct",
       "post_id": "6abfdc21373007cd24eae23d",
       "published_at": "2026-10-02T16:30:35.443174+00:00"
+    },
+    "select_carr|market:2026-10-03": {
+      "channel": "select_carr",
+      "content_key": "market:2026-10-03",
+      "post_id": "6ac112dead7fd83bc5f61687",
+      "published_at": "2026-10-03T14:36:24.802083+00:00"
+    },
+    "select_carrr|market:2026-10-03": {
+      "channel": "select_carrr",
+      "content_key": "market:2026-10-03",
+      "post_id": "6ac112e87d53b827e0e05e80",
+      "published_at": "2026-10-03T14:36:34.213905+00:00"
     }
   },
   "story_cursors": {
