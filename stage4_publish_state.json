@@ -132,6 +132,18 @@
       "content_key": "market:2026-10-04",
       "post_id": "6ac25eb77d5538d1baa3e10c",
       "published_at": "2026-10-04T14:12:16.088484+00:00"
+    },
+    "select_carr|buy_request:r1:BUY-1790924613360-bzy3ns": {
+      "channel": "select_carr",
+      "content_key": "buy_request:r1:BUY-1790924613360-bzy3ns",
+      "post_id": "6ac273ada486988a6e1d8111",
+      "published_at": "2026-10-04T15:41:41.477301+00:00"
+    },
+    "select_carrr|buy_request:r1:BUY-1790924613360-bzy3ns": {
+      "channel": "select_carrr",
+      "content_key": "buy_request:r1:BUY-1790924613360-bzy3ns",
+      "post_id": "6ac273b511a7340ba02e0198",
+      "published_at": "2026-10-04T15:41:51.921791+00:00"
     }
   },
   "story_cursors": {
@@ -140,11 +152,11 @@
       "key": "f0016984b806c8b9942343e0d9a17577875010c0b5a39e8dac92ad2ea54a936c"
     },
     "buy_request": {
-      "at": "2026-10-02T00:45:56.714750+00:00",
-      "key": "BUY-1790890740303-tiltct"
+      "at": "2026-10-02T17:51:54.706801+00:00",
+      "key": "BUY-1790924613360-bzy3ns"
     }
   },
-  "story_last_published_at": "2026-10-03T18:47:22.693517+00:00",
+  "story_last_published_at": "2026-10-04T15:41:51.922443+00:00",
   "story_queue_initialized": true,
   "story_queue_initialized_at": "2026-10-01T11:06:51.865589+00:00"
 }
