@@ -1,17 +1,17 @@
 {
   "version": "2.6.0",
   "render_revision": "r7",
-  "generated_at": "2026-10-04T18:43:48.901397+00:00",
+  "generated_at": "2026-10-04T19:12:11.073623+00:00",
   "mode": "story_queue",
   "stories": [
     {
-      "kind": "buy_request",
-      "key": "buy_request:r1:BUY-1790939486301-n40tfe",
-      "path": "stage4_runtime/story_buy_request.jpeg",
+      "kind": "opportunity",
+      "key": "opportunity:r7:3f626603b1afceab01ea2d847306957e622c695cd6233f2576610b56b9087369",
+      "path": "stage4_runtime/story_opportunity.jpeg",
       "cursor_after": {
-        "kind": "buy_request",
-        "at": "2026-10-02T17:51:54.713196+00:00",
-        "key": "BUY-1790939486301-n40tfe"
+        "kind": "opportunity",
+        "at": "2026-10-02T18:12:03.019386+00:00",
+        "key": "3f626603b1afceab01ea2d847306957e622c695cd6233f2576610b56b9087369"
       }
     }
   ],
