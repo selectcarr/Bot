@@ -1,0 +1,525 @@
+name: Select Carr Stage 4
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "Stage 4 action"
+        required: true
+        default: "check_buffer"
+        type: choice
+        options:
+          - check_buffer
+          - validate_templates
+          - build
+          - publish_opportunity
+          - publish_story_queue
+          - publish_market
+          - publish_cars
+
+  # All scheduled times below are native Tehran time.
+  # Stories: every 15 minutes only inside 11:00-15:00 and 19:00-23:00.
+  # Feed posts: start exactly at the requested time, then retry every 15 minutes
+  # for up to two hours. Duplicate memory prevents double publishing.
+  schedule:
+    # Stories: 11:00-14:45 Tehran
+    - cron: "0,15,30,45 11-14 * * *"
+      timezone: "Asia/Tehran"
+
+    # Stories: 19:00-22:45 Tehran
+    - cron: "0,15,30,45 19-22 * * *"
+      timezone: "Asia/Tehran"
+
+    # Saturday: market 13:30-15:30; cars 21:30-23:30
+    - cron: "30,45 13 * * 6"
+      timezone: "Asia/Tehran"
+    - cron: "0,15,30,45 14 * * 6"
+      timezone: "Asia/Tehran"
+    - cron: "0,15,30 15 * * 6"
+      timezone: "Asia/Tehran"
+
+    - cron: "30,45 21 * * 6"
+      timezone: "Asia/Tehran"
+    - cron: "0,15,30,45 22 * * 6"
+      timezone: "Asia/Tehran"
+    - cron: "0,15,30 23 * * 6"
+      timezone: "Asia/Tehran"
+
+    # Sunday: market 12:00-14:00; cars 14:30-16:30
+    - cron: "0,15,30,45 12-13 * * 0"
+      timezone: "Asia/Tehran"
+    - cron: "0 14 * * 0"
+      timezone: "Asia/Tehran"
+
+    - cron: "30,45 14 * * 0"
+      timezone: "Asia/Tehran"
+    - cron: "0,15,30,45 15 * * 0"
+      timezone: "Asia/Tehran"
+    - cron: "0,15,30 16 * * 0"
+      timezone: "Asia/Tehran"
+
+    # Monday: market 14:30-16:30; cars 22:30-23:45
+    - cron: "30,45 14 * * 1"
+      timezone: "Asia/Tehran"
+    - cron: "0,15,30,45 15 * * 1"
+      timezone: "Asia/Tehran"
+    - cron: "0,15,30 16 * * 1"
+      timezone: "Asia/Tehran"
+
+    - cron: "30,45 22 * * 1"
+      timezone: "Asia/Tehran"
+    - cron: "0,15,30,45 23 * * 1"
+      timezone: "Asia/Tehran"
+
+    # Tuesday: market 13:30-15:30; cars 20:30-22:30
+    - cron: "30,45 13 * * 2"
+      timezone: "Asia/Tehran"
+    - cron: "0,15,30,45 14 * * 2"
+      timezone: "Asia/Tehran"
+    - cron: "0,15,30 15 * * 2"
+      timezone: "Asia/Tehran"
+
+    - cron: "30,45 20 * * 2"
+      timezone: "Asia/Tehran"
+    - cron: "0,15,30,45 21 * * 2"
+      timezone: "Asia/Tehran"
+    - cron: "0,15,30 22 * * 2"
+      timezone: "Asia/Tehran"
+
+    # Wednesday: market 13:00-15:00; cars 22:00-23:45
+    - cron: "0,15,30,45 13-14 * * 3"
+      timezone: "Asia/Tehran"
+    - cron: "0 15 * * 3"
+      timezone: "Asia/Tehran"
+
+    - cron: "0,15,30,45 22-23 * * 3"
+      timezone: "Asia/Tehran"
+
+    # Thursday: market 12:00-14:00; cars 14:00-16:00
+    # At +2h, previous-day source values may be used if current-day values are absent.
+    - cron: "0,15,30,45 12-13 * * 4"
+      timezone: "Asia/Tehran"
+    - cron: "0 14 * * 4"
+      timezone: "Asia/Tehran"
+
+    - cron: "0,15,30,45 14-15 * * 4"
+      timezone: "Asia/Tehran"
+    - cron: "0 16 * * 4"
+      timezone: "Asia/Tehran"
+
+    # Friday: market 11:30-13:30; cars 14:00-16:00
+    # At +2h, previous-day source values may be used if current-day values are absent.
+    - cron: "30,45 11 * * 5"
+      timezone: "Asia/Tehran"
+    - cron: "0,15,30,45 12 * * 5"
+      timezone: "Asia/Tehran"
+    - cron: "0,15,30 13 * * 5"
+      timezone: "Asia/Tehran"
+
+    - cron: "0,15,30,45 14-15 * * 5"
+      timezone: "Asia/Tehran"
+    - cron: "0 16 * * 5"
+      timezone: "Asia/Tehran"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: select-carr-stage4
+  cancel-in-progress: false
+
+jobs:
+  stage4:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    env:
+      BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
+      BUFFER_API_URL: https://api.buffer.com
+
+      ACCURATE_STATE_ENCRYPTION_KEY: >-
+        ${{ secrets.ACCURATE_STATE_ENCRYPTION_KEY }}
+
+      SELECT_CARR_DATA_SECRET: >-
+        ${{ secrets.SELECT_CARR_DATA_SECRET }}
+
+      SELECT_CARR_ENCRYPTED_DB: >-
+        private_data/select_carr_banks.sqlite3.enc
+
+      SELECT_CARR_MARKET_DB: >-
+        select_carr_market_runtime/select_carr_market.sqlite3
+
+      SELECT_CARR_SOURCE_CHANNEL_URL: >-
+        https://t.me/s/DO_L4
+
+      STAGE4_TEMPLATE_DIR: >-
+        assets/stage4_templates
+
+      STAGE4_OUTPUT_DIR: >-
+        stage4_runtime
+
+      STAGE4_FONT_REGULAR: >-
+        assets/fonts/Vazirmatn-Regular.ttf
+
+      STAGE4_FONT_BOLD: >-
+        assets/fonts/Vazirmatn-Bold.ttf
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Resolve Stage 4 action
+        id: resolve
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          EVENT_SCHEDULE: ${{ github.event.schedule }}
+          MANUAL_ACTION: ${{ github.event.inputs.action }}
+        run: |
+          set -euo pipefail
+
+          if [[ "${EVENT_NAME}" == "schedule" ]]; then
+            case "${EVENT_SCHEDULE}" in
+              "0,15,30,45 11-14 * * *"|"0,15,30,45 19-22 * * *")
+                action="publish_story_queue"
+                ;;
+
+              "30,45 13 * * 6"|"0,15,30,45 14 * * 6"|"0,15,30 15 * * 6"|\
+              "0,15,30,45 12-13 * * 0"|"0 14 * * 0"|\
+              "30,45 14 * * 1"|"0,15,30,45 15 * * 1"|"0,15,30 16 * * 1"|\
+              "30,45 13 * * 2"|"0,15,30,45 14 * * 2"|"0,15,30 15 * * 2"|\
+              "0,15,30,45 13-14 * * 3"|"0 15 * * 3"|\
+              "0,15,30,45 12-13 * * 4"|"0 14 * * 4"|\
+              "30,45 11 * * 5"|"0,15,30,45 12 * * 5"|"0,15,30 13 * * 5")
+                action="publish_market"
+                ;;
+
+              "30,45 21 * * 6"|"0,15,30,45 22 * * 6"|"0,15,30 23 * * 6"|\
+              "30,45 14 * * 0"|"0,15,30,45 15 * * 0"|"0,15,30 16 * * 0"|\
+              "30,45 22 * * 1"|"0,15,30,45 23 * * 1"|\
+              "30,45 20 * * 2"|"0,15,30,45 21 * * 2"|"0,15,30 22 * * 2"|\
+              "0,15,30,45 22-23 * * 3"|\
+              "0,15,30,45 14-15 * * 4"|"0 16 * * 4"|\
+              "0,15,30,45 14-15 * * 5"|"0 16 * * 5")
+                action="publish_cars"
+                ;;
+
+              *)
+                echo "Unknown schedule: ${EVENT_SCHEDULE}"
+                exit 1
+                ;;
+            esac
+          else
+            action="${MANUAL_ACTION:-check_buffer}"
+          fi
+
+          case "${action}" in
+            check_buffer|validate_templates|build|publish_opportunity|publish_story_queue|publish_market|publish_cars)
+              ;;
+            *)
+              echo "Unsupported Stage 4 action: ${action}"
+              exit 1
+              ;;
+          esac
+
+          case "${action}" in
+            publish_opportunity)
+              mode="opportunity"
+              ;;
+            publish_story_queue)
+              mode="story_queue"
+              ;;
+            publish_market)
+              mode="market"
+              ;;
+            publish_cars)
+              mode="cars"
+              ;;
+            build)
+              mode="all"
+              ;;
+            *)
+              mode="all"
+              ;;
+          esac
+
+          echo "action=${action}" >> "${GITHUB_OUTPUT}"
+          echo "mode=${mode}" >> "${GITHUB_OUTPUT}"
+          echo "Resolved action=${action} mode=${mode}"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          set -euo pipefail
+
+          sudo apt-get update
+
+          sudo apt-get install -y \
+            fonts-noto-core \
+            fonts-dejavu-core
+
+          python -m pip install \
+            --disable-pip-version-check \
+            cryptography \
+            pillow \
+            beautifulsoup4
+
+      - name: Compile Stage 4
+        run: |
+          set -euo pipefail
+          python -m py_compile select_carr_stage4.py
+
+      - name: Validate locked templates and Persian text engine
+        if: >-
+          steps.resolve.outputs.action != 'check_buffer'
+        run: |
+          set -euo pipefail
+          python select_carr_stage4.py validate_templates
+
+      - name: Restore Stage 4 publish memory
+        if: >-
+          startsWith(steps.resolve.outputs.action, 'publish_')
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mkdir -p stage4_runtime
+
+          git fetch origin \
+            select-carr-stage4-media:refs/remotes/origin/select-carr-stage4-media \
+            || true
+
+          if git show-ref \
+            --verify \
+            --quiet \
+            refs/remotes/origin/select-carr-stage4-media
+          then
+            git show \
+              origin/select-carr-stage4-media:stage4_publish_state.json \
+              > stage4_runtime/publish_state.json \
+              2>/dev/null \
+              || true
+          fi
+
+      - name: Restore Select Carr market state
+        if: >-
+          steps.resolve.outputs.action == 'build' ||
+          steps.resolve.outputs.action == 'publish_opportunity' ||
+          steps.resolve.outputs.action == 'publish_story_queue'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ -z "${ACCURATE_STATE_ENCRYPTION_KEY}" ]]; then
+            echo "ACCURATE_STATE_ENCRYPTION_KEY is missing."
+            exit 1
+          fi
+
+          rm -rf select_carr_market_runtime
+          mkdir -p select_carr_market_runtime
+
+          git fetch origin \
+            select-carr-market-state:refs/remotes/origin/select-carr-market-state
+
+          git show \
+            origin/select-carr-market-state:select-carr-market/runtime.tar.gz.enc \
+            > /tmp/select-carr-market-runtime.tar.gz.enc
+
+          openssl enc \
+            -d \
+            -aes-256-cbc \
+            -pbkdf2 \
+            -in /tmp/select-carr-market-runtime.tar.gz.enc \
+            -out /tmp/select-carr-market-runtime.tar.gz \
+            -pass env:ACCURATE_STATE_ENCRYPTION_KEY
+
+          tar -xzf \
+            /tmp/select-carr-market-runtime.tar.gz \
+            -C select_carr_market_runtime
+
+          test -f \
+            select_carr_market_runtime/select_carr_market.sqlite3
+
+      - name: Run Stage 4 Buffer check
+        if: >-
+          steps.resolve.outputs.action == 'check_buffer'
+        run: |
+          set -euo pipefail
+          python select_carr_stage4.py check_buffer
+
+      - name: Build Stage 4 media
+        if: >-
+          steps.resolve.outputs.action == 'build' ||
+          startsWith(steps.resolve.outputs.action, 'publish_')
+        shell: bash
+        env:
+          STAGE4_MODE: ${{ steps.resolve.outputs.mode }}
+        run: |
+          set -euo pipefail
+
+          python select_carr_stage4.py \
+            build \
+            --mode "${STAGE4_MODE}"
+
+      - name: Prepare generated media branch
+        id: media
+        if: >-
+          startsWith(steps.resolve.outputs.action, 'publish_')
+        shell: bash
+        env:
+          STAGE4_MODE: ${{ steps.resolve.outputs.mode }}
+        run: |
+          set -euo pipefail
+
+          shopt -s nullglob
+          media_files=(stage4_runtime/*.jpeg)
+
+          if (( ${#media_files[@]} == 0 )); then
+            echo "has_media=false" >> "${GITHUB_OUTPUT}"
+          else
+            echo "has_media=true" >> "${GITHUB_OUTPUT}"
+          fi
+
+          git config user.name "select-carr-bot"
+          git config user.email "actions@users.noreply.github.com"
+
+          rm -rf /tmp/select-carr-stage4-media
+
+          git fetch origin \
+            select-carr-stage4-media:refs/remotes/origin/select-carr-stage4-media \
+            || true
+
+          if git show-ref \
+            --verify \
+            --quiet \
+            refs/remotes/origin/select-carr-stage4-media
+          then
+            git worktree add \
+              -B select-carr-stage4-media \
+              /tmp/select-carr-stage4-media \
+              origin/select-carr-stage4-media
+          else
+            git worktree add \
+              --detach \
+              /tmp/select-carr-stage4-media \
+              HEAD
+
+            cd /tmp/select-carr-stage4-media
+
+            git switch --orphan \
+              select-carr-stage4-media
+
+            git rm \
+              -rf . \
+              || true
+
+            cd "${GITHUB_WORKSPACE}"
+          fi
+
+          if (( ${#media_files[@]} > 0 )); then
+            if [[ "${STAGE4_MODE}" == "cars" ]]; then
+              rm -f \
+                /tmp/select-carr-stage4-media/post_car_prices_*.jpeg
+            fi
+
+            cp \
+              "${media_files[@]}" \
+              /tmp/select-carr-stage4-media/
+          fi
+
+          if [[ -f stage4_runtime/manifest.json ]]; then
+            cp \
+              stage4_runtime/manifest.json \
+              /tmp/select-carr-stage4-media/manifest.json
+          fi
+
+          if [[ -f stage4_runtime/publish_state.json ]]; then
+            cp \
+              stage4_runtime/publish_state.json \
+              /tmp/select-carr-stage4-media/stage4_publish_state.json
+          fi
+
+          cd /tmp/select-carr-stage4-media
+
+          git add .
+
+          git commit \
+            -m "Update Select Carr Stage 4 media/state" \
+            || true
+
+          git push \
+            origin \
+            HEAD:select-carr-stage4-media
+
+      - name: Publish selected Stage 4 content
+        if: >-
+          startsWith(steps.resolve.outputs.action, 'publish_') &&
+          steps.media.outputs.has_media == 'true'
+        shell: bash
+        env:
+          STAGE4_MODE: ${{ steps.resolve.outputs.mode }}
+        run: |
+          set -euo pipefail
+
+          python select_carr_stage4.py \
+            publish \
+            --mode "${STAGE4_MODE}"
+
+      - name: Persist Stage 4 publish memory
+        if: >-
+          always() &&
+          startsWith(steps.resolve.outputs.action, 'publish_')
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ ! -f stage4_runtime/publish_state.json ]]; then
+            echo "No publish-state file to persist."
+            exit 0
+          fi
+
+          if [[ ! -e /tmp/select-carr-stage4-media/.git ]]; then
+            echo "Media worktree unavailable; state remains in workflow artifact."
+            exit 0
+          fi
+
+          cp \
+            stage4_runtime/publish_state.json \
+            /tmp/select-carr-stage4-media/stage4_publish_state.json
+
+          cd /tmp/select-carr-stage4-media
+
+          git config \
+            user.name \
+            "select-carr-bot"
+
+          git config \
+            user.email \
+            "actions@users.noreply.github.com"
+
+          git add \
+            stage4_publish_state.json
+
+          git commit \
+            -m "Update Select Carr Stage 4 publish state" \
+            || true
+
+          git push \
+            origin \
+            HEAD:select-carr-stage4-media
+
+      - name: Upload Stage 4 diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: select-carr-stage4-${{ github.run_id }}
+          path: |
+            stage4_runtime/
+          if-no-files-found: ignore
