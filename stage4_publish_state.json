@@ -168,19 +168,31 @@
       "content_key": "opportunity:r7:3f626603b1afceab01ea2d847306957e622c695cd6233f2576610b56b9087369",
       "post_id": "6ac2a51563761da98b596660",
       "published_at": "2026-10-04T19:12:27.907436+00:00"
+    },
+    "select_carr|opportunity:r8:de6129b9d0dba95e8c5a56b294b232df5dc2315a5da332f46da99440d6c48fcb": {
+      "channel": "select_carr",
+      "content_key": "opportunity:r8:de6129b9d0dba95e8c5a56b294b232df5dc2315a5da332f46da99440d6c48fcb",
+      "post_id": "6ac3cba1802ad37fad8c2900",
+      "published_at": "2026-10-05T16:09:15.881735+00:00"
+    },
+    "select_carrr|opportunity:r8:de6129b9d0dba95e8c5a56b294b232df5dc2315a5da332f46da99440d6c48fcb": {
+      "channel": "select_carrr",
+      "content_key": "opportunity:r8:de6129b9d0dba95e8c5a56b294b232df5dc2315a5da332f46da99440d6c48fcb",
+      "post_id": "6ac3cbacda066553d756495c",
+      "published_at": "2026-10-05T16:09:26.330090+00:00"
     }
   },
   "story_cursors": {
     "opportunity": {
-      "at": "2026-10-02T18:12:03.019386+00:00",
-      "key": "3f626603b1afceab01ea2d847306957e622c695cd6233f2576610b56b9087369"
+      "at": "2026-10-03T05:40:34.575009+00:00",
+      "key": "de6129b9d0dba95e8c5a56b294b232df5dc2315a5da332f46da99440d6c48fcb"
     },
     "buy_request": {
       "at": "2026-10-02T17:51:54.713196+00:00",
       "key": "BUY-1790939486301-n40tfe"
     }
   },
-  "story_last_published_at": "2026-10-04T19:12:27.907886+00:00",
+  "story_last_published_at": "2026-10-05T16:09:26.330806+00:00",
   "story_queue_initialized": true,
   "story_queue_initialized_at": "2026-10-01T11:06:51.865589+00:00"
 }
