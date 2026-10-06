@@ -180,6 +180,18 @@
       "content_key": "opportunity:r8:de6129b9d0dba95e8c5a56b294b232df5dc2315a5da332f46da99440d6c48fcb",
       "post_id": "6ac3cbacda066553d756495c",
       "published_at": "2026-10-05T16:09:26.330090+00:00"
+    },
+    "select_carr|market:2026-10-06": {
+      "channel": "select_carr",
+      "content_key": "market:2026-10-06",
+      "post_id": "6ac4e9dd3f0fa5ef5c7bf474",
+      "published_at": "2026-10-06T12:30:31.880028+00:00"
+    },
+    "select_carrr|market:2026-10-06": {
+      "channel": "select_carrr",
+      "content_key": "market:2026-10-06",
+      "post_id": "6ac4e9e8601f82eda02c26e8",
+      "published_at": "2026-10-06T12:30:42.237013+00:00"
     }
   },
   "story_cursors": {
