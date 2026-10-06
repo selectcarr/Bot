@@ -196,15 +196,16 @@
   },
   "story_cursors": {
     "opportunity": {
-      "at": "2026-10-03T05:40:34.575009+00:00",
-      "key": "de6129b9d0dba95e8c5a56b294b232df5dc2315a5da332f46da99440d6c48fcb"
+      "at": "2026-09-29T12:35:20.222647+00:00",
+      "key": ""
     },
     "buy_request": {
-      "at": "2026-10-02T17:51:54.713196+00:00",
-      "key": "BUY-1790939486301-n40tfe"
+      "at": "2026-09-29T12:35:20.222647+00:00",
+      "key": ""
     }
   },
   "story_last_published_at": "2026-10-05T16:09:26.330806+00:00",
   "story_queue_initialized": true,
-  "story_queue_initialized_at": "2026-10-01T11:06:51.865589+00:00"
+  "story_queue_initialized_at": "2026-10-06T12:35:20.222663+00:00",
+  "story_queue_policy_version": 2
 }
