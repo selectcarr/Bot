@@ -1,22 +1,40 @@
 {
   "version": "2.8.2",
   "render_revision": "r9",
-  "generated_at": "2026-10-06T21:14:01.077395+00:00",
-  "mode": "market",
+  "generated_at": "2026-10-07T17:49:42.686197+00:00",
+  "mode": "cars",
   "stories": [],
-  "market_post": {
-    "key": "market:2026-10-07",
-    "path": "stage4_runtime/post_market.jpeg",
-    "source_post_id": "52448",
-    "source_published_at": "2026-10-06T20:28:47+00:00",
-    "source_tehran_date": "2026-10-06",
-    "fallback_previous_day": true
-  },
-  "car_price_key": null,
-  "car_price_slides": [],
+  "market_post": null,
+  "car_price_key": "cars:2026-10-07",
+  "car_price_slides": [
+    {
+      "key": "cars:2026-10-07:01",
+      "path": "stage4_runtime/post_car_prices_01.jpeg"
+    },
+    {
+      "key": "cars:2026-10-07:02",
+      "path": "stage4_runtime/post_car_prices_02.jpeg"
+    },
+    {
+      "key": "cars:2026-10-07:03",
+      "path": "stage4_runtime/post_car_prices_03.jpeg"
+    },
+    {
+      "key": "cars:2026-10-07:04",
+      "path": "stage4_runtime/post_car_prices_04.jpeg"
+    },
+    {
+      "key": "cars:2026-10-07:05",
+      "path": "stage4_runtime/post_car_prices_05.jpeg"
+    }
+  ],
   "buy_request_story": {
     "enabled": true,
     "source": "sc_intake_submissions"
   },
-  "source_posts_scanned": 235
+  "source_posts_scanned": 235,
+  "car_source_post_id": "52470",
+  "car_source_published_at": "2026-10-07T12:21:37+00:00",
+  "car_source_tehran_date": "2026-10-07",
+  "car_fallback_previous_day": false
 }
