@@ -1,9 +1,58 @@
 {
   "version": "2.9.0",
   "render_revision": "r9",
-  "generated_at": "2026-10-09T09:31:45.244060+00:00",
-  "mode": "cars",
-  "stories": [],
+  "generated_at": "2026-10-09T09:34:16.380990+00:00",
+  "mode": "story_queue",
+  "stories": [
+    {
+      "kind": "opportunity",
+      "entity_id": "5fc481e56144a172cd32d03d971ee1a6a96f7e2cfc333751c10fcc44b035ac90",
+      "key": "opportunity:r9:5fc481e56144a172cd32d03d971ee1a6a96f7e2cfc333751c10fcc44b035ac90",
+      "path": "stage4_runtime/story_01_opportunity_7b953c08ac.jpeg"
+    },
+    {
+      "kind": "opportunity",
+      "entity_id": "c51c0c8ab1362e8a657473b569720fc288c6708b8153546ed8ff97d732492d9b",
+      "key": "opportunity:r9:c51c0c8ab1362e8a657473b569720fc288c6708b8153546ed8ff97d732492d9b",
+      "path": "stage4_runtime/story_02_opportunity_0d48efb98b.jpeg"
+    },
+    {
+      "kind": "buy_request",
+      "entity_id": "BUY-1791231317722-8el0p9",
+      "key": "buy_request:r3:BUY-1791231317722-8el0p9",
+      "path": "stage4_runtime/story_03_buy_request_d9a6734a2a.jpeg"
+    },
+    {
+      "kind": "opportunity",
+      "entity_id": "3846a04ca4c1c1f3d335e9bd85f891dcb2a35b114d7fd90badcccfe5ba260ca3",
+      "key": "opportunity:r9:3846a04ca4c1c1f3d335e9bd85f891dcb2a35b114d7fd90badcccfe5ba260ca3",
+      "path": "stage4_runtime/story_04_opportunity_e51085736c.jpeg"
+    },
+    {
+      "kind": "opportunity",
+      "entity_id": "2bbca6b91c8d3d03399da61a8a6b4fda9087362740a3a6adc440c6b15b6f5333",
+      "key": "opportunity:r9:2bbca6b91c8d3d03399da61a8a6b4fda9087362740a3a6adc440c6b15b6f5333",
+      "path": "stage4_runtime/story_05_opportunity_15c0eeb558.jpeg"
+    },
+    {
+      "kind": "opportunity",
+      "entity_id": "d6ad33082b85fb5fee2570d32bfb7164199a8cfc10fa47abc5fe1bd3c68f56b5",
+      "key": "opportunity:r9:d6ad33082b85fb5fee2570d32bfb7164199a8cfc10fa47abc5fe1bd3c68f56b5",
+      "path": "stage4_runtime/story_06_opportunity_253fa2581d.jpeg"
+    },
+    {
+      "kind": "buy_request",
+      "entity_id": "BUY-1791401926824-n271p6",
+      "key": "buy_request:r3:BUY-1791401926824-n271p6",
+      "path": "stage4_runtime/story_07_buy_request_225884980b.jpeg"
+    },
+    {
+      "kind": "opportunity",
+      "entity_id": "6e6564b662047826578166aeb418a75a79d112cfe386b0e9bbf02685a7f1658f",
+      "key": "opportunity:r9:6e6564b662047826578166aeb418a75a79d112cfe386b0e9bbf02685a7f1658f",
+      "path": "stage4_runtime/story_08_opportunity_71c977816f.jpeg"
+    }
+  ],
   "market_post": null,
   "car_price_key": null,
   "car_price_slides": [],
@@ -11,27 +60,13 @@
     "enabled": true,
     "source": "sc_intake_submissions"
   },
-  "source_posts_scanned": 239,
-  "car_candidate_posts": 3,
-  "car_candidates_recent": [
-    {
-      "post_id": "52565",
-      "published_at": "2026-10-08T10:21:35+00:00",
-      "tehran_date": "2026-10-08",
-      "rows": 71
-    },
-    {
-      "post_id": "52470",
-      "published_at": "2026-10-07T12:21:37+00:00",
-      "tehran_date": "2026-10-07",
-      "rows": 71
-    },
-    {
-      "post_id": "52420",
-      "published_at": "2026-10-06T10:29:49+00:00",
-      "tehran_date": "2026-10-06",
-      "rows": 70
-    }
-  ],
-  "car_max_rows_detected": 71
+  "buyer_seen": 4,
+  "buyer_valid": 2,
+  "buyer_rejected": 2,
+  "buyer_rejection_reasons": {
+    "already_published": 2
+  },
+  "opportunity_pending": 6,
+  "story_queue_status": "story_batch_ready",
+  "story_batch_size": 8
 }
