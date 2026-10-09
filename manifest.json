@@ -1,8 +1,8 @@
 {
   "version": "2.9.0",
   "render_revision": "r9",
-  "generated_at": "2026-10-09T10:57:46.619577+00:00",
-  "mode": "cars",
+  "generated_at": "2026-10-09T10:58:32.718118+00:00",
+  "mode": "story_queue",
   "stories": [],
   "market_post": null,
   "car_price_key": null,
@@ -11,27 +11,12 @@
     "enabled": true,
     "source": "sc_intake_submissions"
   },
-  "source_posts_scanned": 240,
-  "car_candidate_posts": 3,
-  "car_candidates_recent": [
-    {
-      "post_id": "52565",
-      "published_at": "2026-10-08T10:21:35+00:00",
-      "tehran_date": "2026-10-08",
-      "rows": 71
-    },
-    {
-      "post_id": "52470",
-      "published_at": "2026-10-07T12:21:37+00:00",
-      "tehran_date": "2026-10-07",
-      "rows": 71
-    },
-    {
-      "post_id": "52420",
-      "published_at": "2026-10-06T10:29:49+00:00",
-      "tehran_date": "2026-10-06",
-      "rows": 70
-    }
-  ],
-  "car_max_rows_detected": 71
+  "buyer_seen": 4,
+  "buyer_valid": 0,
+  "buyer_rejected": 4,
+  "buyer_rejection_reasons": {
+    "already_published": 4
+  },
+  "opportunity_pending": 0,
+  "story_queue_status": "no_new_story"
 }
