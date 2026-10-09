@@ -1,16 +1,9 @@
 {
   "version": "2.9.0",
   "render_revision": "r9",
-  "generated_at": "2026-10-09T10:57:24.036182+00:00",
-  "mode": "story_queue",
-  "stories": [
-    {
-      "kind": "opportunity",
-      "entity_id": "8a38ed5ef7d14b140964b42a7d5a4402f5132d9eb88163c62831b25b95c6e92d",
-      "key": "opportunity:r9:8a38ed5ef7d14b140964b42a7d5a4402f5132d9eb88163c62831b25b95c6e92d",
-      "path": "stage4_runtime/story_01_opportunity_d86bf9f5e4.jpeg"
-    }
-  ],
+  "generated_at": "2026-10-09T10:57:46.619577+00:00",
+  "mode": "cars",
+  "stories": [],
   "market_post": null,
   "car_price_key": null,
   "car_price_slides": [],
@@ -18,13 +11,27 @@
     "enabled": true,
     "source": "sc_intake_submissions"
   },
-  "buyer_seen": 4,
-  "buyer_valid": 0,
-  "buyer_rejected": 4,
-  "buyer_rejection_reasons": {
-    "already_published": 4
-  },
-  "opportunity_pending": 1,
-  "story_queue_status": "story_batch_ready",
-  "story_batch_size": 1
+  "source_posts_scanned": 240,
+  "car_candidate_posts": 3,
+  "car_candidates_recent": [
+    {
+      "post_id": "52565",
+      "published_at": "2026-10-08T10:21:35+00:00",
+      "tehran_date": "2026-10-08",
+      "rows": 71
+    },
+    {
+      "post_id": "52470",
+      "published_at": "2026-10-07T12:21:37+00:00",
+      "tehran_date": "2026-10-07",
+      "rows": 71
+    },
+    {
+      "post_id": "52420",
+      "published_at": "2026-10-06T10:29:49+00:00",
+      "tehran_date": "2026-10-06",
+      "rows": 70
+    }
+  ],
+  "car_max_rows_detected": 71
 }
