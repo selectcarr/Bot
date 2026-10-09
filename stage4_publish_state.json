@@ -276,6 +276,102 @@
       "content_key": "opportunity:r9:cbd50ab3c17374e6ec3f431bb329ae0a909ad1e9cf0c6c3126d6123ac0ec28cd",
       "post_id": "6ac76fb54c3e0e67bbd9b7cf",
       "published_at": "2026-10-08T10:26:05.065179+00:00"
+    },
+    "select_carr|opportunity:r9:5fc481e56144a172cd32d03d971ee1a6a96f7e2cfc333751c10fcc44b035ac90": {
+      "channel": "select_carr",
+      "content_key": "opportunity:r9:5fc481e56144a172cd32d03d971ee1a6a96f7e2cfc333751c10fcc44b035ac90",
+      "post_id": "6ac8b51c1830eefbfde0fac7",
+      "published_at": "2026-10-09T09:34:30.090735+00:00"
+    },
+    "select_carrr|opportunity:r9:5fc481e56144a172cd32d03d971ee1a6a96f7e2cfc333751c10fcc44b035ac90": {
+      "channel": "select_carrr",
+      "content_key": "opportunity:r9:5fc481e56144a172cd32d03d971ee1a6a96f7e2cfc333751c10fcc44b035ac90",
+      "post_id": "6ac8b52623bf44c86c2098c4",
+      "published_at": "2026-10-09T09:34:38.638837+00:00"
+    },
+    "select_carr|opportunity:r9:c51c0c8ab1362e8a657473b569720fc288c6708b8153546ed8ff97d732492d9b": {
+      "channel": "select_carr",
+      "content_key": "opportunity:r9:c51c0c8ab1362e8a657473b569720fc288c6708b8153546ed8ff97d732492d9b",
+      "post_id": "6ac8b53523bf44c86c209a9c",
+      "published_at": "2026-10-09T09:34:53.419945+00:00"
+    },
+    "select_carrr|opportunity:r9:c51c0c8ab1362e8a657473b569720fc288c6708b8153546ed8ff97d732492d9b": {
+      "channel": "select_carrr",
+      "content_key": "opportunity:r9:c51c0c8ab1362e8a657473b569720fc288c6708b8153546ed8ff97d732492d9b",
+      "post_id": "6ac8b53dbce38c992a413af4",
+      "published_at": "2026-10-09T09:34:59.709519+00:00"
+    },
+    "select_carr|buy_request:r3:BUY-1791231317722-8el0p9": {
+      "channel": "select_carr",
+      "content_key": "buy_request:r3:BUY-1791231317722-8el0p9",
+      "post_id": "6ac8b54ad80f9abbdd0c4f09",
+      "published_at": "2026-10-09T09:35:13.466431+00:00"
+    },
+    "select_carrr|buy_request:r3:BUY-1791231317722-8el0p9": {
+      "channel": "select_carrr",
+      "content_key": "buy_request:r3:BUY-1791231317722-8el0p9",
+      "post_id": "6ac8b5511665a1309c199e03",
+      "published_at": "2026-10-09T09:35:20.840045+00:00"
+    },
+    "select_carr|opportunity:r9:3846a04ca4c1c1f3d335e9bd85f891dcb2a35b114d7fd90badcccfe5ba260ca3": {
+      "channel": "select_carr",
+      "content_key": "opportunity:r9:3846a04ca4c1c1f3d335e9bd85f891dcb2a35b114d7fd90badcccfe5ba260ca3",
+      "post_id": "6ac8b55fbce38c992a41426e",
+      "published_at": "2026-10-09T09:35:34.350695+00:00"
+    },
+    "select_carrr|opportunity:r9:3846a04ca4c1c1f3d335e9bd85f891dcb2a35b114d7fd90badcccfe5ba260ca3": {
+      "channel": "select_carrr",
+      "content_key": "opportunity:r9:3846a04ca4c1c1f3d335e9bd85f891dcb2a35b114d7fd90badcccfe5ba260ca3",
+      "post_id": "6ac8b566d0fcedde87700995",
+      "published_at": "2026-10-09T09:35:42.717833+00:00"
+    },
+    "select_carr|opportunity:r9:2bbca6b91c8d3d03399da61a8a6b4fda9087362740a3a6adc440c6b15b6f5333": {
+      "channel": "select_carr",
+      "content_key": "opportunity:r9:2bbca6b91c8d3d03399da61a8a6b4fda9087362740a3a6adc440c6b15b6f5333",
+      "post_id": "6ac8b575d80f9abbdd0c54b9",
+      "published_at": "2026-10-09T09:35:57.743634+00:00"
+    },
+    "select_carrr|opportunity:r9:2bbca6b91c8d3d03399da61a8a6b4fda9087362740a3a6adc440c6b15b6f5333": {
+      "channel": "select_carrr",
+      "content_key": "opportunity:r9:2bbca6b91c8d3d03399da61a8a6b4fda9087362740a3a6adc440c6b15b6f5333",
+      "post_id": "6ac8b57d1830eefbfde10bea",
+      "published_at": "2026-10-09T09:36:06.142375+00:00"
+    },
+    "select_carr|opportunity:r9:d6ad33082b85fb5fee2570d32bfb7164199a8cfc10fa47abc5fe1bd3c68f56b5": {
+      "channel": "select_carr",
+      "content_key": "opportunity:r9:d6ad33082b85fb5fee2570d32bfb7164199a8cfc10fa47abc5fe1bd3c68f56b5",
+      "post_id": "6ac8b58c1830eefbfde10d84",
+      "published_at": "2026-10-09T09:36:18.813609+00:00"
+    },
+    "select_carrr|opportunity:r9:d6ad33082b85fb5fee2570d32bfb7164199a8cfc10fa47abc5fe1bd3c68f56b5": {
+      "channel": "select_carrr",
+      "content_key": "opportunity:r9:d6ad33082b85fb5fee2570d32bfb7164199a8cfc10fa47abc5fe1bd3c68f56b5",
+      "post_id": "6ac8b592d0fcedde877010e5",
+      "published_at": "2026-10-09T09:36:28.170019+00:00"
+    },
+    "select_carr|buy_request:r3:BUY-1791401926824-n271p6": {
+      "channel": "select_carr",
+      "content_key": "buy_request:r3:BUY-1791401926824-n271p6",
+      "post_id": "6ac8b5a223bf44c86c20a7df",
+      "published_at": "2026-10-09T09:36:41.834736+00:00"
+    },
+    "select_carrr|buy_request:r3:BUY-1791401926824-n271p6": {
+      "channel": "select_carrr",
+      "content_key": "buy_request:r3:BUY-1791401926824-n271p6",
+      "post_id": "6ac8b5aad0fcedde87701347",
+      "published_at": "2026-10-09T09:36:50.187934+00:00"
+    },
+    "select_carr|opportunity:r9:6e6564b662047826578166aeb418a75a79d112cfe386b0e9bbf02685a7f1658f": {
+      "channel": "select_carr",
+      "content_key": "opportunity:r9:6e6564b662047826578166aeb418a75a79d112cfe386b0e9bbf02685a7f1658f",
+      "post_id": "6ac8b5b823bf44c86c20a996",
+      "published_at": "2026-10-09T09:37:06.873754+00:00"
+    },
+    "select_carrr|opportunity:r9:6e6564b662047826578166aeb418a75a79d112cfe386b0e9bbf02685a7f1658f": {
+      "channel": "select_carrr",
+      "content_key": "opportunity:r9:6e6564b662047826578166aeb418a75a79d112cfe386b0e9bbf02685a7f1658f",
+      "post_id": "6ac8b5c3d0fcedde87701509",
+      "published_at": "2026-10-09T09:37:13.225195+00:00"
     }
   },
   "story_cursors": {
@@ -288,7 +384,7 @@
       "key": ""
     }
   },
-  "story_last_published_at": "2026-10-08T10:26:05.065740+00:00",
+  "story_last_published_at": "2026-10-09T09:37:13.226290+00:00",
   "story_queue_initialized": true,
   "story_queue_initialized_at": "2026-10-06T12:35:20.222663+00:00",
   "story_queue_policy_version": 2
