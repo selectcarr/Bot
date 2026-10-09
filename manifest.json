@@ -1,22 +1,37 @@
 {
   "version": "2.9.0",
   "render_revision": "r9",
-  "generated_at": "2026-10-09T10:30:19.874628+00:00",
-  "mode": "market",
+  "generated_at": "2026-10-09T10:30:58.143234+00:00",
+  "mode": "cars",
   "stories": [],
-  "market_post": {
-    "key": "market:2026-10-09",
-    "path": "stage4_runtime/post_market.jpeg",
-    "source_post_id": "52618",
-    "source_published_at": "2026-10-09T09:42:47+00:00",
-    "source_tehran_date": "2026-10-09",
-    "fallback_previous_day": false
-  },
+  "market_post": null,
   "car_price_key": null,
   "car_price_slides": [],
   "buy_request_story": {
     "enabled": true,
     "source": "sc_intake_submissions"
   },
-  "source_posts_scanned": 240
+  "source_posts_scanned": 240,
+  "car_candidate_posts": 3,
+  "car_candidates_recent": [
+    {
+      "post_id": "52565",
+      "published_at": "2026-10-08T10:21:35+00:00",
+      "tehran_date": "2026-10-08",
+      "rows": 71
+    },
+    {
+      "post_id": "52470",
+      "published_at": "2026-10-07T12:21:37+00:00",
+      "tehran_date": "2026-10-07",
+      "rows": 71
+    },
+    {
+      "post_id": "52420",
+      "published_at": "2026-10-06T10:29:49+00:00",
+      "tehran_date": "2026-10-06",
+      "rows": 70
+    }
+  ],
+  "car_max_rows_detected": 71
 }
