@@ -888,6 +888,32 @@
           "media_group_id": "1684470829790395408"
         }
       ]
+    },
+    "bale|buy_request:r3:BUY-1791650531094-pkm0ky": {
+      "result": {
+        "message_id": 77,
+        "from": {
+          "id": 1342369143,
+          "is_bot": true,
+          "first_name": "",
+          "last_name": ""
+        },
+        "date": 1791654216,
+        "chat": {
+          "id": 4718241208,
+          "type": "group"
+        },
+        "photo": [
+          {
+            "file_id": "423273912:6549793002406289152:1:e824f59e464252b25156d1baa3da4338fa83b0224d2d05c0de0f8aa530b1a20c774c770bd4b5d8c0",
+            "file_unique_id": "423273912:6549793002406289152:1:e824f59e464252b25156d1baa3da4338fa83b0224d2d05c0de0f8aa530b1a20c774c770bd4b5d8c0",
+            "width": 869,
+            "height": 1476,
+            "file_size": 576488
+          }
+        ],
+        "caption": "درخواست خرید خودرو\n\nبرای دریافت\n✅بهترین فرصت های خرید و فروش خودروی خودتان\n✅و قیمت روز خودروها\n✅و قیمت طلا و دلار ،\nحتما با ما همراه باشد .\n@select_carr\n@select_carrr"
+      }
     }
   }
 }
