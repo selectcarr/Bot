@@ -1,62 +1,22 @@
 {
   "version": "2.9.1",
   "render_revision": "r9",
-  "generated_at": "2026-10-10T18:50:56.307033+00:00",
-  "mode": "cars",
+  "generated_at": "2026-10-11T11:36:56.707573+00:00",
+  "mode": "market",
   "stories": [],
-  "market_post": null,
-  "car_price_key": "cars:2026-10-10",
-  "car_price_slides": [
-    {
-      "key": "cars:2026-10-10:01",
-      "path": "stage4_runtime/post_car_prices_01.jpeg"
-    },
-    {
-      "key": "cars:2026-10-10:02",
-      "path": "stage4_runtime/post_car_prices_02.jpeg"
-    },
-    {
-      "key": "cars:2026-10-10:03",
-      "path": "stage4_runtime/post_car_prices_03.jpeg"
-    },
-    {
-      "key": "cars:2026-10-10:04",
-      "path": "stage4_runtime/post_car_prices_04.jpeg"
-    },
-    {
-      "key": "cars:2026-10-10:05",
-      "path": "stage4_runtime/post_car_prices_05.jpeg"
-    }
-  ],
+  "market_post": {
+    "key": "market:2026-10-11",
+    "path": "stage4_runtime/post_market.jpeg",
+    "source_post_id": "52743",
+    "source_published_at": "2026-10-11T09:35:01+00:00",
+    "source_tehran_date": "2026-10-11",
+    "fallback_previous_day": false
+  },
+  "car_price_key": null,
+  "car_price_slides": [],
   "buy_request_story": {
     "enabled": true,
     "source": "sc_intake_submissions"
   },
-  "source_posts_scanned": 237,
-  "car_candidate_posts": 3,
-  "car_candidates_recent": [
-    {
-      "post_id": "52660",
-      "published_at": "2026-10-10T10:11:50+00:00",
-      "tehran_date": "2026-10-10",
-      "rows": 72
-    },
-    {
-      "post_id": "52565",
-      "published_at": "2026-10-08T10:21:35+00:00",
-      "tehran_date": "2026-10-08",
-      "rows": 71
-    },
-    {
-      "post_id": "52470",
-      "published_at": "2026-10-07T12:21:37+00:00",
-      "tehran_date": "2026-10-07",
-      "rows": 71
-    }
-  ],
-  "car_max_rows_detected": 72,
-  "car_source_post_id": "52660",
-  "car_source_published_at": "2026-10-10T10:11:50+00:00",
-  "car_source_tehran_date": "2026-10-10",
-  "car_fallback_previous_day": false
+  "source_posts_scanned": 237
 }
