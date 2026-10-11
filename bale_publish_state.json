@@ -1024,6 +1024,90 @@
         ],
         "caption": "قیمت طلا، دلار، سکه و اونس\n\nبرای دریافت\n✅بهترین فرصت های خرید و فروش خودروی خودتان\n✅و قیمت روز خودروها\n✅و قیمت طلا و دلار ،\nحتما با ما همراه باشد .\n@select_carr\n@select_carrr"
       }
+    },
+    "bale|cars:2026-10-11": {
+      "result": [
+        {
+          "message_id": 90,
+          "from": {
+            "id": 1342369143,
+            "is_bot": true,
+            "first_name": "",
+            "last_name": ""
+          },
+          "date": 1791744371,
+          "chat": {
+            "id": 0,
+            "type": "group",
+            "photo": null
+          },
+          "media_group_id": "6787010936289184685"
+        },
+        {
+          "message_id": 95,
+          "from": {
+            "id": 1342369143,
+            "is_bot": true,
+            "first_name": "",
+            "last_name": ""
+          },
+          "date": 1791744371,
+          "chat": {
+            "id": 0,
+            "type": "group",
+            "photo": null
+          },
+          "media_group_id": "6787010936289184685"
+        },
+        {
+          "message_id": 96,
+          "from": {
+            "id": 1342369143,
+            "is_bot": true,
+            "first_name": "",
+            "last_name": ""
+          },
+          "date": 1791744371,
+          "chat": {
+            "id": 0,
+            "type": "group",
+            "photo": null
+          },
+          "media_group_id": "6787010936289184685"
+        },
+        {
+          "message_id": 97,
+          "from": {
+            "id": 1342369143,
+            "is_bot": true,
+            "first_name": "",
+            "last_name": ""
+          },
+          "date": 1791744371,
+          "chat": {
+            "id": 0,
+            "type": "group",
+            "photo": null
+          },
+          "media_group_id": "6787010936289184685"
+        },
+        {
+          "message_id": 99,
+          "from": {
+            "id": 1342369143,
+            "is_bot": true,
+            "first_name": "",
+            "last_name": ""
+          },
+          "date": 1791744371,
+          "chat": {
+            "id": 0,
+            "type": "group",
+            "photo": null
+          },
+          "media_group_id": "6787010936289184685"
+        }
+      ]
     }
   }
 }
