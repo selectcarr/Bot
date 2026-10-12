@@ -1,62 +1,30 @@
 {
   "version": "2.9.1",
   "render_revision": "r9",
-  "generated_at": "2026-10-11T18:44:46.116207+00:00",
-  "mode": "cars",
-  "stories": [],
-  "market_post": null,
-  "car_price_key": "cars:2026-10-11",
-  "car_price_slides": [
+  "generated_at": "2026-10-12T08:04:39.745097+00:00",
+  "mode": "story_queue",
+  "stories": [
     {
-      "key": "cars:2026-10-11:01",
-      "path": "stage4_runtime/post_car_prices_01.jpeg"
-    },
-    {
-      "key": "cars:2026-10-11:02",
-      "path": "stage4_runtime/post_car_prices_02.jpeg"
-    },
-    {
-      "key": "cars:2026-10-11:03",
-      "path": "stage4_runtime/post_car_prices_03.jpeg"
-    },
-    {
-      "key": "cars:2026-10-11:04",
-      "path": "stage4_runtime/post_car_prices_04.jpeg"
-    },
-    {
-      "key": "cars:2026-10-11:05",
-      "path": "stage4_runtime/post_car_prices_05.jpeg"
+      "kind": "opportunity",
+      "entity_id": "ace962595a43840dac460ca4d49954fabee774e1f7b48c809209504fc4cf80d4",
+      "key": "opportunity:r9:ace962595a43840dac460ca4d49954fabee774e1f7b48c809209504fc4cf80d4",
+      "path": "stage4_runtime/story_01_opportunity_02f6e99e11.jpeg"
     }
   ],
+  "market_post": null,
+  "car_price_key": null,
+  "car_price_slides": [],
   "buy_request_story": {
     "enabled": true,
     "source": "sc_intake_submissions"
   },
-  "source_posts_scanned": 236,
-  "car_candidate_posts": 3,
-  "car_candidates_recent": [
-    {
-      "post_id": "52747",
-      "published_at": "2026-10-11T10:21:16+00:00",
-      "tehran_date": "2026-10-11",
-      "rows": 74
-    },
-    {
-      "post_id": "52660",
-      "published_at": "2026-10-10T10:11:50+00:00",
-      "tehran_date": "2026-10-10",
-      "rows": 72
-    },
-    {
-      "post_id": "52565",
-      "published_at": "2026-10-08T10:21:35+00:00",
-      "tehran_date": "2026-10-08",
-      "rows": 71
-    }
-  ],
-  "car_max_rows_detected": 74,
-  "car_source_post_id": "52747",
-  "car_source_published_at": "2026-10-11T10:21:16+00:00",
-  "car_source_tehran_date": "2026-10-11",
-  "car_fallback_previous_day": false
+  "buyer_seen": 3,
+  "buyer_valid": 0,
+  "buyer_rejected": 3,
+  "buyer_rejection_reasons": {
+    "already_published": 3
+  },
+  "opportunity_pending": 3,
+  "story_queue_status": "story_batch_ready",
+  "story_batch_size": 1
 }
