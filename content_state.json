@@ -8,9 +8,17 @@
       "message_ids": [
         16
       ]
+    },
+    "2026-10-13:reel": {
+      "sent_at": "2026-10-13T13:45:13.732859+03:30",
+      "kind": "reel",
+      "family": "mileage_myth",
+      "message_ids": [
+        17
+      ]
     }
   },
-  "last_reel_family": "",
+  "last_reel_family": "mileage_myth",
   "last_post_family": "deal",
   "instagram_notification_initialized": true,
   "instagram_notified_tokens": {
