@@ -1,8 +1,17 @@
 {
   "version": 1,
-  "sent": {},
+  "sent": {
+    "2026-10-13:post": {
+      "sent_at": "2026-10-13T13:12:19.439617+03:30",
+      "kind": "post",
+      "family": "deal",
+      "message_ids": [
+        16
+      ]
+    }
+  },
   "last_reel_family": "",
-  "last_post_family": "",
+  "last_post_family": "deal",
   "instagram_notification_initialized": true,
   "instagram_notified_tokens": {
     "select_carr|opportunity:4ec42efb5bc38d0c9a10c504312182c620f4b2a1c030b4b0b7d2d30028998afb": {
