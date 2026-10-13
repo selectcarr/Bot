@@ -431,6 +431,70 @@
       "status": "bootstrap_seen",
       "published_at": "2026-10-11T18:45:25.715350+00:00",
       "content_key": "cars:2026-10-11"
+    },
+    "select_carr|opportunity:r9:ace962595a43840dac460ca4d49954fabee774e1f7b48c809209504fc4cf80d4": {
+      "status": "notified",
+      "notified_at": "2026-10-13T13:55:52.581546+03:30",
+      "published_at": "2026-10-12T08:04:49.099512+00:00",
+      "content_key": "opportunity:r9:ace962595a43840dac460ca4d49954fabee774e1f7b48c809209504fc4cf80d4",
+      "channel": "select_carr",
+      "message_id": 18
+    },
+    "select_carrr|opportunity:r9:ace962595a43840dac460ca4d49954fabee774e1f7b48c809209504fc4cf80d4": {
+      "status": "notified",
+      "notified_at": "2026-10-13T13:55:52.581566+03:30",
+      "published_at": "2026-10-12T08:04:55.439205+00:00",
+      "content_key": "opportunity:r9:ace962595a43840dac460ca4d49954fabee774e1f7b48c809209504fc4cf80d4",
+      "channel": "select_carrr",
+      "message_id": 18
+    },
+    "select_carr|market:2026-10-12": {
+      "status": "notified",
+      "notified_at": "2026-10-13T13:55:53.023413+03:30",
+      "published_at": "2026-10-12T10:59:52.644279+00:00",
+      "content_key": "market:2026-10-12",
+      "channel": "select_carr",
+      "message_id": 19
+    },
+    "select_carrr|market:2026-10-12": {
+      "status": "notified",
+      "notified_at": "2026-10-13T13:55:53.023433+03:30",
+      "published_at": "2026-10-12T11:00:01.090702+00:00",
+      "content_key": "market:2026-10-12",
+      "channel": "select_carrr",
+      "message_id": 19
+    },
+    "select_carr|opportunity:r9:1c8adce37847cca5744e1f8ce83b3146ffe55365622376497d6e4bf8142f9ac9": {
+      "status": "notified",
+      "notified_at": "2026-10-13T13:55:53.501545+03:30",
+      "published_at": "2026-10-12T11:15:28.353697+00:00",
+      "content_key": "opportunity:r9:1c8adce37847cca5744e1f8ce83b3146ffe55365622376497d6e4bf8142f9ac9",
+      "channel": "select_carr",
+      "message_id": 20
+    },
+    "select_carrr|opportunity:r9:1c8adce37847cca5744e1f8ce83b3146ffe55365622376497d6e4bf8142f9ac9": {
+      "status": "notified",
+      "notified_at": "2026-10-13T13:55:53.501565+03:30",
+      "published_at": "2026-10-12T11:15:35.690157+00:00",
+      "content_key": "opportunity:r9:1c8adce37847cca5744e1f8ce83b3146ffe55365622376497d6e4bf8142f9ac9",
+      "channel": "select_carrr",
+      "message_id": 20
+    },
+    "select_carr|opportunity:r9:9cd716857ef2e20ed1ad482569101158724c116ffbecef68d98e72565bd90a33": {
+      "status": "notified",
+      "notified_at": "2026-10-13T13:55:53.868859+03:30",
+      "published_at": "2026-10-12T17:49:37.312252+00:00",
+      "content_key": "opportunity:r9:9cd716857ef2e20ed1ad482569101158724c116ffbecef68d98e72565bd90a33",
+      "channel": "select_carr",
+      "message_id": 21
+    },
+    "select_carrr|opportunity:r9:9cd716857ef2e20ed1ad482569101158724c116ffbecef68d98e72565bd90a33": {
+      "status": "notified",
+      "notified_at": "2026-10-13T13:55:53.868876+03:30",
+      "published_at": "2026-10-12T17:49:45.709976+00:00",
+      "content_key": "opportunity:r9:9cd716857ef2e20ed1ad482569101158724c116ffbecef68d98e72565bd90a33",
+      "channel": "select_carrr",
+      "message_id": 21
     }
   }
 }
