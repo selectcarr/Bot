@@ -540,6 +540,18 @@
       "content_key": "opportunity:r9:9cd716857ef2e20ed1ad482569101158724c116ffbecef68d98e72565bd90a33",
       "post_id": "6acd1db16082b7070756f55b",
       "published_at": "2026-10-12T17:49:45.709976+00:00"
+    },
+    "select_carr|market:2026-10-13": {
+      "channel": "select_carr",
+      "content_key": "market:2026-10-13",
+      "post_id": "6ace1d4eb4d66b8b80b5184c",
+      "published_at": "2026-10-13T12:00:25.248807+00:00"
+    },
+    "select_carrr|market:2026-10-13": {
+      "channel": "select_carrr",
+      "content_key": "market:2026-10-13",
+      "post_id": "6ace1d597c54ccc397c04eb7",
+      "published_at": "2026-10-13T12:00:35.683844+00:00"
     }
   },
   "story_cursors": {
