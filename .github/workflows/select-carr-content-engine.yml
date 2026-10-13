@@ -1,0 +1,364 @@
+name: Select Carr Content Engine
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "Content Engine action"
+        required: true
+        default: "check_telegram"
+        type: choice
+        options:
+          - check_telegram
+          - test_telegram
+          - preview_reel
+          - preview_post
+          - send_reel
+          - send_post
+          - send_daily_pack
+          - notify_instagram
+
+  # One morning delivery only: Reel + Post together before noon Tehran.
+  # 10:30 Tehran = 07:00 UTC.
+  schedule:
+    - cron: "0 7 * * *"
+
+  # Centralized Instagram publication notifications.
+  # Any successful Stage 4 publication is detected from its persistent state.
+  workflow_run:
+    workflows:
+      - "Select Carr Stage 4"
+    types:
+      - completed
+
+permissions:
+  contents: write
+
+concurrency:
+  group: select-carr-content-engine
+  cancel-in-progress: false
+
+jobs:
+  content:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    env:
+      # Use the existing bot token. The script verifies that it belongs to
+      # @Selectcaranalyzbot_bot before sending anything.
+      CONTENT_TELEGRAM_BOT_TOKEN: >-
+        ${{ secrets.CONTENT_TELEGRAM_BOT_TOKEN }}
+
+      # Numeric Telegram channel id for @Select_car_analyz.
+      # It is not a secret and is intentionally pinned here.
+      CONTENT_TELEGRAM_CHAT_ID: "-1004444202669"
+      CONTENT_EXPECTED_BOT_USERNAME: "Selectcaranalyzbot_bot"
+
+      SELECT_CARR_DATA_SECRET: >-
+        ${{ secrets.SELECT_CARR_DATA_SECRET }}
+
+      SELECT_CARR_ENCRYPTED_DB: >-
+        private_data/select_carr_banks.sqlite3.enc
+
+      SELECT_CARR_MARKET_DB: >-
+        select_carr_market_runtime/select_carr_market.sqlite3
+
+      SELECT_CARR_SOURCE_CHANNEL_URL: >-
+        https://t.me/s/DO_L4
+
+      ACCURATE_STATE_ENCRYPTION_KEY: >-
+        ${{ secrets.ACCURATE_STATE_ENCRYPTION_KEY }}
+
+      SELECT_CARR_CONTENT_RUNTIME: >-
+        content_runtime
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Resolve content action
+        id: resolve
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          MANUAL_ACTION: ${{ github.event.inputs.action }}
+        run: |
+          set -euo pipefail
+
+          if [[ "${EVENT_NAME}" == "schedule" ]]; then
+            action="send_daily_pack"
+          elif [[ "${EVENT_NAME}" == "workflow_run" ]]; then
+            action="notify_instagram"
+          else
+            action="${MANUAL_ACTION:-check_telegram}"
+          fi
+
+          case "${action}" in
+            check_telegram|test_telegram|preview_reel|preview_post|send_reel|send_post|send_daily_pack|notify_instagram)
+              ;;
+            *)
+              echo "Unsupported action: ${action}"
+              exit 1
+              ;;
+          esac
+
+          echo "action=${action}" >> "${GITHUB_OUTPUT}"
+          echo "Resolved action=${action}"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          set -euo pipefail
+          python -m pip install \
+            --disable-pip-version-check \
+            cryptography \
+            pillow \
+            beautifulsoup4
+
+      - name: Compile content engine
+        run: |
+          set -euo pipefail
+          python -m py_compile select_carr_content_engine.py
+          python -m py_compile select_carr_stage4.py
+
+      - name: Run content self-test
+        run: |
+          set -euo pipefail
+          python select_carr_content_engine.py selftest
+
+      - name: Restore content state
+        if: >-
+          steps.resolve.outputs.action == 'send_reel' ||
+          steps.resolve.outputs.action == 'send_post' ||
+          steps.resolve.outputs.action == 'send_daily_pack' ||
+          steps.resolve.outputs.action == 'notify_instagram'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mkdir -p content_runtime
+
+          git fetch \
+            origin \
+            select-carr-content-state:refs/remotes/origin/select-carr-content-state \
+            || true
+
+          if git show-ref \
+            --verify \
+            --quiet \
+            refs/remotes/origin/select-carr-content-state
+          then
+            git show \
+              origin/select-carr-content-state:content_state.json \
+              > content_runtime/state.json \
+              2>/dev/null \
+              || true
+          fi
+
+      - name: Restore Stage 4 publication state
+        if: >-
+          steps.resolve.outputs.action == 'notify_instagram'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mkdir -p content_runtime
+
+          git fetch \
+            origin \
+            select-carr-stage4-media:refs/remotes/origin/select-carr-stage4-media \
+            || true
+
+          if git show-ref \
+            --verify \
+            --quiet \
+            refs/remotes/origin/select-carr-stage4-media
+          then
+            git show \
+              origin/select-carr-stage4-media:stage4_publish_state.json \
+              > content_runtime/stage4_publish_state.json \
+              2>/dev/null \
+              || true
+          fi
+
+      - name: Restore Select Carr market state
+        if: >-
+          steps.resolve.outputs.action == 'preview_reel' ||
+          steps.resolve.outputs.action == 'preview_post' ||
+          steps.resolve.outputs.action == 'send_reel' ||
+          steps.resolve.outputs.action == 'send_post' ||
+          steps.resolve.outputs.action == 'send_daily_pack'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          rm -rf select_carr_market_runtime
+          mkdir -p select_carr_market_runtime
+
+          if [[ -z "${ACCURATE_STATE_ENCRYPTION_KEY}" ]]; then
+            echo "Market state key is unavailable; content engine will continue without Deal context."
+            exit 0
+          fi
+
+          set +e
+          git fetch \
+            origin \
+            select-carr-market-state:refs/remotes/origin/select-carr-market-state
+          fetch_status=$?
+          set -e
+
+          if (( fetch_status != 0 )); then
+            echo "Market state branch unavailable; continuing without Deal context."
+            exit 0
+          fi
+
+          if ! git show \
+            origin/select-carr-market-state:select-carr-market/runtime.tar.gz.enc \
+            > /tmp/select-carr-market-runtime.tar.gz.enc
+          then
+            echo "Encrypted market state unavailable; continuing."
+            exit 0
+          fi
+
+          if ! openssl enc \
+            -d \
+            -aes-256-cbc \
+            -pbkdf2 \
+            -in /tmp/select-carr-market-runtime.tar.gz.enc \
+            -out /tmp/select-carr-market-runtime.tar.gz \
+            -pass env:ACCURATE_STATE_ENCRYPTION_KEY
+          then
+            echo "Could not decrypt market state; continuing without Deal context."
+            exit 0
+          fi
+
+          tar \
+            -xzf /tmp/select-carr-market-runtime.tar.gz \
+            -C select_carr_market_runtime \
+            || true
+
+      - name: Check Telegram connection
+        if: >-
+          steps.resolve.outputs.action == 'check_telegram'
+        run: |
+          set -euo pipefail
+          python select_carr_content_engine.py check_telegram
+
+      - name: Send Telegram test
+        if: >-
+          steps.resolve.outputs.action == 'test_telegram'
+        run: |
+          set -euo pipefail
+          python select_carr_content_engine.py test_telegram
+
+      - name: Preview Reel package
+        if: >-
+          steps.resolve.outputs.action == 'preview_reel'
+        run: |
+          set -euo pipefail
+          python select_carr_content_engine.py preview --type reel
+
+      - name: Preview Post package
+        if: >-
+          steps.resolve.outputs.action == 'preview_post'
+        run: |
+          set -euo pipefail
+          python select_carr_content_engine.py preview --type post
+
+      - name: Send Reel package
+        if: >-
+          steps.resolve.outputs.action == 'send_reel' ||
+          steps.resolve.outputs.action == 'send_daily_pack'
+        run: |
+          set -euo pipefail
+          python select_carr_content_engine.py send --type reel
+
+      - name: Send Post package
+        if: >-
+          steps.resolve.outputs.action == 'send_post' ||
+          steps.resolve.outputs.action == 'send_daily_pack'
+        run: |
+          set -euo pipefail
+          python select_carr_content_engine.py send --type post
+
+      - name: Send Instagram publication notifications
+        if: >-
+          steps.resolve.outputs.action == 'notify_instagram'
+        run: |
+          set -euo pipefail
+          python select_carr_content_engine.py notify_instagram
+
+      - name: Persist content state
+        if: >-
+          always() &&
+          (
+            steps.resolve.outputs.action == 'send_reel' ||
+            steps.resolve.outputs.action == 'send_post' ||
+            steps.resolve.outputs.action == 'send_daily_pack' ||
+            steps.resolve.outputs.action == 'notify_instagram'
+          )
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ ! -f content_runtime/state.json ]]; then
+            echo "No content state to persist."
+            exit 0
+          fi
+
+          git config user.name "select-carr-bot"
+          git config user.email "actions@users.noreply.github.com"
+
+          rm -rf /tmp/select-carr-content-state
+
+          git fetch \
+            origin \
+            select-carr-content-state:refs/remotes/origin/select-carr-content-state \
+            || true
+
+          if git show-ref \
+            --verify \
+            --quiet \
+            refs/remotes/origin/select-carr-content-state
+          then
+            git worktree add \
+              -B select-carr-content-state \
+              /tmp/select-carr-content-state \
+              origin/select-carr-content-state
+          else
+            git worktree add \
+              --detach \
+              /tmp/select-carr-content-state \
+              HEAD
+
+            cd /tmp/select-carr-content-state
+            git switch --orphan select-carr-content-state
+            git rm -rf . || true
+            cd "${GITHUB_WORKSPACE}"
+          fi
+
+          cp \
+            content_runtime/state.json \
+            /tmp/select-carr-content-state/content_state.json
+
+          cd /tmp/select-carr-content-state
+
+          git add content_state.json
+          git commit -m "Update Select Carr content state" || true
+          git push origin HEAD:select-carr-content-state
+
+      - name: Upload content diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: select-carr-content-${{ github.run_id }}
+          path: |
+            content_runtime/
+          if-no-files-found: ignore
