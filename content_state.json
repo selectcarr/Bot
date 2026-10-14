@@ -16,10 +16,26 @@
       "message_ids": [
         17
       ]
+    },
+    "2026-10-14:reel": {
+      "sent_at": "2026-10-14T16:19:52.974797+03:30",
+      "kind": "reel",
+      "family": "paint_body",
+      "message_ids": [
+        28
+      ]
+    },
+    "2026-10-14:post": {
+      "sent_at": "2026-10-14T16:20:07.266346+03:30",
+      "kind": "post",
+      "family": "buy_checklist",
+      "message_ids": [
+        29
+      ]
     }
   },
-  "last_reel_family": "mileage_myth",
-  "last_post_family": "deal",
+  "last_reel_family": "paint_body",
+  "last_post_family": "buy_checklist",
   "instagram_notification_initialized": true,
   "instagram_notified_tokens": {
     "select_carr|opportunity:4ec42efb5bc38d0c9a10c504312182c620f4b2a1c030b4b0b7d2d30028998afb": {
