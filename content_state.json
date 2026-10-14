@@ -559,6 +559,22 @@
       "content_key": "opportunity:r9:15d281c80631f65d766aae004d2b265c90da9430ab766a53d84fef042d974d3a",
       "channel": "select_carrr",
       "message_id": 25
+    },
+    "select_carr|market:2026-10-14": {
+      "status": "notified",
+      "notified_at": "2026-10-14T14:02:06.305843+03:30",
+      "published_at": "2026-10-14T10:31:18.155195+00:00",
+      "content_key": "market:2026-10-14",
+      "channel": "select_carr",
+      "message_id": 27
+    },
+    "select_carrr|market:2026-10-14": {
+      "status": "notified",
+      "notified_at": "2026-10-14T14:02:06.305867+03:30",
+      "published_at": "2026-10-14T10:31:28.601384+00:00",
+      "content_key": "market:2026-10-14",
+      "channel": "select_carrr",
+      "message_id": 27
     }
   }
 }
