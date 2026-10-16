@@ -751,6 +751,38 @@
       "content_key": "opportunity:r10:4900b4fb7195ce444aeb1332dbf0ee67568e8868db3adf64f8cceef73af32c34",
       "channel": "select_carrr",
       "message_id": 42
+    },
+    "select_carr|opportunity:r10:529f0d5a7e8b0df123fbc97a69fdbe98a3c62914699e6bfcac03a597d397cb9a": {
+      "status": "notified",
+      "notified_at": "2026-10-16T12:59:04.575694+03:30",
+      "published_at": "2026-10-16T09:27:33.289321+00:00",
+      "content_key": "opportunity:r10:529f0d5a7e8b0df123fbc97a69fdbe98a3c62914699e6bfcac03a597d397cb9a",
+      "channel": "select_carr",
+      "message_id": 44
+    },
+    "select_carrr|opportunity:r10:529f0d5a7e8b0df123fbc97a69fdbe98a3c62914699e6bfcac03a597d397cb9a": {
+      "status": "notified",
+      "notified_at": "2026-10-16T12:59:04.575711+03:30",
+      "published_at": "2026-10-16T09:27:43.696022+00:00",
+      "content_key": "opportunity:r10:529f0d5a7e8b0df123fbc97a69fdbe98a3c62914699e6bfcac03a597d397cb9a",
+      "channel": "select_carrr",
+      "message_id": 44
+    },
+    "select_carr|market:2026-10-16": {
+      "status": "notified",
+      "notified_at": "2026-10-16T12:59:05.085616+03:30",
+      "published_at": "2026-10-16T09:28:14.229137+00:00",
+      "content_key": "market:2026-10-16",
+      "channel": "select_carr",
+      "message_id": 45
+    },
+    "select_carrr|market:2026-10-16": {
+      "status": "notified",
+      "notified_at": "2026-10-16T12:59:05.085628+03:30",
+      "published_at": "2026-10-16T09:28:23.627800+00:00",
+      "content_key": "market:2026-10-16",
+      "channel": "select_carrr",
+      "message_id": 45
     }
   },
   "last_health_report_date": "2026-10-15",
