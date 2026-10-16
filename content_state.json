@@ -48,10 +48,26 @@
       "message_ids": [
         38
       ]
+    },
+    "2026-10-16:reel": {
+      "sent_at": "2026-10-16T15:45:40.521740+03:30",
+      "kind": "reel",
+      "family": "hidden_costs",
+      "message_ids": [
+        47
+      ]
+    },
+    "2026-10-16:post": {
+      "sent_at": "2026-10-16T15:45:52.036959+03:30",
+      "kind": "post",
+      "family": "seller_questions",
+      "message_ids": [
+        48
+      ]
     }
   },
-  "last_reel_family": "market_psychology",
-  "last_post_family": "ad_red_flags",
+  "last_reel_family": "hidden_costs",
+  "last_post_family": "seller_questions",
   "instagram_notification_initialized": true,
   "instagram_notified_tokens": {
     "select_carr|opportunity:4ec42efb5bc38d0c9a10c504312182c620f4b2a1c030b4b0b7d2d30028998afb": {
@@ -785,9 +801,9 @@
       "message_id": 45
     }
   },
-  "last_health_report_date": "2026-10-15",
-  "last_health_report_at": "2026-10-15T16:06:11.694358+03:30",
+  "last_health_report_date": "2026-10-16",
+  "last_health_report_at": "2026-10-16T15:45:28.462196+03:30",
   "last_health_report_message_ids": [
-    36
+    46
   ]
 }
