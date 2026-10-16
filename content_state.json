@@ -815,6 +815,22 @@
       "content_key": "cars:2026-10-16",
       "channel": "select_carrr",
       "message_id": 49
+    },
+    "select_carr|buy_request:r4:BUY-1792153513613-3gua18": {
+      "status": "notified",
+      "notified_at": "2026-10-16T20:32:40.502766+03:30",
+      "published_at": "2026-10-16T17:01:32.058526+00:00",
+      "content_key": "buy_request:r4:BUY-1792153513613-3gua18",
+      "channel": "select_carr",
+      "message_id": 50
+    },
+    "select_carrr|buy_request:r4:BUY-1792153513613-3gua18": {
+      "status": "notified",
+      "notified_at": "2026-10-16T20:32:40.502789+03:30",
+      "published_at": "2026-10-16T17:01:42.508369+00:00",
+      "content_key": "buy_request:r4:BUY-1792153513613-3gua18",
+      "channel": "select_carrr",
+      "message_id": 50
     }
   },
   "last_health_report_date": "2026-10-16",
