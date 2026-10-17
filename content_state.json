@@ -911,6 +911,22 @@
       "content_key": "market:2026-10-17",
       "channel": "select_carrr",
       "message_id": 55
+    },
+    "select_carr|buy_request:r4:BUY-1792245436333-6x4sh2": {
+      "status": "notified",
+      "notified_at": "2026-10-17T19:27:32.161407+03:30",
+      "published_at": "2026-10-17T15:56:40.962613+00:00",
+      "content_key": "buy_request:r4:BUY-1792245436333-6x4sh2",
+      "channel": "select_carr",
+      "message_id": 59
+    },
+    "select_carrr|buy_request:r4:BUY-1792245436333-6x4sh2": {
+      "status": "notified",
+      "notified_at": "2026-10-17T19:27:32.161433+03:30",
+      "published_at": "2026-10-17T15:56:49.330176+00:00",
+      "content_key": "buy_request:r4:BUY-1792245436333-6x4sh2",
+      "channel": "select_carrr",
+      "message_id": 59
     }
   },
   "last_health_report_date": "2026-10-17",
