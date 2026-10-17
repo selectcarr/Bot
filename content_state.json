@@ -927,6 +927,22 @@
       "content_key": "buy_request:r4:BUY-1792245436333-6x4sh2",
       "channel": "select_carrr",
       "message_id": 59
+    },
+    "select_carr|opportunity:r10:132a1c1e96dab215379558151de44f2b93e506bdfd26d8345d10ca8252cb1149": {
+      "status": "notified",
+      "notified_at": "2026-10-17T19:54:23.915064+03:30",
+      "published_at": "2026-10-17T16:23:40.285209+00:00",
+      "content_key": "opportunity:r10:132a1c1e96dab215379558151de44f2b93e506bdfd26d8345d10ca8252cb1149",
+      "channel": "select_carr",
+      "message_id": 60
+    },
+    "select_carrr|opportunity:r10:132a1c1e96dab215379558151de44f2b93e506bdfd26d8345d10ca8252cb1149": {
+      "status": "notified",
+      "notified_at": "2026-10-17T19:54:23.915087+03:30",
+      "published_at": "2026-10-17T16:23:47.600340+00:00",
+      "content_key": "opportunity:r10:132a1c1e96dab215379558151de44f2b93e506bdfd26d8345d10ca8252cb1149",
+      "channel": "select_carrr",
+      "message_id": 60
     }
   },
   "last_health_report_date": "2026-10-17",
