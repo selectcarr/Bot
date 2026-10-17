@@ -804,6 +804,18 @@
       "content_key": "market:2026-10-17",
       "post_id": "6ad35694dd83363c4dcb70d9",
       "published_at": "2026-10-17T11:06:02.250291+00:00"
+    },
+    "select_carr|buy_request:r4:BUY-1792245436333-6x4sh2": {
+      "channel": "select_carr",
+      "content_key": "buy_request:r4:BUY-1792245436333-6x4sh2",
+      "post_id": "6ad39ab1769b457934854b43",
+      "published_at": "2026-10-17T15:56:40.962613+00:00"
+    },
+    "select_carrr|buy_request:r4:BUY-1792245436333-6x4sh2": {
+      "channel": "select_carrr",
+      "content_key": "buy_request:r4:BUY-1792245436333-6x4sh2",
+      "post_id": "6ad39ab9938409f1d092620b",
+      "published_at": "2026-10-17T15:56:49.330176+00:00"
     }
   },
   "story_cursors": {
@@ -816,11 +828,11 @@
       "key": ""
     }
   },
-  "story_last_published_at": "2026-10-17T11:05:27.318591+00:00",
+  "story_last_published_at": "2026-10-17T15:56:49.331148+00:00",
   "story_queue_initialized": true,
   "story_queue_initialized_at": "2026-10-06T12:35:20.222663+00:00",
   "story_queue_policy_version": 2,
-  "story_last_kind": "opportunity",
+  "story_last_kind": "buy_request",
   "scheduler_last_seen_at": "2026-10-17T15:56:29.209260+00:00",
   "scheduler_last_tehran_time": "2026-10-17T19:26:29.208930+03:30",
   "scheduler_last_due_modes": [
