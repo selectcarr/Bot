@@ -1007,6 +1007,22 @@
       "content_key": "market:2026-10-18",
       "channel": "select_carrr",
       "message_id": 64
+    },
+    "select_carr|cars:2026-10-18": {
+      "status": "notified",
+      "notified_at": "2026-10-18T16:45:58.667252+03:30",
+      "published_at": "2026-10-18T13:15:04.234265+00:00",
+      "content_key": "cars:2026-10-18",
+      "channel": "select_carr",
+      "message_id": 68
+    },
+    "select_carrr|cars:2026-10-18": {
+      "status": "notified",
+      "notified_at": "2026-10-18T16:45:58.667277+03:30",
+      "published_at": "2026-10-18T13:15:15.579506+00:00",
+      "content_key": "cars:2026-10-18",
+      "channel": "select_carrr",
+      "message_id": 68
     }
   },
   "last_health_report_date": "2026-10-18",
