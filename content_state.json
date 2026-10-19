@@ -1071,6 +1071,22 @@
       "content_key": "opportunity:r10:06ffe416190f5c3fb23991eca94a09f84a7af25f3bfd95920052e56bb4f976d9",
       "channel": "select_carrr",
       "message_id": 71
+    },
+    "select_carr|market:2026-10-19": {
+      "status": "notified",
+      "notified_at": "2026-10-19T16:27:22.196632+03:30",
+      "published_at": "2026-10-19T12:56:33.565161+00:00",
+      "content_key": "market:2026-10-19",
+      "channel": "select_carr",
+      "message_id": 73
+    },
+    "select_carrr|market:2026-10-19": {
+      "status": "notified",
+      "notified_at": "2026-10-19T16:27:22.196654+03:30",
+      "published_at": "2026-10-19T12:56:41.934914+00:00",
+      "content_key": "market:2026-10-19",
+      "channel": "select_carrr",
+      "message_id": 73
     }
   },
   "last_health_report_date": "2026-10-18",
