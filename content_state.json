@@ -1119,6 +1119,22 @@
       "content_key": "opportunity:r10:87c660c0e3e1d4316891144163616a95deef0885e060800f093b228bc53e350d",
       "channel": "select_carrr",
       "message_id": 77
+    },
+    "select_carr|opportunity:r10:4dcdf2839b39942f182b4b90ba79f883eba31b890125fdbb3e024b3a476e10cf": {
+      "status": "notified",
+      "notified_at": "2026-10-20T12:26:10.030897+03:30",
+      "published_at": "2026-10-20T08:55:13.285945+00:00",
+      "content_key": "opportunity:r10:4dcdf2839b39942f182b4b90ba79f883eba31b890125fdbb3e024b3a476e10cf",
+      "channel": "select_carr",
+      "message_id": 79
+    },
+    "select_carrr|opportunity:r10:4dcdf2839b39942f182b4b90ba79f883eba31b890125fdbb3e024b3a476e10cf": {
+      "status": "notified",
+      "notified_at": "2026-10-20T12:26:10.030920+03:30",
+      "published_at": "2026-10-20T08:55:22.551042+00:00",
+      "content_key": "opportunity:r10:4dcdf2839b39942f182b4b90ba79f883eba31b890125fdbb3e024b3a476e10cf",
+      "channel": "select_carrr",
+      "message_id": 79
     }
   },
   "last_health_report_date": "2026-10-19",
