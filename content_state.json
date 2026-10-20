@@ -1183,6 +1183,22 @@
       "content_key": "market:2026-10-20",
       "channel": "select_carrr",
       "message_id": 81
+    },
+    "select_carr|opportunity:r10:087e6b08a1a91efeb009a872c048ba8f12f164aa3c9f46c079b070ddd8f1ccf1": {
+      "status": "notified",
+      "notified_at": "2026-10-20T19:15:13.632244+03:30",
+      "published_at": "2026-10-20T15:44:15.712023+00:00",
+      "content_key": "opportunity:r10:087e6b08a1a91efeb009a872c048ba8f12f164aa3c9f46c079b070ddd8f1ccf1",
+      "channel": "select_carr",
+      "message_id": 85
+    },
+    "select_carrr|opportunity:r10:087e6b08a1a91efeb009a872c048ba8f12f164aa3c9f46c079b070ddd8f1ccf1": {
+      "status": "notified",
+      "notified_at": "2026-10-20T19:15:13.632267+03:30",
+      "published_at": "2026-10-20T15:44:26.212417+00:00",
+      "content_key": "opportunity:r10:087e6b08a1a91efeb009a872c048ba8f12f164aa3c9f46c079b070ddd8f1ccf1",
+      "channel": "select_carrr",
+      "message_id": 85
     }
   },
   "last_health_report_date": "2026-10-20",
