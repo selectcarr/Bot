@@ -1,14 +1,14 @@
 {
   "version": "2.10.0",
   "render_revision": "r10",
-  "generated_at": "2026-10-21T10:23:11.068684+00:00",
+  "generated_at": "2026-10-21T17:33:37.931029+00:00",
   "mode": "story_queue",
   "stories": [
     {
       "kind": "opportunity",
-      "entity_id": "9ad0d70c8c49df98fa4edea9e51273e73cba307b941a895cfac6c9485a15c57b",
-      "key": "opportunity:r10:9ad0d70c8c49df98fa4edea9e51273e73cba307b941a895cfac6c9485a15c57b",
-      "path": "stage4_runtime/story_01_opportunity_7299569cbe.jpeg"
+      "entity_id": "65f90d69993a34bf68a9efb2447ef0d643c583dac94b219c4ae50814eaec2216",
+      "key": "opportunity:r10:65f90d69993a34bf68a9efb2447ef0d643c583dac94b219c4ae50814eaec2216",
+      "path": "stage4_runtime/story_01_opportunity_6f70fab1a0.jpeg"
     }
   ],
   "market_post": null,
