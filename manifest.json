@@ -1,69 +1,22 @@
 {
   "version": "2.10.0",
   "render_revision": "r10",
-  "generated_at": "2026-10-20T17:53:48.538752+00:00",
-  "mode": "cars",
+  "generated_at": "2026-10-21T08:45:23.566685+00:00",
+  "mode": "market",
   "stories": [],
-  "market_post": null,
-  "car_price_key": "cars:2026-10-20",
-  "car_price_slides": [
-    {
-      "key": "cars:2026-10-20:01",
-      "path": "stage4_runtime/post_car_prices_01.jpeg"
-    },
-    {
-      "key": "cars:2026-10-20:02",
-      "path": "stage4_runtime/post_car_prices_02.jpeg"
-    },
-    {
-      "key": "cars:2026-10-20:03",
-      "path": "stage4_runtime/post_car_prices_03.jpeg"
-    },
-    {
-      "key": "cars:2026-10-20:04",
-      "path": "stage4_runtime/post_car_prices_04.jpeg"
-    },
-    {
-      "key": "cars:2026-10-20:05",
-      "path": "stage4_runtime/post_car_prices_05.jpeg"
-    }
-  ],
+  "market_post": {
+    "key": "market:2026-10-21",
+    "path": "stage4_runtime/post_market.jpeg",
+    "source_post_id": "53348",
+    "source_published_at": "2026-10-21T08:06:48+00:00",
+    "source_tehran_date": "2026-10-21",
+    "fallback_previous_day": false
+  },
+  "car_price_key": null,
+  "car_price_slides": [],
   "buy_request_story": {
     "enabled": true,
     "source": "sc_intake_submissions"
   },
-  "source_posts_scanned": 239,
-  "car_candidate_posts": 4,
-  "car_candidates_recent": [
-    {
-      "post_id": "53291",
-      "published_at": "2026-10-20T10:33:28+00:00",
-      "tehran_date": "2026-10-20",
-      "rows": 77
-    },
-    {
-      "post_id": "53215",
-      "published_at": "2026-10-19T10:33:28+00:00",
-      "tehran_date": "2026-10-19",
-      "rows": 76
-    },
-    {
-      "post_id": "53156",
-      "published_at": "2026-10-18T10:10:37+00:00",
-      "tehran_date": "2026-10-18",
-      "rows": 77
-    },
-    {
-      "post_id": "53083",
-      "published_at": "2026-10-17T10:12:07+00:00",
-      "tehran_date": "2026-10-17",
-      "rows": 71
-    }
-  ],
-  "car_max_rows_detected": 77,
-  "car_previous_day_fallback_allowed": false,
-  "car_source_post_id": "53291",
-  "car_source_published_at": "2026-10-20T10:33:28+00:00",
-  "car_source_tehran_date": "2026-10-20",
-  "car_fallback_previous_day": false
+  "source_posts_scanned": 239
 }
