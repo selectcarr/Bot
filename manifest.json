@@ -1,14 +1,14 @@
 {
   "version": "2.10.0",
   "render_revision": "r10",
-  "generated_at": "2026-10-21T18:14:01.166888+00:00",
+  "generated_at": "2026-10-21T19:24:01.885937+00:00",
   "mode": "story_queue",
   "stories": [
     {
       "kind": "opportunity",
-      "entity_id": "d678f8d72d8bbe012b30d52dde796f1045a5dfa67769e18d844252c871c4e70b",
-      "key": "opportunity:r10:d678f8d72d8bbe012b30d52dde796f1045a5dfa67769e18d844252c871c4e70b",
-      "path": "stage4_runtime/story_01_opportunity_5b6e063d05.jpeg"
+      "entity_id": "b2a977be2c8c45dd582d21f3fc0f528e2e5097659b7843c17b1d0ff864fb9ab1",
+      "key": "opportunity:r10:b2a977be2c8c45dd582d21f3fc0f528e2e5097659b7843c17b1d0ff864fb9ab1",
+      "path": "stage4_runtime/story_01_opportunity_9183fc2f6b.jpeg"
     }
   ],
   "market_post": null,
@@ -24,7 +24,7 @@
   "buyer_rejection_reasons": {
     "already_published": 2
   },
-  "opportunity_pending": 5,
+  "opportunity_pending": 4,
   "story_manual_time_override": false,
   "story_queue_status": "story_batch_ready",
   "story_batch_size": 1
