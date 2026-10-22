@@ -1407,6 +1407,22 @@
       "content_key": "cars:2026-10-22",
       "channel": "select_carrr",
       "message_id": 104
+    },
+    "select_carr|opportunity:r10:0ffd8fc19a6df07dabd4b7a409c67476d75f767c79f4245b68805f69ff4aaea6": {
+      "status": "notified",
+      "notified_at": "2026-10-22T21:02:50.489448+03:30",
+      "published_at": "2026-10-22T17:31:53.786148+00:00",
+      "content_key": "opportunity:r10:0ffd8fc19a6df07dabd4b7a409c67476d75f767c79f4245b68805f69ff4aaea6",
+      "channel": "select_carr",
+      "message_id": 105
+    },
+    "select_carrr|opportunity:r10:0ffd8fc19a6df07dabd4b7a409c67476d75f767c79f4245b68805f69ff4aaea6": {
+      "status": "notified",
+      "notified_at": "2026-10-22T21:02:50.489473+03:30",
+      "published_at": "2026-10-22T17:32:04.245992+00:00",
+      "content_key": "opportunity:r10:0ffd8fc19a6df07dabd4b7a409c67476d75f767c79f4245b68805f69ff4aaea6",
+      "channel": "select_carrr",
+      "message_id": 105
     }
   },
   "last_health_report_date": "2026-10-22",
