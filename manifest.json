@@ -1,7 +1,7 @@
 {
   "version": "2.10.0",
   "render_revision": "r10",
-  "generated_at": "2026-10-21T19:24:28.642163+00:00",
+  "generated_at": "2026-10-22T06:49:04.676755+00:00",
   "mode": "cars",
   "stories": [],
   "market_post": null,
@@ -11,7 +11,7 @@
     "enabled": true,
     "source": "sc_intake_submissions"
   },
-  "source_posts_scanned": 239,
+  "source_posts_scanned": 240,
   "car_candidate_posts": 2,
   "car_candidates_recent": [
     {
