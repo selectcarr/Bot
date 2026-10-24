@@ -176,10 +176,26 @@
       "message_ids": [
         113
       ]
+    },
+    "2026-10-24:reel": {
+      "sent_at": "2026-10-24T15:26:38.158241+03:30",
+      "kind": "reel",
+      "family": "market_psychology",
+      "message_ids": [
+        122
+      ]
+    },
+    "2026-10-24:post": {
+      "sent_at": "2026-10-24T15:26:48.828976+03:30",
+      "kind": "post",
+      "family": "ad_red_flags",
+      "message_ids": [
+        123
+      ]
     }
   },
-  "last_reel_family": "paint_body",
-  "last_post_family": "buy_checklist",
+  "last_reel_family": "market_psychology",
+  "last_post_family": "ad_red_flags",
   "instagram_notification_initialized": true,
   "instagram_notified_tokens": {
     "select_carr|opportunity:4ec42efb5bc38d0c9a10c504312182c620f4b2a1c030b4b0b7d2d30028998afb": {
@@ -1601,9 +1617,9 @@
       "message_id": 120
     }
   },
-  "last_health_report_date": "2026-10-23",
-  "last_health_report_at": "2026-10-23T16:03:36.075357+03:30",
+  "last_health_report_date": "2026-10-24",
+  "last_health_report_at": "2026-10-24T15:26:27.039485+03:30",
   "last_health_report_message_ids": [
-    111
+    121
   ]
 }
