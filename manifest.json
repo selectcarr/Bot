@@ -1,53 +1,29 @@
 {
   "version": "2.10.0",
   "render_revision": "r10",
-  "generated_at": "2026-10-24T18:51:58.600866+00:00",
-  "mode": "cars",
-  "stories": [],
-  "market_post": null,
-  "car_price_key": "cars:2026-10-24",
-  "car_price_slides": [
+  "generated_at": "2026-10-24T18:56:41.923117+00:00",
+  "mode": "story_queue",
+  "stories": [
     {
-      "key": "cars:2026-10-24:01",
-      "path": "stage4_runtime/post_car_prices_01.jpeg"
-    },
-    {
-      "key": "cars:2026-10-24:02",
-      "path": "stage4_runtime/post_car_prices_02.jpeg"
-    },
-    {
-      "key": "cars:2026-10-24:03",
-      "path": "stage4_runtime/post_car_prices_03.jpeg"
-    },
-    {
-      "key": "cars:2026-10-24:04",
-      "path": "stage4_runtime/post_car_prices_04.jpeg"
+      "kind": "opportunity",
+      "entity_id": "46eb9b7a07fe1d90e86de65042242f56a587b5b7791b5f78568db0042c04ba14",
+      "key": "opportunity:r10:46eb9b7a07fe1d90e86de65042242f56a587b5b7791b5f78568db0042c04ba14",
+      "path": "stage4_runtime/story_01_opportunity_e78aea89ef.jpeg"
     }
   ],
+  "market_post": null,
+  "car_price_key": null,
+  "car_price_slides": [],
   "buy_request_story": {
     "enabled": true,
     "source": "sc_intake_submissions"
   },
-  "source_posts_scanned": 239,
-  "car_candidate_posts": 2,
-  "car_candidates_recent": [
-    {
-      "post_id": "53613",
-      "published_at": "2026-10-24T10:10:26+00:00",
-      "tehran_date": "2026-10-24",
-      "rows": 63
-    },
-    {
-      "post_id": "53462",
-      "published_at": "2026-10-22T10:05:43+00:00",
-      "tehran_date": "2026-10-22",
-      "rows": 66
-    }
-  ],
-  "car_max_rows_detected": 66,
-  "car_previous_day_fallback_allowed": false,
-  "car_source_post_id": "53613",
-  "car_source_published_at": "2026-10-24T10:10:26+00:00",
-  "car_source_tehran_date": "2026-10-24",
-  "car_fallback_previous_day": false
+  "buyer_seen": 0,
+  "buyer_valid": 0,
+  "buyer_rejected": 0,
+  "buyer_rejection_reasons": {},
+  "opportunity_pending": 1,
+  "story_manual_time_override": false,
+  "story_queue_status": "story_batch_ready",
+  "story_batch_size": 1
 }
