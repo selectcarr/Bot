@@ -1,9 +1,16 @@
 {
   "version": "2.10.0",
   "render_revision": "r10",
-  "generated_at": "2026-10-24T16:12:23.114161+00:00",
+  "generated_at": "2026-10-24T16:15:20.477958+00:00",
   "mode": "story_queue",
-  "stories": [],
+  "stories": [
+    {
+      "kind": "opportunity",
+      "entity_id": "74b54e618b1b09438c681ceef66002802fd51abe817f3cb94afe7254c2ad0535",
+      "key": "opportunity:r10:74b54e618b1b09438c681ceef66002802fd51abe817f3cb94afe7254c2ad0535",
+      "path": "stage4_runtime/story_01_opportunity_fbff743e67.jpeg"
+    }
+  ],
   "market_post": null,
   "car_price_key": null,
   "car_price_slides": [],
@@ -15,7 +22,8 @@
   "buyer_valid": 0,
   "buyer_rejected": 0,
   "buyer_rejection_reasons": {},
-  "opportunity_pending": 0,
+  "opportunity_pending": 3,
   "story_manual_time_override": false,
-  "story_queue_status": "no_new_story"
+  "story_queue_status": "story_batch_ready",
+  "story_batch_size": 1
 }
