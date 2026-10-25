@@ -1,57 +1,29 @@
 {
   "version": "2.10.0",
   "render_revision": "r10",
-  "generated_at": "2026-10-25T15:44:13.667948+00:00",
-  "mode": "cars",
-  "stories": [],
-  "market_post": null,
-  "car_price_key": "cars:2026-10-25",
-  "car_price_slides": [
+  "generated_at": "2026-10-25T16:43:19.067687+00:00",
+  "mode": "story_queue",
+  "stories": [
     {
-      "key": "cars:2026-10-25:01",
-      "path": "stage4_runtime/post_car_prices_01.jpeg"
-    },
-    {
-      "key": "cars:2026-10-25:02",
-      "path": "stage4_runtime/post_car_prices_02.jpeg"
-    },
-    {
-      "key": "cars:2026-10-25:03",
-      "path": "stage4_runtime/post_car_prices_03.jpeg"
-    },
-    {
-      "key": "cars:2026-10-25:04",
-      "path": "stage4_runtime/post_car_prices_04.jpeg"
-    },
-    {
-      "key": "cars:2026-10-25:05",
-      "path": "stage4_runtime/post_car_prices_05.jpeg"
+      "kind": "opportunity",
+      "entity_id": "b46c08a0b94855acddc2a1cfdc914ed565f29e10b59f4f303ae78d9173273887",
+      "key": "opportunity:r10:b46c08a0b94855acddc2a1cfdc914ed565f29e10b59f4f303ae78d9173273887",
+      "path": "stage4_runtime/story_01_opportunity_8de3884132.jpeg"
     }
   ],
+  "market_post": null,
+  "car_price_key": null,
+  "car_price_slides": [],
   "buy_request_story": {
     "enabled": true,
     "source": "sc_intake_submissions"
   },
-  "source_posts_scanned": 238,
-  "car_candidate_posts": 2,
-  "car_candidates_recent": [
-    {
-      "post_id": "53699",
-      "published_at": "2026-10-25T10:14:40+00:00",
-      "tehran_date": "2026-10-25",
-      "rows": 65
-    },
-    {
-      "post_id": "53613",
-      "published_at": "2026-10-24T10:10:26+00:00",
-      "tehran_date": "2026-10-24",
-      "rows": 63
-    }
-  ],
-  "car_max_rows_detected": 65,
-  "car_previous_day_fallback_allowed": false,
-  "car_source_post_id": "53699",
-  "car_source_published_at": "2026-10-25T10:14:40+00:00",
-  "car_source_tehran_date": "2026-10-25",
-  "car_fallback_previous_day": false
+  "buyer_seen": 0,
+  "buyer_valid": 0,
+  "buyer_rejected": 0,
+  "buyer_rejection_reasons": {},
+  "opportunity_pending": 2,
+  "story_manual_time_override": false,
+  "story_queue_status": "story_batch_ready",
+  "story_batch_size": 1
 }
