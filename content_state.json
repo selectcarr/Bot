@@ -208,9 +208,17 @@
       "message_ids": [
         132
       ]
+    },
+    "2026-10-26:reel": {
+      "sent_at": "2026-10-26T17:37:12.983436+03:30",
+      "kind": "reel",
+      "family": "resale_value",
+      "message_ids": [
+        140
+      ]
     }
   },
-  "last_reel_family": "hidden_costs",
+  "last_reel_family": "resale_value",
   "last_post_family": "seller_questions",
   "instagram_notification_initialized": true,
   "instagram_notified_tokens": {
@@ -1793,9 +1801,9 @@
       "message_id": 138
     }
   },
-  "last_health_report_date": "2026-10-25",
-  "last_health_report_at": "2026-10-25T15:59:00.888585+03:30",
+  "last_health_report_date": "2026-10-26",
+  "last_health_report_at": "2026-10-26T17:36:59.649267+03:30",
   "last_health_report_message_ids": [
-    130
+    139
   ]
 }
