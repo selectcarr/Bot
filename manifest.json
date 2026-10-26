@@ -1,7 +1,7 @@
 {
   "version": "2.10.0",
   "render_revision": "r10",
-  "generated_at": "2026-10-26T09:42:40.704408+00:00",
+  "generated_at": "2026-10-26T09:48:40.281010+00:00",
   "mode": "market",
   "stories": [],
   "market_post": {
@@ -18,5 +18,5 @@
     "enabled": true,
     "source": "sc_intake_submissions"
   },
-  "source_posts_scanned": 238
+  "source_posts_scanned": 239
 }
