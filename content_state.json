@@ -1815,6 +1815,22 @@
       "content_key": "buy_request:r4:BUY-1792967485322-ehm55f",
       "channel": "select_carrr",
       "message_id": 141
+    },
+    "select_carr|cars:2026-10-26": {
+      "status": "notified",
+      "notified_at": "2026-10-26T23:39:20.707235+03:30",
+      "published_at": "2026-10-26T20:08:26.403534+00:00",
+      "content_key": "cars:2026-10-26",
+      "channel": "select_carr",
+      "message_id": 142
+    },
+    "select_carrr|cars:2026-10-26": {
+      "status": "notified",
+      "notified_at": "2026-10-26T23:39:20.707259+03:30",
+      "published_at": "2026-10-26T20:08:36.733089+00:00",
+      "content_key": "cars:2026-10-26",
+      "channel": "select_carrr",
+      "message_id": 142
     }
   },
   "last_health_report_date": "2026-10-26",
