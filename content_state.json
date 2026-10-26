@@ -1799,6 +1799,22 @@
       "content_key": "market:2026-10-26",
       "channel": "select_carrr",
       "message_id": 138
+    },
+    "select_carr|buy_request:r4:BUY-1792967485322-ehm55f": {
+      "status": "notified",
+      "notified_at": "2026-10-26T22:28:56.930554+03:30",
+      "published_at": "2026-10-26T18:57:56.574247+00:00",
+      "content_key": "buy_request:r4:BUY-1792967485322-ehm55f",
+      "channel": "select_carr",
+      "message_id": 141
+    },
+    "select_carrr|buy_request:r4:BUY-1792967485322-ehm55f": {
+      "status": "notified",
+      "notified_at": "2026-10-26T22:28:56.930576+03:30",
+      "published_at": "2026-10-26T18:58:05.041552+00:00",
+      "content_key": "buy_request:r4:BUY-1792967485322-ehm55f",
+      "channel": "select_carrr",
+      "message_id": 141
     }
   },
   "last_health_report_date": "2026-10-26",
