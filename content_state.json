@@ -1895,6 +1895,38 @@
       "content_key": "buy_request:r4:BUY-1792967574704-k54jo8",
       "channel": "select_carrr",
       "message_id": 148
+    },
+    "select_carr|opportunity:r10:dcfdaff42edf89831c837cc5a7ca36ea4b91ade11138fcad9e21c14bf83a7893": {
+      "status": "notified",
+      "notified_at": "2026-10-27T22:04:26.069341+03:30",
+      "published_at": "2026-10-27T18:32:31.515645+00:00",
+      "content_key": "opportunity:r10:dcfdaff42edf89831c837cc5a7ca36ea4b91ade11138fcad9e21c14bf83a7893",
+      "channel": "select_carr",
+      "message_id": 149
+    },
+    "select_carrr|opportunity:r10:dcfdaff42edf89831c837cc5a7ca36ea4b91ade11138fcad9e21c14bf83a7893": {
+      "status": "notified",
+      "notified_at": "2026-10-27T22:04:26.069357+03:30",
+      "published_at": "2026-10-27T18:32:42.130459+00:00",
+      "content_key": "opportunity:r10:dcfdaff42edf89831c837cc5a7ca36ea4b91ade11138fcad9e21c14bf83a7893",
+      "channel": "select_carrr",
+      "message_id": 149
+    },
+    "select_carr|cars:2026-10-27": {
+      "status": "notified",
+      "notified_at": "2026-10-27T22:04:26.569218+03:30",
+      "published_at": "2026-10-27T18:33:17.139823+00:00",
+      "content_key": "cars:2026-10-27",
+      "channel": "select_carr",
+      "message_id": 150
+    },
+    "select_carrr|cars:2026-10-27": {
+      "status": "notified",
+      "notified_at": "2026-10-27T22:04:26.569232+03:30",
+      "published_at": "2026-10-27T18:33:27.562358+00:00",
+      "content_key": "cars:2026-10-27",
+      "channel": "select_carrr",
+      "message_id": 150
     }
   },
   "last_health_report_date": "2026-10-26",
