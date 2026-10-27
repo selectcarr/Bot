@@ -1927,6 +1927,22 @@
       "content_key": "cars:2026-10-27",
       "channel": "select_carrr",
       "message_id": 150
+    },
+    "select_carr|buy_request:r4:BUY-1792970579217-hehl1n": {
+      "status": "notified",
+      "notified_at": "2026-10-28T00:18:12.262245+03:30",
+      "published_at": "2026-10-27T19:06:20.269143+00:00",
+      "content_key": "buy_request:r4:BUY-1792970579217-hehl1n",
+      "channel": "select_carr",
+      "message_id": 151
+    },
+    "select_carrr|buy_request:r4:BUY-1792970579217-hehl1n": {
+      "status": "notified",
+      "notified_at": "2026-10-28T00:18:12.262267+03:30",
+      "published_at": "2026-10-27T19:06:30.727622+00:00",
+      "content_key": "buy_request:r4:BUY-1792970579217-hehl1n",
+      "channel": "select_carrr",
+      "message_id": 151
     }
   },
   "last_health_report_date": "2026-10-26",
