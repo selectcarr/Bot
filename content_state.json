@@ -216,10 +216,26 @@
       "message_ids": [
         140
       ]
+    },
+    "2026-10-27:reel": {
+      "sent_at": "2026-10-27T16:38:02.607471+03:30",
+      "kind": "reel",
+      "family": "scam_red_flags",
+      "message_ids": [
+        146
+      ]
+    },
+    "2026-10-27:post": {
+      "sent_at": "2026-10-27T16:38:14.870739+03:30",
+      "kind": "post",
+      "family": "inspection_checklist",
+      "message_ids": [
+        147
+      ]
     }
   },
-  "last_reel_family": "resale_value",
-  "last_post_family": "seller_questions",
+  "last_reel_family": "scam_red_flags",
+  "last_post_family": "inspection_checklist",
   "instagram_notification_initialized": true,
   "instagram_notified_tokens": {
     "select_carr|opportunity:4ec42efb5bc38d0c9a10c504312182c620f4b2a1c030b4b0b7d2d30028998afb": {
