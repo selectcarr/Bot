@@ -1493,7 +1493,9 @@
   "story_queue_initialized_at": "2026-10-06T12:35:20.222663+00:00",
   "story_queue_policy_version": 2,
   "story_last_kind": "buy_request",
-  "scheduler_last_seen_at": "2026-10-28T14:24:56.743327+00:00",
-  "scheduler_last_tehran_time": "2026-10-28T17:54:56.742489+03:30",
-  "scheduler_last_due_modes": []
+  "scheduler_last_seen_at": "2026-10-28T19:36:49.481711+00:00",
+  "scheduler_last_tehran_time": "2026-10-28T23:06:49.481185+03:30",
+  "scheduler_last_due_modes": [
+    "cars"
+  ]
 }
