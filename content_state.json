@@ -1943,6 +1943,22 @@
       "content_key": "buy_request:r4:BUY-1792970579217-hehl1n",
       "channel": "select_carrr",
       "message_id": 151
+    },
+    "select_carr|market:2026-10-28": {
+      "status": "notified",
+      "notified_at": "2026-10-28T16:50:38.667681+03:30",
+      "published_at": "2026-10-28T13:19:44.549852+00:00",
+      "content_key": "market:2026-10-28",
+      "channel": "select_carr",
+      "message_id": 153
+    },
+    "select_carrr|market:2026-10-28": {
+      "status": "notified",
+      "notified_at": "2026-10-28T16:50:38.667706+03:30",
+      "published_at": "2026-10-28T13:19:50.875655+00:00",
+      "content_key": "market:2026-10-28",
+      "channel": "select_carrr",
+      "message_id": 153
     }
   },
   "last_health_report_date": "2026-10-26",
