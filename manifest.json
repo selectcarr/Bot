@@ -1,31 +1,22 @@
 {
   "version": "2.10.0",
   "render_revision": "r10",
-  "generated_at": "2026-10-27T19:06:07.169000+00:00",
-  "mode": "story_queue",
-  "stories": [
-    {
-      "kind": "buy_request",
-      "entity_id": "BUY-1792970579217-hehl1n",
-      "key": "buy_request:r4:BUY-1792970579217-hehl1n",
-      "path": "stage4_runtime/story_01_buy_request_54bc67a2a6.jpeg"
-    }
-  ],
-  "market_post": null,
+  "generated_at": "2026-10-28T13:19:17.593360+00:00",
+  "mode": "market",
+  "stories": [],
+  "market_post": {
+    "key": "market:2026-10-28",
+    "path": "stage4_runtime/post_market.jpeg",
+    "source_post_id": "53877",
+    "source_published_at": "2026-10-28T11:50:53+00:00",
+    "source_tehran_date": "2026-10-28",
+    "fallback_previous_day": false
+  },
   "car_price_key": null,
   "car_price_slides": [],
   "buy_request_story": {
     "enabled": true,
     "source": "sc_intake_submissions"
   },
-  "buyer_seen": 3,
-  "buyer_valid": 1,
-  "buyer_rejected": 2,
-  "buyer_rejection_reasons": {
-    "already_published": 2
-  },
-  "opportunity_pending": 5,
-  "story_manual_time_override": false,
-  "story_queue_status": "story_batch_ready",
-  "story_batch_size": 1
+  "source_posts_scanned": 240
 }
