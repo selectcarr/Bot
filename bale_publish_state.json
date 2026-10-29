@@ -3572,6 +3572,32 @@
         ],
         "caption": "قیمت طلا، دلار، سکه و اونس\n\nبرای دریافت\n✅بهترین فرصت های خرید و فروش خودروی خودتان\n✅و قیمت روز خودروها\n✅و قیمت طلا و دلار ،\nحتما با ما همراه باشد .\n@select_carr\n@select_carrr"
       }
+    },
+    "bale|opportunity:r10:282c3ffa8e3a43f7295daad347ccddb1ea52c3bf746f3cb6d7ea6cab1e1f9956": {
+      "result": {
+        "message_id": 299,
+        "from": {
+          "id": 1342369143,
+          "is_bot": true,
+          "first_name": "",
+          "last_name": ""
+        },
+        "date": 1793269416,
+        "chat": {
+          "id": 4718241208,
+          "type": "group"
+        },
+        "photo": [
+          {
+            "file_id": "423273912:-1818454245929378048:1:e824f59e464252b20c9731bd105f6962c1fe95f6433f491b4b3aceaee67039cb774c770bd4b5d8c0",
+            "file_unique_id": "423273912:-1818454245929378048:1:e824f59e464252b20c9731bd105f6962c1fe95f6433f491b4b3aceaee67039cb774c770bd4b5d8c0",
+            "width": 835,
+            "height": 1465,
+            "file_size": 599465
+          }
+        ],
+        "caption": "فرصت خرید خودرو\n\nبرای دریافت\n✅بهترین فرصت های خرید و فروش خودروی خودتان\n✅و قیمت روز خودروها\n✅و قیمت طلا و دلار ،\nحتما با ما همراه باشد .\n@select_carr\n@select_carrr"
+      }
     }
   }
 }
