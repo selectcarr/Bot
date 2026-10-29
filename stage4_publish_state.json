@@ -1488,6 +1488,18 @@
       "content_key": "cars:2026-10-28",
       "post_id": "6ae24eecba9a64c57481efdc",
       "published_at": "2026-10-28T19:37:26.448021+00:00"
+    },
+    "select_carr|opportunity:r10:8dc615eaac146b02b789d20f74d1d2e7354dd976f3738ba3e60110a68d56ae3a": {
+      "channel": "select_carr",
+      "content_key": "opportunity:r10:8dc615eaac146b02b789d20f74d1d2e7354dd976f3738ba3e60110a68d56ae3a",
+      "post_id": "6ae3092035657f219b381e42",
+      "published_at": "2026-10-29T08:51:54.837867+00:00"
+    },
+    "select_carrr|opportunity:r10:8dc615eaac146b02b789d20f74d1d2e7354dd976f3738ba3e60110a68d56ae3a": {
+      "channel": "select_carrr",
+      "content_key": "opportunity:r10:8dc615eaac146b02b789d20f74d1d2e7354dd976f3738ba3e60110a68d56ae3a",
+      "post_id": "6ae3092a9c83386213592741",
+      "published_at": "2026-10-29T08:52:05.184348+00:00"
     }
   },
   "story_cursors": {
@@ -1500,11 +1512,11 @@
       "key": ""
     }
   },
-  "story_last_published_at": "2026-10-27T19:06:30.728696+00:00",
+  "story_last_published_at": "2026-10-29T08:52:05.185984+00:00",
   "story_queue_initialized": true,
   "story_queue_initialized_at": "2026-10-06T12:35:20.222663+00:00",
   "story_queue_policy_version": 2,
-  "story_last_kind": "buy_request",
+  "story_last_kind": "opportunity",
   "scheduler_last_seen_at": "2026-10-29T08:51:40.479617+00:00",
   "scheduler_last_tehran_time": "2026-10-29T12:21:40.478665+03:30",
   "scheduler_last_due_modes": [
