@@ -2023,6 +2023,22 @@
       "content_key": "market:2026-10-29",
       "channel": "select_carrr",
       "message_id": 160
+    },
+    "select_carr|opportunity:r10:282c3ffa8e3a43f7295daad347ccddb1ea52c3bf746f3cb6d7ea6cab1e1f9956": {
+      "status": "notified",
+      "notified_at": "2026-10-29T13:53:43.815672+03:30",
+      "published_at": "2026-10-29T10:22:46.429156+00:00",
+      "content_key": "opportunity:r10:282c3ffa8e3a43f7295daad347ccddb1ea52c3bf746f3cb6d7ea6cab1e1f9956",
+      "channel": "select_carr",
+      "message_id": 161
+    },
+    "select_carrr|opportunity:r10:282c3ffa8e3a43f7295daad347ccddb1ea52c3bf746f3cb6d7ea6cab1e1f9956": {
+      "status": "notified",
+      "notified_at": "2026-10-29T13:53:43.815692+03:30",
+      "published_at": "2026-10-29T10:22:54.822353+00:00",
+      "content_key": "opportunity:r10:282c3ffa8e3a43f7295daad347ccddb1ea52c3bf746f3cb6d7ea6cab1e1f9956",
+      "channel": "select_carrr",
+      "message_id": 161
     }
   },
   "last_health_report_date": "2026-10-28",
