@@ -264,10 +264,26 @@
       "message_ids": [
         165
       ]
+    },
+    "2026-10-30:reel": {
+      "sent_at": "2026-10-30T17:28:59.616230+03:30",
+      "kind": "reel",
+      "family": "negotiation",
+      "message_ids": [
+        173
+      ]
+    },
+    "2026-10-30:post": {
+      "sent_at": "2026-10-30T17:29:13.242736+03:30",
+      "kind": "post",
+      "family": "mileage_myth",
+      "message_ids": [
+        174
+      ]
     }
   },
-  "last_reel_family": "cheap_trap",
-  "last_post_family": "documents",
+  "last_reel_family": "negotiation",
+  "last_post_family": "mileage_myth",
   "instagram_notification_initialized": true,
   "instagram_notified_tokens": {
     "select_carr|opportunity:4ec42efb5bc38d0c9a10c504312182c620f4b2a1c030b4b0b7d2d30028998afb": {
@@ -2153,9 +2169,9 @@
       "message_id": 171
     }
   },
-  "last_health_report_date": "2026-10-29",
-  "last_health_report_at": "2026-10-29T17:36:28.298307+03:30",
+  "last_health_report_date": "2026-10-30",
+  "last_health_report_at": "2026-10-30T17:28:45.366718+03:30",
   "last_health_report_message_ids": [
-    163
+    172
   ]
 }
