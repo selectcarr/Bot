@@ -1637,7 +1637,9 @@
   "story_queue_initialized_at": "2026-10-06T12:35:20.222663+00:00",
   "story_queue_policy_version": 2,
   "story_last_kind": "opportunity",
-  "scheduler_last_seen_at": "2026-10-31T06:37:42.336212+00:00",
-  "scheduler_last_tehran_time": "2026-10-31T10:07:42.335326+03:30",
-  "scheduler_last_due_modes": []
+  "scheduler_last_seen_at": "2026-10-31T12:57:12.938094+00:00",
+  "scheduler_last_tehran_time": "2026-10-31T16:27:12.937527+03:30",
+  "scheduler_last_due_modes": [
+    "market"
+  ]
 }
