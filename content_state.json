@@ -2247,6 +2247,38 @@
       "content_key": "opportunity:r10:cc13b9dc95ca20273ab1bacba0828330b85c39586ddd3189007d03cc4d466cc6",
       "channel": "select_carrr",
       "message_id": 182
+    },
+    "select_carr|opportunity:r10:0bbb50be5453e1a9cf53b1411134f34a787f4efb10545f9d447fe3e93442298c": {
+      "status": "notified",
+      "notified_at": "2026-10-31T21:56:35.176952+03:30",
+      "published_at": "2026-10-31T18:25:04.383672+00:00",
+      "content_key": "opportunity:r10:0bbb50be5453e1a9cf53b1411134f34a787f4efb10545f9d447fe3e93442298c",
+      "channel": "select_carr",
+      "message_id": 183
+    },
+    "select_carrr|opportunity:r10:0bbb50be5453e1a9cf53b1411134f34a787f4efb10545f9d447fe3e93442298c": {
+      "status": "notified",
+      "notified_at": "2026-10-31T21:56:35.176972+03:30",
+      "published_at": "2026-10-31T18:25:11.871473+00:00",
+      "content_key": "opportunity:r10:0bbb50be5453e1a9cf53b1411134f34a787f4efb10545f9d447fe3e93442298c",
+      "channel": "select_carrr",
+      "message_id": 183
+    },
+    "select_carr|cars:2026-10-31": {
+      "status": "notified",
+      "notified_at": "2026-10-31T21:56:35.638818+03:30",
+      "published_at": "2026-10-31T18:25:41.093478+00:00",
+      "content_key": "cars:2026-10-31",
+      "channel": "select_carr",
+      "message_id": 184
+    },
+    "select_carrr|cars:2026-10-31": {
+      "status": "notified",
+      "notified_at": "2026-10-31T21:56:35.638838+03:30",
+      "published_at": "2026-10-31T18:25:51.568912+00:00",
+      "content_key": "cars:2026-10-31",
+      "channel": "select_carrr",
+      "message_id": 184
     }
   },
   "last_health_report_date": "2026-10-31",
