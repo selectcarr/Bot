@@ -1709,10 +1709,9 @@
   "story_queue_initialized_at": "2026-10-06T12:35:20.222663+00:00",
   "story_queue_policy_version": 2,
   "story_last_kind": "opportunity",
-  "scheduler_last_seen_at": "2026-11-01T09:40:46.045908+00:00",
-  "scheduler_last_tehran_time": "2026-11-01T13:10:46.045089+03:30",
+  "scheduler_last_seen_at": "2026-11-01T13:48:10.419986+00:00",
+  "scheduler_last_tehran_time": "2026-11-01T17:18:10.419249+03:30",
   "scheduler_last_due_modes": [
-    "story_queue",
-    "market"
+    "cars"
   ]
 }
