@@ -312,10 +312,26 @@
       "message_ids": [
         191
       ]
+    },
+    "2026-11-02:reel": {
+      "sent_at": "2026-11-02T20:28:49.979492+03:30",
+      "kind": "reel",
+      "family": "negotiation",
+      "message_ids": [
+        197
+      ]
+    },
+    "2026-11-02:post": {
+      "sent_at": "2026-11-02T20:29:02.640118+03:30",
+      "kind": "post",
+      "family": "mileage_myth",
+      "message_ids": [
+        198
+      ]
     }
   },
-  "last_reel_family": "seller_questions",
-  "last_post_family": "market_myths",
+  "last_reel_family": "negotiation",
+  "last_post_family": "mileage_myth",
   "instagram_notification_initialized": true,
   "instagram_notified_tokens": {
     "select_carr|opportunity:4ec42efb5bc38d0c9a10c504312182c620f4b2a1c030b4b0b7d2d30028998afb": {
@@ -2393,9 +2409,9 @@
       "message_id": 195
     }
   },
-  "last_health_report_date": "2026-11-01",
-  "last_health_report_at": "2026-11-01T17:43:12.151324+03:30",
+  "last_health_report_date": "2026-11-02",
+  "last_health_report_at": "2026-11-02T20:28:37.098164+03:30",
   "last_health_report_message_ids": [
-    189
+    196
   ]
 }
