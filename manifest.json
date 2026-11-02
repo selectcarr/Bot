@@ -1,21 +1,22 @@
 {
   "version": "2.10.0",
   "render_revision": "r10",
-  "generated_at": "2026-11-02T10:05:22.982248+00:00",
-  "mode": "story_queue",
+  "generated_at": "2026-11-02T11:33:49.125936+00:00",
+  "mode": "market",
   "stories": [],
-  "market_post": null,
+  "market_post": {
+    "key": "market:2026-11-02",
+    "path": "stage4_runtime/post_market.jpeg",
+    "source_post_id": "54128",
+    "source_published_at": "2026-11-02T09:00:49+00:00",
+    "source_tehran_date": "2026-11-02",
+    "fallback_previous_day": false
+  },
   "car_price_key": null,
   "car_price_slides": [],
   "buy_request_story": {
     "enabled": true,
     "source": "sc_intake_submissions"
   },
-  "buyer_seen": 0,
-  "buyer_valid": 0,
-  "buyer_rejected": 0,
-  "buyer_rejection_reasons": {},
-  "opportunity_pending": 0,
-  "story_manual_time_override": false,
-  "story_queue_status": "no_new_story"
+  "source_posts_scanned": 238
 }
