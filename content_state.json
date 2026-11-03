@@ -2423,6 +2423,22 @@
       "content_key": "cars:2026-11-02",
       "channel": "select_carrr",
       "message_id": 199
+    },
+    "select_carr|market:2026-11-03": {
+      "status": "notified",
+      "notified_at": "2026-11-03T18:16:35.016823+03:30",
+      "published_at": "2026-11-03T14:45:38.094573+00:00",
+      "content_key": "market:2026-11-03",
+      "channel": "select_carr",
+      "message_id": 201
+    },
+    "select_carrr|market:2026-11-03": {
+      "status": "notified",
+      "notified_at": "2026-11-03T18:16:35.016842+03:30",
+      "published_at": "2026-11-03T14:45:48.760577+00:00",
+      "content_key": "market:2026-11-03",
+      "channel": "select_carrr",
+      "message_id": 201
     }
   },
   "last_health_report_date": "2026-11-02",
