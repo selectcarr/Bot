@@ -1,14 +1,14 @@
 {
   "version": "2.10.0",
   "render_revision": "r10",
-  "generated_at": "2026-11-04T09:41:24.670766+00:00",
+  "generated_at": "2026-11-04T14:57:17.936981+00:00",
   "mode": "market",
   "stories": [],
   "market_post": {
     "key": "market:2026-11-04",
     "path": "stage4_runtime/post_market.jpeg",
-    "source_post_id": "54296",
-    "source_published_at": "2026-11-04T08:12:42+00:00",
+    "source_post_id": "54315",
+    "source_published_at": "2026-11-04T13:42:34+00:00",
     "source_tehran_date": "2026-11-04",
     "fallback_previous_day": false
   },
