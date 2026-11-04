@@ -344,10 +344,26 @@
       "message_ids": [
         204
       ]
+    },
+    "2026-11-04:reel": {
+      "sent_at": "2026-11-04T18:50:19.497270+03:30",
+      "kind": "reel",
+      "family": "paint_body",
+      "message_ids": [
+        209
+      ]
+    },
+    "2026-11-04:post": {
+      "sent_at": "2026-11-04T18:50:31.729098+03:30",
+      "kind": "post",
+      "family": "buy_checklist",
+      "message_ids": [
+        210
+      ]
     }
   },
-  "last_reel_family": "mileage_myth",
-  "last_post_family": "body_paint",
+  "last_reel_family": "paint_body",
+  "last_post_family": "buy_checklist",
   "instagram_notification_initialized": true,
   "instagram_notified_tokens": {
     "select_carr|opportunity:4ec42efb5bc38d0c9a10c504312182c620f4b2a1c030b4b0b7d2d30028998afb": {
@@ -2489,9 +2505,9 @@
       "message_id": 207
     }
   },
-  "last_health_report_date": "2026-11-03",
-  "last_health_report_at": "2026-11-03T18:29:20.067245+03:30",
+  "last_health_report_date": "2026-11-04",
+  "last_health_report_at": "2026-11-04T18:50:06.872551+03:30",
   "last_health_report_message_ids": [
-    202
+    208
   ]
 }
