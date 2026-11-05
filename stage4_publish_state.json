@@ -1800,6 +1800,18 @@
       "content_key": "market:2026-11-05",
       "post_id": "6aec5317b444628db7c1421b",
       "published_at": "2026-11-05T09:57:51.275072+00:00"
+    },
+    "select_carr|cars:2026-11-05": {
+      "channel": "select_carr",
+      "content_key": "cars:2026-11-05",
+      "post_id": "6aec9a9cd0b6cad45c4ad0fd",
+      "published_at": "2026-11-05T15:03:03.041719+00:00"
+    },
+    "select_carrr|cars:2026-11-05": {
+      "channel": "select_carrr",
+      "content_key": "cars:2026-11-05",
+      "post_id": "6aec9aa7e28c1572bf782768",
+      "published_at": "2026-11-05T15:03:14.128935+00:00"
     }
   },
   "story_cursors": {
