@@ -1853,7 +1853,7 @@
   "story_queue_initialized_at": "2026-10-06T12:35:20.222663+00:00",
   "story_queue_policy_version": 2,
   "story_last_kind": "opportunity",
-  "scheduler_last_seen_at": "2026-11-07T00:13:54.932537+00:00",
-  "scheduler_last_tehran_time": "2026-11-07T03:43:54.931744+03:30",
+  "scheduler_last_seen_at": "2026-11-07T02:02:22.773379+00:00",
+  "scheduler_last_tehran_time": "2026-11-07T05:32:22.772437+03:30",
   "scheduler_last_due_modes": []
 }
