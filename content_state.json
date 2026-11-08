@@ -408,10 +408,26 @@
       "message_ids": [
         227
       ]
+    },
+    "2026-11-08:reel": {
+      "sent_at": "2026-11-08T17:44:03.876457+03:30",
+      "kind": "reel",
+      "family": "scam_red_flags",
+      "message_ids": [
+        233
+      ]
+    },
+    "2026-11-08:post": {
+      "sent_at": "2026-11-08T17:44:19.115424+03:30",
+      "kind": "post",
+      "family": "inspection_checklist",
+      "message_ids": [
+        234
+      ]
     }
   },
-  "last_reel_family": "resale_value",
-  "last_post_family": "price_checklist",
+  "last_reel_family": "scam_red_flags",
+  "last_post_family": "inspection_checklist",
   "instagram_notification_initialized": true,
   "instagram_notified_tokens": {
     "select_carr|opportunity:4ec42efb5bc38d0c9a10c504312182c620f4b2a1c030b4b0b7d2d30028998afb": {
@@ -2681,9 +2697,9 @@
       "message_id": 231
     }
   },
-  "last_health_report_date": "2026-11-07",
-  "last_health_report_at": "2026-11-07T17:22:42.305278+03:30",
+  "last_health_report_date": "2026-11-08",
+  "last_health_report_at": "2026-11-08T17:43:48.439810+03:30",
   "last_health_report_message_ids": [
-    225
+    232
   ]
 }
