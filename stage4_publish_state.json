@@ -1860,6 +1860,18 @@
       "content_key": "cars:2026-11-07",
       "post_id": "6aef75a4562f2e6de97629a5",
       "published_at": "2026-11-07T19:02:07.385254+00:00"
+    },
+    "select_carr|market:2026-11-08": {
+      "channel": "select_carr",
+      "content_key": "market:2026-11-08",
+      "post_id": "6af052bc9214322f68496528",
+      "published_at": "2026-11-08T10:45:25.162833+00:00"
+    },
+    "select_carrr|market:2026-11-08": {
+      "channel": "select_carrr",
+      "content_key": "market:2026-11-08",
+      "post_id": "6af052c551492b796e30f94e",
+      "published_at": "2026-11-08T10:45:34.433382+00:00"
     }
   },
   "story_cursors": {
