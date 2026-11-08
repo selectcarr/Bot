@@ -2695,6 +2695,22 @@
       "content_key": "cars:2026-11-08",
       "channel": "select_carrr",
       "message_id": 231
+    },
+    "select_carr|buy_request:r4:BUY-1794140927689-4tazn8": {
+      "status": "notified",
+      "notified_at": "2026-11-08T21:47:00.881522+03:30",
+      "published_at": "2026-11-08T18:16:08.692315+00:00",
+      "content_key": "buy_request:r4:BUY-1794140927689-4tazn8",
+      "channel": "select_carr",
+      "message_id": 235
+    },
+    "select_carrr|buy_request:r4:BUY-1794140927689-4tazn8": {
+      "status": "notified",
+      "notified_at": "2026-11-08T21:47:00.881551+03:30",
+      "published_at": "2026-11-08T18:16:16.146824+00:00",
+      "content_key": "buy_request:r4:BUY-1794140927689-4tazn8",
+      "channel": "select_carrr",
+      "message_id": 235
     }
   },
   "last_health_report_date": "2026-11-08",
