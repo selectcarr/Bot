@@ -4765,6 +4765,85 @@
           "media_group_id": "8115348157909504056"
         }
       ]
+    },
+    "bale|cars:2026-11-08": {
+      "result": [
+        {
+          "message_id": 405,
+          "from": {
+            "id": 1342369143,
+            "is_bot": true,
+            "first_name": ""
+          },
+          "date": 1794146355,
+          "chat": {
+            "id": 0,
+            "type": "group",
+            "photo": null
+          },
+          "media_group_id": "8044064541752872546"
+        },
+        {
+          "message_id": 406,
+          "from": {
+            "id": 1342369143,
+            "is_bot": true,
+            "first_name": ""
+          },
+          "date": 1794146355,
+          "chat": {
+            "id": 0,
+            "type": "group",
+            "photo": null
+          },
+          "media_group_id": "8044064541752872546"
+        },
+        {
+          "message_id": 411,
+          "from": {
+            "id": 1342369143,
+            "is_bot": true,
+            "first_name": ""
+          },
+          "date": 1794146355,
+          "chat": {
+            "id": 0,
+            "type": "group",
+            "photo": null
+          },
+          "media_group_id": "8044064541752872546"
+        },
+        {
+          "message_id": 412,
+          "from": {
+            "id": 1342369143,
+            "is_bot": true,
+            "first_name": ""
+          },
+          "date": 1794146355,
+          "chat": {
+            "id": 0,
+            "type": "group",
+            "photo": null
+          },
+          "media_group_id": "8044064541752872546"
+        },
+        {
+          "message_id": 413,
+          "from": {
+            "id": 1342369143,
+            "is_bot": true,
+            "first_name": ""
+          },
+          "date": 1794146355,
+          "chat": {
+            "id": 0,
+            "type": "group",
+            "photo": null
+          },
+          "media_group_id": "8044064541752872546"
+        }
+      ]
     }
   }
 }
