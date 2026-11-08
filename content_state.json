@@ -2711,6 +2711,22 @@
       "content_key": "buy_request:r4:BUY-1794140927689-4tazn8",
       "channel": "select_carrr",
       "message_id": 235
+    },
+    "select_carr|buy_request:r4:BUY-1794141051172-sxtqhz": {
+      "status": "notified",
+      "notified_at": "2026-11-08T22:33:48.975518+03:30",
+      "published_at": "2026-11-08T19:02:51.898143+00:00",
+      "content_key": "buy_request:r4:BUY-1794141051172-sxtqhz",
+      "channel": "select_carr",
+      "message_id": 236
+    },
+    "select_carrr|buy_request:r4:BUY-1794141051172-sxtqhz": {
+      "status": "notified",
+      "notified_at": "2026-11-08T22:33:48.975540+03:30",
+      "published_at": "2026-11-08T19:03:03.207343+00:00",
+      "content_key": "buy_request:r4:BUY-1794141051172-sxtqhz",
+      "channel": "select_carrr",
+      "message_id": 236
     }
   },
   "last_health_report_date": "2026-11-08",
