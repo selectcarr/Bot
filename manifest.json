@@ -1,16 +1,9 @@
 {
   "version": "2.10.0",
   "render_revision": "r10",
-  "generated_at": "2026-11-08T19:02:39.340831+00:00",
+  "generated_at": "2026-11-09T10:15:54.038772+00:00",
   "mode": "story_queue",
-  "stories": [
-    {
-      "kind": "buy_request",
-      "entity_id": "BUY-1794141051172-sxtqhz",
-      "key": "buy_request:r4:BUY-1794141051172-sxtqhz",
-      "path": "stage4_runtime/story_01_buy_request_91fc4f120b.jpeg"
-    }
-  ],
+  "stories": [],
   "market_post": null,
   "car_price_key": null,
   "car_price_slides": [],
@@ -19,13 +12,12 @@
     "source": "sc_intake_submissions"
   },
   "buyer_seen": 2,
-  "buyer_valid": 1,
-  "buyer_rejected": 1,
+  "buyer_valid": 0,
+  "buyer_rejected": 2,
   "buyer_rejection_reasons": {
-    "already_published": 1
+    "already_published": 2
   },
   "opportunity_pending": 0,
   "story_manual_time_override": false,
-  "story_queue_status": "story_batch_ready",
-  "story_batch_size": 1
+  "story_queue_status": "no_new_story"
 }
