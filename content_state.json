@@ -2727,6 +2727,22 @@
       "content_key": "buy_request:r4:BUY-1794141051172-sxtqhz",
       "channel": "select_carrr",
       "message_id": 236
+    },
+    "select_carr|market:2026-11-09": {
+      "status": "notified",
+      "notified_at": "2026-11-09T20:28:20.091198+03:30",
+      "published_at": "2026-11-09T16:57:25.911961+00:00",
+      "content_key": "market:2026-11-09",
+      "channel": "select_carr",
+      "message_id": 238
+    },
+    "select_carrr|market:2026-11-09": {
+      "status": "notified",
+      "notified_at": "2026-11-09T20:28:20.091217+03:30",
+      "published_at": "2026-11-09T16:57:32.395106+00:00",
+      "content_key": "market:2026-11-09",
+      "channel": "select_carrr",
+      "message_id": 238
     }
   },
   "last_health_report_date": "2026-11-08",
