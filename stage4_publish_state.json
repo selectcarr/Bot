@@ -1973,7 +1973,7 @@
   "story_queue_initialized_at": "2026-10-06T12:35:20.222663+00:00",
   "story_queue_policy_version": 2,
   "story_last_kind": "buy_request",
-  "scheduler_last_seen_at": "2026-11-11T06:50:50.066445+00:00",
-  "scheduler_last_tehran_time": "2026-11-11T10:20:50.065458+03:30",
+  "scheduler_last_seen_at": "2026-11-11T06:51:34.303523+00:00",
+  "scheduler_last_tehran_time": "2026-11-11T10:21:34.302730+03:30",
   "scheduler_last_due_modes": []
 }
