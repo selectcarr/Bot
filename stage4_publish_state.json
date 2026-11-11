@@ -1985,10 +1985,9 @@
   "story_queue_initialized_at": "2026-10-06T12:35:20.222663+00:00",
   "story_queue_policy_version": 2,
   "story_last_kind": "buy_request",
-  "scheduler_last_seen_at": "2026-11-11T09:55:17.648851+00:00",
-  "scheduler_last_tehran_time": "2026-11-11T13:25:17.648030+03:30",
+  "scheduler_last_seen_at": "2026-11-11T17:15:18.927613+00:00",
+  "scheduler_last_tehran_time": "2026-11-11T20:45:18.926769+03:30",
   "scheduler_last_due_modes": [
-    "story_queue",
-    "market"
+    "story_queue"
   ]
 }
