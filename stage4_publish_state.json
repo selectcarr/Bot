@@ -1997,7 +1997,10 @@
   "story_queue_initialized_at": "2026-10-06T12:35:20.222663+00:00",
   "story_queue_policy_version": 2,
   "story_last_kind": "buy_request",
-  "scheduler_last_seen_at": "2026-11-12T12:42:46.775138+00:00",
-  "scheduler_last_tehran_time": "2026-11-12T16:12:46.774374+03:30",
-  "scheduler_last_due_modes": []
+  "scheduler_last_seen_at": "2026-11-12T15:40:32.501542+00:00",
+  "scheduler_last_tehran_time": "2026-11-12T19:10:32.500730+03:30",
+  "scheduler_last_due_modes": [
+    "story_queue",
+    "cars"
+  ]
 }
