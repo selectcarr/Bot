@@ -1,8 +1,8 @@
 {
   "version": "2.10.0",
   "render_revision": "r10",
-  "generated_at": "2026-11-12T16:11:14.876485+00:00",
-  "mode": "story_queue",
+  "generated_at": "2026-11-12T16:40:04.811644+00:00",
+  "mode": "story_now",
   "stories": [],
   "market_post": null,
   "car_price_key": null,
@@ -18,6 +18,6 @@
     "already_published": 2
   },
   "opportunity_pending": 0,
-  "story_manual_time_override": false,
+  "story_manual_time_override": true,
   "story_queue_status": "no_new_story"
 }
