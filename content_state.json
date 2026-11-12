@@ -2871,6 +2871,14 @@
       "content_key": "market:2026-11-12",
       "channel": "select_carrr",
       "message_id": 255
+    },
+    "select_carr|cars:2026-11-12": {
+      "status": "notified",
+      "notified_at": "2026-11-12T19:11:55.707807+03:30",
+      "published_at": "2026-11-12T15:41:05.244395+00:00",
+      "content_key": "cars:2026-11-12",
+      "channel": "select_carr",
+      "message_id": 256
     }
   },
   "last_health_report_date": "2026-11-11",
