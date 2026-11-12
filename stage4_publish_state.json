@@ -1980,6 +1980,12 @@
       "content_key": "market:2026-11-12",
       "post_id": "6af5a5acc6319c29c492bf29",
       "published_at": "2026-11-12T11:40:36.701470+00:00"
+    },
+    "select_carr|cars:2026-11-12": {
+      "channel": "select_carr",
+      "content_key": "cars:2026-11-12",
+      "post_id": "6af5de0633d2167bc65f71ce",
+      "published_at": "2026-11-12T15:41:05.244395+00:00"
     }
   },
   "story_cursors": {
