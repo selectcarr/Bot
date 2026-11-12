@@ -1968,6 +1968,18 @@
       "content_key": "market:2026-11-11",
       "post_id": "6af43b9f09bdcaff02d80ac3",
       "published_at": "2026-11-11T09:55:50.238836+00:00"
+    },
+    "select_carr|market:2026-11-12": {
+      "channel": "select_carr",
+      "content_key": "market:2026-11-12",
+      "post_id": "6af5a5a48dea3df8ddbaa20e",
+      "published_at": "2026-11-12T11:40:28.406807+00:00"
+    },
+    "select_carrr|market:2026-11-12": {
+      "channel": "select_carrr",
+      "content_key": "market:2026-11-12",
+      "post_id": "6af5a5acc6319c29c492bf29",
+      "published_at": "2026-11-12T11:40:36.701470+00:00"
     }
   },
   "story_cursors": {
