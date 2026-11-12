@@ -42,7 +42,6 @@ BUY_REQUEST_RENDER_REVISION = 'r4'
 
 TARGET_CHANNELS = (
     'select_carr',
-    'select_carrr',
 )
 
 
