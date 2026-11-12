@@ -2855,6 +2855,22 @@
       "content_key": "market:2026-11-11",
       "channel": "select_carrr",
       "message_id": 250
+    },
+    "select_carr|market:2026-11-12": {
+      "status": "notified",
+      "notified_at": "2026-11-12T15:11:31.374109+03:30",
+      "published_at": "2026-11-12T11:40:28.406807+00:00",
+      "content_key": "market:2026-11-12",
+      "channel": "select_carr",
+      "message_id": 255
+    },
+    "select_carrr|market:2026-11-12": {
+      "status": "notified",
+      "notified_at": "2026-11-12T15:11:31.374130+03:30",
+      "published_at": "2026-11-12T11:40:36.701470+00:00",
+      "content_key": "market:2026-11-12",
+      "channel": "select_carrr",
+      "message_id": 255
     }
   },
   "last_health_report_date": "2026-11-11",
