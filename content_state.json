@@ -2919,6 +2919,14 @@
       "content_key": "opportunity:r10:bfdf487ac7429c93664afba0a991d614abb030ee347ec6d26c50d2fd02e3705d",
       "channel": "select_carr",
       "message_id": 263
+    },
+    "select_carr|cars:2026-11-13": {
+      "status": "notified",
+      "notified_at": "2026-11-13T18:30:07.340947+03:30",
+      "published_at": "2026-11-13T14:59:15.947416+00:00",
+      "content_key": "cars:2026-11-13",
+      "channel": "select_carr",
+      "message_id": 264
     }
   },
   "last_health_report_date": "2026-11-12",
