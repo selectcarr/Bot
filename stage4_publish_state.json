@@ -1992,6 +1992,12 @@
       "content_key": "opportunity:r10:ed1a8473d21b27cb43ee8bdacdb1771b9c07c58e29c6468c0bc9e9501b19269f",
       "post_id": "6af6c5b0c1a0010a5b0a3c0f",
       "published_at": "2026-11-13T08:09:27.991038+00:00"
+    },
+    "select_carr|market:2026-11-13": {
+      "channel": "select_carr",
+      "content_key": "market:2026-11-13",
+      "post_id": "6af6c5c9da25c4db3ea46329",
+      "published_at": "2026-11-13T08:09:55.648372+00:00"
     }
   },
   "story_cursors": {
