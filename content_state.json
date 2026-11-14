@@ -2943,6 +2943,14 @@
       "content_key": "opportunity:r10:b43ec8150bbc5d917041c0ca540ef377b4ee4f748a776fb966813d4f8abb10c5",
       "channel": "select_carr",
       "message_id": 267
+    },
+    "select_carr|opportunity:r10:cb7aee7e2bb48a6368592ea24c26bbc9457eb058c6c1f957df12a1c058481ec1": {
+      "status": "notified",
+      "notified_at": "2026-11-14T12:14:49.076273+03:30",
+      "published_at": "2026-11-14T08:43:58.096420+00:00",
+      "content_key": "opportunity:r10:cb7aee7e2bb48a6368592ea24c26bbc9457eb058c6c1f957df12a1c058481ec1",
+      "channel": "select_carr",
+      "message_id": 269
     }
   },
   "last_health_report_date": "2026-11-13",
