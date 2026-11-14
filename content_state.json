@@ -488,10 +488,26 @@
       "message_ids": [
         259
       ]
+    },
+    "2026-11-14:reel": {
+      "sent_at": "2026-11-14T17:34:20.034689+03:30",
+      "kind": "reel",
+      "family": "market_psychology",
+      "message_ids": [
+        273
+      ]
+    },
+    "2026-11-14:post": {
+      "sent_at": "2026-11-14T17:34:35.712757+03:30",
+      "kind": "post",
+      "family": "ad_red_flags",
+      "message_ids": [
+        274
+      ]
     }
   },
-  "last_reel_family": "mileage_myth",
-  "last_post_family": "body_paint",
+  "last_reel_family": "market_psychology",
+  "last_post_family": "ad_red_flags",
   "instagram_notification_initialized": true,
   "instagram_notified_tokens": {
     "select_carr|opportunity:4ec42efb5bc38d0c9a10c504312182c620f4b2a1c030b4b0b7d2d30028998afb": {
@@ -2969,9 +2985,9 @@
       "message_id": 271
     }
   },
-  "last_health_report_date": "2026-11-13",
-  "last_health_report_at": "2026-11-13T18:46:50.743394+03:30",
+  "last_health_report_date": "2026-11-14",
+  "last_health_report_at": "2026-11-14T17:34:03.750362+03:30",
   "last_health_report_message_ids": [
-    265
+    272
   ]
 }
