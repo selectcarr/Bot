@@ -2034,6 +2034,12 @@
       "content_key": "opportunity:r10:b22348632311a21aae639225fc02962e0ca30c0f63f255bec15ac6e60528a7c7",
       "post_id": "6af83d1681e1228421fe1b82",
       "published_at": "2026-11-14T10:51:09.267845+00:00"
+    },
+    "select_carr|market:2026-11-14": {
+      "channel": "select_carr",
+      "content_key": "market:2026-11-14",
+      "post_id": "6af83d2ed8bd2962e4235701",
+      "published_at": "2026-11-14T10:51:35.493070+00:00"
     }
   },
   "story_cursors": {
