@@ -2040,6 +2040,12 @@
       "content_key": "market:2026-11-14",
       "post_id": "6af83d2ed8bd2962e4235701",
       "published_at": "2026-11-14T10:51:35.493070+00:00"
+    },
+    "select_carr|opportunity:r10:8fd09fe794494a18dbeb455147f97b800e4d33cb66e1f85fa72ce8a2fcf91512": {
+      "channel": "select_carr",
+      "content_key": "opportunity:r10:8fd09fe794494a18dbeb455147f97b800e4d33cb66e1f85fa72ce8a2fcf91512",
+      "post_id": "6af8a84676c23bf1c732d372",
+      "published_at": "2026-11-14T18:28:33.161808+00:00"
     }
   },
   "story_cursors": {
@@ -2052,7 +2058,7 @@
       "key": ""
     }
   },
-  "story_last_published_at": "2026-11-14T10:51:09.270109+00:00",
+  "story_last_published_at": "2026-11-14T18:28:33.163961+00:00",
   "story_queue_initialized": true,
   "story_queue_initialized_at": "2026-10-06T12:35:20.222663+00:00",
   "story_queue_policy_version": 2,
