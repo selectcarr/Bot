@@ -3023,6 +3023,14 @@
       "content_key": "market:2026-11-15",
       "channel": "select_carr",
       "message_id": 280
+    },
+    "select_carr|cars:2026-11-15": {
+      "status": "notified",
+      "notified_at": "2026-11-15T17:57:44.744519+03:30",
+      "published_at": "2026-11-15T14:26:49.235942+00:00",
+      "content_key": "cars:2026-11-15",
+      "channel": "select_carr",
+      "message_id": 281
     }
   },
   "last_health_report_date": "2026-11-14",
