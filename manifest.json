@@ -1,63 +1,31 @@
 {
   "version": "2.10.0",
   "render_revision": "r10",
-  "generated_at": "2026-11-15T14:26:26.224357+00:00",
-  "mode": "cars",
-  "stories": [],
-  "market_post": null,
-  "car_price_key": "cars:2026-11-15",
-  "car_price_slides": [
+  "generated_at": "2026-11-15T16:44:26.198446+00:00",
+  "mode": "story_queue",
+  "stories": [
     {
-      "key": "cars:2026-11-15:01",
-      "path": "stage4_runtime/post_car_prices_01.jpeg"
-    },
-    {
-      "key": "cars:2026-11-15:02",
-      "path": "stage4_runtime/post_car_prices_02.jpeg"
-    },
-    {
-      "key": "cars:2026-11-15:03",
-      "path": "stage4_runtime/post_car_prices_03.jpeg"
-    },
-    {
-      "key": "cars:2026-11-15:04",
-      "path": "stage4_runtime/post_car_prices_04.jpeg"
-    },
-    {
-      "key": "cars:2026-11-15:05",
-      "path": "stage4_runtime/post_car_prices_05.jpeg"
+      "kind": "opportunity",
+      "entity_id": "f444b15f22c5533ab2950e04c2e10852eba60d512dd534ba9c93ad73d30a4344",
+      "key": "opportunity:r10:f444b15f22c5533ab2950e04c2e10852eba60d512dd534ba9c93ad73d30a4344",
+      "path": "stage4_runtime/story_01_opportunity_9d46acc697.jpeg"
     }
   ],
+  "market_post": null,
+  "car_price_key": null,
+  "car_price_slides": [],
   "buy_request_story": {
     "enabled": true,
     "source": "sc_intake_submissions"
   },
-  "source_posts_scanned": 240,
-  "car_candidate_posts": 3,
-  "car_candidates_recent": [
-    {
-      "post_id": "55051",
-      "published_at": "2026-11-15T10:22:04+00:00",
-      "tehran_date": "2026-11-15",
-      "rows": 77
-    },
-    {
-      "post_id": "54998",
-      "published_at": "2026-11-14T10:21:19+00:00",
-      "tehran_date": "2026-11-14",
-      "rows": 79
-    },
-    {
-      "post_id": "54868",
-      "published_at": "2026-11-12T10:49:20+00:00",
-      "tehran_date": "2026-11-12",
-      "rows": 81
-    }
-  ],
-  "car_max_rows_detected": 81,
-  "car_previous_day_fallback_allowed": false,
-  "car_source_post_id": "55051",
-  "car_source_published_at": "2026-11-15T10:22:04+00:00",
-  "car_source_tehran_date": "2026-11-15",
-  "car_fallback_previous_day": false
+  "buyer_seen": 2,
+  "buyer_valid": 0,
+  "buyer_rejected": 2,
+  "buyer_rejection_reasons": {
+    "already_published": 2
+  },
+  "opportunity_pending": 10,
+  "story_manual_time_override": false,
+  "story_queue_status": "story_batch_ready",
+  "story_batch_size": 1
 }
