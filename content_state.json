@@ -3063,6 +3063,14 @@
       "content_key": "opportunity:r10:4a28ee736332246a9d5fe00ed635e4692ba1436f397e8ea872d78e0b8bd1f291",
       "channel": "select_carr",
       "message_id": 286
+    },
+    "select_carr|opportunity:r10:57b744248cdca64df7690c9d6e36be134b0fc900395b92e3070647daf45c9333": {
+      "status": "notified",
+      "notified_at": "2026-11-16T11:57:34.795735+03:30",
+      "published_at": "2026-11-16T08:26:31.041163+00:00",
+      "content_key": "opportunity:r10:57b744248cdca64df7690c9d6e36be134b0fc900395b92e3070647daf45c9333",
+      "channel": "select_carr",
+      "message_id": 288
     }
   },
   "last_health_report_date": "2026-11-15",
