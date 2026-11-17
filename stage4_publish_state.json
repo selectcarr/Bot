@@ -2130,6 +2130,12 @@
       "content_key": "opportunity:r10:f812ee53a8df0ed7a101e95342cdcc4f08a9e35aaec073ed1db04ae2c2d4617d",
       "post_id": "6afc2e6c2864ead2aead7ea2",
       "published_at": "2026-11-17T10:37:42.231668+00:00"
+    },
+    "select_carr|market:2026-11-17": {
+      "channel": "select_carr",
+      "content_key": "market:2026-11-17",
+      "post_id": "6afc2e8b5517798f6ae9e5b9",
+      "published_at": "2026-11-17T10:38:13.047742+00:00"
     }
   },
   "story_cursors": {
