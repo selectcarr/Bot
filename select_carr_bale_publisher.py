@@ -59,7 +59,6 @@ MEDIA_BRANCH = os.getenv(
 
 TARGET_INSTAGRAM_CHANNELS = (
     "select_carr",
-    "select_carrr",
 )
 
 FOLLOW_CAPTION = (
