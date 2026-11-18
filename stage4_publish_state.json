@@ -2178,6 +2178,12 @@
       "content_key": "opportunity:r10:22874ca895f807de0bac846cdd54ac8ed676b2a520c8e8f09c20888c1a782631",
       "post_id": "6afdcc38ff73344f88f92d48",
       "published_at": "2026-11-18T16:03:15.446325+00:00"
+    },
+    "select_carr|opportunity:r10:a095e9d0a94f5e283c95431da9e02b03c09019bb2f425583ea931dac3e4e7cc5": {
+      "channel": "select_carr",
+      "content_key": "opportunity:r10:a095e9d0a94f5e283c95431da9e02b03c09019bb2f425583ea931dac3e4e7cc5",
+      "post_id": "6afdd565b3f8322ac74f1b91",
+      "published_at": "2026-11-18T16:42:23.318140+00:00"
     }
   },
   "story_cursors": {
@@ -2190,7 +2196,7 @@
       "key": ""
     }
   },
-  "story_last_published_at": "2026-11-18T16:03:15.447868+00:00",
+  "story_last_published_at": "2026-11-18T16:42:23.320047+00:00",
   "story_queue_initialized": true,
   "story_queue_initialized_at": "2026-10-06T12:35:20.222663+00:00",
   "story_queue_policy_version": 2,
