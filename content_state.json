@@ -3223,6 +3223,14 @@
       "content_key": "opportunity:r10:a095e9d0a94f5e283c95431da9e02b03c09019bb2f425583ea931dac3e4e7cc5",
       "channel": "select_carr",
       "message_id": 311
+    },
+    "select_carr|opportunity:r10:44ba6788cbbb2d3d65af31414e5bdc19fc27b89c461290cf9729eb22f9fe2c46": {
+      "status": "notified",
+      "notified_at": "2026-11-18T21:30:19.981837+03:30",
+      "published_at": "2026-11-18T17:59:26.976107+00:00",
+      "content_key": "opportunity:r10:44ba6788cbbb2d3d65af31414e5bdc19fc27b89c461290cf9729eb22f9fe2c46",
+      "channel": "select_carr",
+      "message_id": 312
     }
   },
   "last_health_report_date": "2026-11-17",
