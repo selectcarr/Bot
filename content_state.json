@@ -3207,6 +3207,14 @@
       "content_key": "market:2026-11-18",
       "channel": "select_carr",
       "message_id": 309
+    },
+    "select_carr|opportunity:r10:22874ca895f807de0bac846cdd54ac8ed676b2a520c8e8f09c20888c1a782631": {
+      "status": "notified",
+      "notified_at": "2026-11-18T19:34:15.643878+03:30",
+      "published_at": "2026-11-18T16:03:15.446325+00:00",
+      "content_key": "opportunity:r10:22874ca895f807de0bac846cdd54ac8ed676b2a520c8e8f09c20888c1a782631",
+      "channel": "select_carr",
+      "message_id": 310
     }
   },
   "last_health_report_date": "2026-11-17",
