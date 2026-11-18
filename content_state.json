@@ -3215,6 +3215,14 @@
       "content_key": "opportunity:r10:22874ca895f807de0bac846cdd54ac8ed676b2a520c8e8f09c20888c1a782631",
       "channel": "select_carr",
       "message_id": 310
+    },
+    "select_carr|opportunity:r10:a095e9d0a94f5e283c95431da9e02b03c09019bb2f425583ea931dac3e4e7cc5": {
+      "status": "notified",
+      "notified_at": "2026-11-18T20:13:12.956947+03:30",
+      "published_at": "2026-11-18T16:42:23.318140+00:00",
+      "content_key": "opportunity:r10:a095e9d0a94f5e283c95431da9e02b03c09019bb2f425583ea931dac3e4e7cc5",
+      "channel": "select_carr",
+      "message_id": 311
     }
   },
   "last_health_report_date": "2026-11-17",
