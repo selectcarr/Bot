@@ -3255,6 +3255,14 @@
       "content_key": "cars:2026-11-19",
       "channel": "select_carr",
       "message_id": 316
+    },
+    "select_carr|opportunity:r10:1f7804c22de22b220ab127b5bb9753aa3f60660528c620cb628fa5ad857a41d2": {
+      "status": "notified",
+      "notified_at": "2026-11-19T20:16:41.156347+03:30",
+      "published_at": "2026-11-19T16:45:49.991538+00:00",
+      "content_key": "opportunity:r10:1f7804c22de22b220ab127b5bb9753aa3f60660528c620cb628fa5ad857a41d2",
+      "channel": "select_carr",
+      "message_id": 318
     }
   },
   "last_health_report_date": "2026-11-19",
