@@ -2208,6 +2208,12 @@
       "content_key": "cars:2026-11-19",
       "post_id": "6aff1f381d0dae1133a2c2e1",
       "published_at": "2026-11-19T16:09:38.526545+00:00"
+    },
+    "select_carr|opportunity:r10:1f7804c22de22b220ab127b5bb9753aa3f60660528c620cb628fa5ad857a41d2": {
+      "channel": "select_carr",
+      "content_key": "opportunity:r10:1f7804c22de22b220ab127b5bb9753aa3f60660528c620cb628fa5ad857a41d2",
+      "post_id": "6aff27b3e261b2bb57a20e1a",
+      "published_at": "2026-11-19T16:45:49.991538+00:00"
     }
   },
   "story_cursors": {
@@ -2220,7 +2226,7 @@
       "key": ""
     }
   },
-  "story_last_published_at": "2026-11-19T16:09:04.826427+00:00",
+  "story_last_published_at": "2026-11-19T16:45:49.994213+00:00",
   "story_queue_initialized": true,
   "story_queue_initialized_at": "2026-10-06T12:35:20.222663+00:00",
   "story_queue_policy_version": 2,
