@@ -5655,6 +5655,32 @@
           "media_group_id": "502651152930890613"
         }
       ]
+    },
+    "bale|opportunity:r10:9425b4da6da125e3164eeedf1eb583401177ef026549e8fb0475b6f4ac7db8fa": {
+      "result": {
+        "message_id": 481,
+        "from": {
+          "id": 1342369143,
+          "is_bot": true,
+          "first_name": "",
+          "last_name": ""
+        },
+        "date": 1795191837,
+        "chat": {
+          "id": 4718241208,
+          "type": "group"
+        },
+        "photo": [
+          {
+            "file_id": "423273912:-1968791121918812413:1:e824f59e464252b20c9731bd105f69627948256e9b4692e7bd111bbbc6f75080774c770bd4b5d8c0",
+            "file_unique_id": "423273912:-1968791121918812413:1:e824f59e464252b20c9731bd105f69627948256e9b4692e7bd111bbbc6f75080774c770bd4b5d8c0",
+            "width": 835,
+            "height": 1465,
+            "file_size": 598802
+          }
+        ],
+        "caption": "فرصت خرید خودرو\n\nبرای دریافت\n✅بهترین فرصت های خرید و فروش خودروی خودتان\n✅و قیمت روز خودروها\n✅و قیمت طلا و دلار ،\nحتما با ما همراه باشد .\n@select_carr\n@select_carrr"
+      }
     }
   }
 }
