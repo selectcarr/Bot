@@ -552,10 +552,26 @@
       "message_ids": [
         303
       ]
+    },
+    "2026-11-20:reel": {
+      "sent_at": "2026-11-20T19:32:47.652758+03:30",
+      "kind": "reel",
+      "family": "negotiation",
+      "message_ids": [
+        324
+      ]
+    },
+    "2026-11-20:post": {
+      "sent_at": "2026-11-20T19:33:02.848849+03:30",
+      "kind": "post",
+      "family": "mileage_myth",
+      "message_ids": [
+        325
+      ]
     }
   },
-  "last_reel_family": "scam_red_flags",
-  "last_post_family": "inspection_checklist",
+  "last_reel_family": "negotiation",
+  "last_post_family": "mileage_myth",
   "instagram_notification_initialized": true,
   "instagram_notified_tokens": {
     "select_carr|opportunity:4ec42efb5bc38d0c9a10c504312182c620f4b2a1c030b4b0b7d2d30028998afb": {
@@ -3289,9 +3305,9 @@
       "message_id": 322
     }
   },
-  "last_health_report_date": "2026-11-19",
-  "last_health_report_at": "2026-11-19T19:59:46.208698+03:30",
+  "last_health_report_date": "2026-11-20",
+  "last_health_report_at": "2026-11-20T19:32:32.649852+03:30",
   "last_health_report_message_ids": [
-    317
+    323
   ]
 }
