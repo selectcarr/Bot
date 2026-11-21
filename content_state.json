@@ -3343,6 +3343,14 @@
       "content_key": "market:2026-11-21",
       "channel": "select_carr",
       "message_id": 329
+    },
+    "select_carr|opportunity:r10:233aac4f32756da35a330d776c7e2d1974b1aad041ea42ab0d512b6661afb7f1": {
+      "status": "notified",
+      "notified_at": "2026-11-21T19:03:56.826852+03:30",
+      "published_at": "2026-11-21T15:33:11.683553+00:00",
+      "content_key": "opportunity:r10:233aac4f32756da35a330d776c7e2d1974b1aad041ea42ab0d512b6661afb7f1",
+      "channel": "select_carr",
+      "message_id": 333
     }
   },
   "last_health_report_date": "2026-11-21",
