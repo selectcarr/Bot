@@ -3399,6 +3399,14 @@
       "content_key": "cars:2026-11-22",
       "channel": "select_carr",
       "message_id": 338
+    },
+    "select_carr|opportunity:r10:5f098f06cf77aaad421224562e530a98373ee7f25961c3c20e3d30cc9eca56d5": {
+      "status": "notified",
+      "notified_at": "2026-11-22T19:08:04.954082+03:30",
+      "published_at": "2026-11-22T15:37:10.759262+00:00",
+      "content_key": "opportunity:r10:5f098f06cf77aaad421224562e530a98373ee7f25961c3c20e3d30cc9eca56d5",
+      "channel": "select_carr",
+      "message_id": 342
     }
   },
   "last_health_report_date": "2026-11-22",
