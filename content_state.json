@@ -3431,6 +3431,14 @@
       "content_key": "market:2026-11-23",
       "channel": "select_carr",
       "message_id": 346
+    },
+    "select_carr|opportunity:r10:3e92a809be85231500df1f248906e496154011bb9bcf53f92900a517fd29427e": {
+      "status": "notified",
+      "notified_at": "2026-11-23T22:22:50.648223+03:30",
+      "published_at": "2026-11-23T18:51:50.407166+00:00",
+      "content_key": "opportunity:r10:3e92a809be85231500df1f248906e496154011bb9bcf53f92900a517fd29427e",
+      "channel": "select_carr",
+      "message_id": 347
     }
   },
   "last_health_report_date": "2026-11-22",
