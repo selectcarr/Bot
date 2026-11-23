@@ -3423,6 +3423,14 @@
       "content_key": "opportunity:r10:2be88d5cc9ba6dc7a25327f3e53bed2e7f2134ba0f773016a47e6689e8c0ee2a",
       "channel": "select_carr",
       "message_id": 345
+    },
+    "select_carr|market:2026-11-23": {
+      "status": "notified",
+      "notified_at": "2026-11-23T16:44:47.927948+03:30",
+      "published_at": "2026-11-23T13:13:58.932485+00:00",
+      "content_key": "market:2026-11-23",
+      "channel": "select_carr",
+      "message_id": 346
     }
   },
   "last_health_report_date": "2026-11-22",
