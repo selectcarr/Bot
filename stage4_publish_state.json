@@ -2316,6 +2316,12 @@
       "content_key": "cars:2026-11-23",
       "post_id": "6b0494f283d02a16338b9aff",
       "published_at": "2026-11-23T19:33:17.221111+00:00"
+    },
+    "select_carr|market:2026-11-24": {
+      "channel": "select_carr",
+      "content_key": "market:2026-11-24",
+      "post_id": "6b059d90da629ddac8733521",
+      "published_at": "2026-11-24T14:22:18.963577+00:00"
     }
   },
   "story_cursors": {
