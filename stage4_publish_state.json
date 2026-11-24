@@ -2328,6 +2328,12 @@
       "content_key": "opportunity:r10:7df94edb67dc4c12a2b21297f7be97fc966d046b84d1e8fa892b8e5cb9d052fa",
       "post_id": "6b05cb1104f9f3a5e6ff151f",
       "published_at": "2026-11-24T17:36:26.736768+00:00"
+    },
+    "select_carr|cars:2026-11-24": {
+      "channel": "select_carr",
+      "content_key": "cars:2026-11-24",
+      "post_id": "6b05cb2da1fe31a32b2e8d7f",
+      "published_at": "2026-11-24T17:36:55.912945+00:00"
     }
   },
   "story_cursors": {
