@@ -3463,6 +3463,14 @@
       "content_key": "cars:2026-11-23",
       "channel": "select_carr",
       "message_id": 351
+    },
+    "select_carr|market:2026-11-24": {
+      "status": "notified",
+      "notified_at": "2026-11-24T17:53:24.901178+03:30",
+      "published_at": "2026-11-24T14:22:18.963577+00:00",
+      "content_key": "market:2026-11-24",
+      "channel": "select_carr",
+      "message_id": 353
     }
   },
   "last_health_report_date": "2026-11-23",
