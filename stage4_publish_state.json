@@ -2358,6 +2358,12 @@
       "content_key": "opportunity:r10:0fcbc1f17d71b0bc0d13c282641f7d5722a6521694c720af982eef8c72108838",
       "post_id": "6b06b734db6e5f258eb6ef7e",
       "published_at": "2026-11-25T10:23:57.482438+00:00"
+    },
+    "select_carr|market:2026-11-25": {
+      "channel": "select_carr",
+      "content_key": "market:2026-11-25",
+      "post_id": "6b06b750effc2e7fc52efc73",
+      "published_at": "2026-11-25T10:24:26.236310+00:00"
     }
   },
   "story_cursors": {
