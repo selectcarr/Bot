@@ -3527,6 +3527,22 @@
       "content_key": "opportunity:r10:ce5d7ee400e3ba47ecf4ff3dc8ae59cf058f2395e7824d7ac1012ef2eb7a14c9",
       "channel": "select_carr",
       "message_id": 362
+    },
+    "select_carr|opportunity:r10:0fcbc1f17d71b0bc0d13c282641f7d5722a6521694c720af982eef8c72108838": {
+      "status": "notified",
+      "notified_at": "2026-11-25T13:55:26.287950+03:30",
+      "published_at": "2026-11-25T10:23:57.482438+00:00",
+      "content_key": "opportunity:r10:0fcbc1f17d71b0bc0d13c282641f7d5722a6521694c720af982eef8c72108838",
+      "channel": "select_carr",
+      "message_id": 363
+    },
+    "select_carr|market:2026-11-25": {
+      "status": "notified",
+      "notified_at": "2026-11-25T13:55:26.826884+03:30",
+      "published_at": "2026-11-25T10:24:26.236310+00:00",
+      "content_key": "market:2026-11-25",
+      "channel": "select_carr",
+      "message_id": 364
     }
   },
   "last_health_report_date": "2026-11-24",
