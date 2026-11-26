@@ -3583,6 +3583,14 @@
       "content_key": "cars:2026-11-25",
       "channel": "select_carr",
       "message_id": 370
+    },
+    "select_carr|market:2026-11-26": {
+      "status": "notified",
+      "notified_at": "2026-11-26T15:02:15.815941+03:30",
+      "published_at": "2026-11-26T11:31:25.650511+00:00",
+      "content_key": "market:2026-11-26",
+      "channel": "select_carr",
+      "message_id": 372
     }
   },
   "last_health_report_date": "2026-11-25",
