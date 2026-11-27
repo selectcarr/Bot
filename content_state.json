@@ -3639,6 +3639,22 @@
       "content_key": "market:2026-11-27",
       "channel": "select_carr",
       "message_id": 380
+    },
+    "select_carr|opportunity:r10:dbc6320dceef4a200296b20dd4622dc1c37e63af8da654db73db2ff46bad13fb": {
+      "status": "notified",
+      "notified_at": "2026-11-27T20:35:44.499032+03:30",
+      "published_at": "2026-11-27T17:04:06.678530+00:00",
+      "content_key": "opportunity:r10:dbc6320dceef4a200296b20dd4622dc1c37e63af8da654db73db2ff46bad13fb",
+      "channel": "select_carr",
+      "message_id": 381
+    },
+    "select_carr|cars:2026-11-27": {
+      "status": "notified",
+      "notified_at": "2026-11-27T20:35:45.034818+03:30",
+      "published_at": "2026-11-27T17:04:40.201264+00:00",
+      "content_key": "cars:2026-11-27",
+      "channel": "select_carr",
+      "message_id": 382
     }
   },
   "last_health_report_date": "2026-11-26",
