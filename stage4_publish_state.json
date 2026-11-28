@@ -2483,7 +2483,10 @@
   "story_queue_initialized_at": "2026-10-06T12:35:20.222663+00:00",
   "story_queue_policy_version": 2,
   "story_last_kind": "opportunity",
-  "scheduler_last_seen_at": "2026-11-28T17:55:53.984225+00:00",
-  "scheduler_last_tehran_time": "2026-11-28T21:25:53.983286+03:30",
-  "scheduler_last_due_modes": []
+  "scheduler_last_seen_at": "2026-11-28T18:37:40.606960+00:00",
+  "scheduler_last_tehran_time": "2026-11-28T22:07:40.606246+03:30",
+  "scheduler_last_due_modes": [
+    "story_queue",
+    "cars"
+  ]
 }
