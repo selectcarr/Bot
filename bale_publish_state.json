@@ -6805,6 +6805,85 @@
         ],
         "caption": "فرصت خرید خودرو\n\nبرای دریافت\n✅بهترین فرصت های خرید و فروش خودروی خودتان\n✅و قیمت روز خودروها\n✅و قیمت طلا و دلار ،\nحتما با ما همراه باشد .\n@select_carr\n@select_carrr"
       }
+    },
+    "bale|cars:2026-11-28": {
+      "result": [
+        {
+          "message_id": 561,
+          "from": {
+            "id": 1342369143,
+            "is_bot": true,
+            "first_name": ""
+          },
+          "date": 1795891147,
+          "chat": {
+            "id": 0,
+            "type": "group",
+            "photo": null
+          },
+          "media_group_id": "8659005367259009564"
+        },
+        {
+          "message_id": 562,
+          "from": {
+            "id": 1342369143,
+            "is_bot": true,
+            "first_name": ""
+          },
+          "date": 1795891147,
+          "chat": {
+            "id": 0,
+            "type": "group",
+            "photo": null
+          },
+          "media_group_id": "8659005367259009564"
+        },
+        {
+          "message_id": 567,
+          "from": {
+            "id": 1342369143,
+            "is_bot": true,
+            "first_name": ""
+          },
+          "date": 1795891147,
+          "chat": {
+            "id": 0,
+            "type": "group",
+            "photo": null
+          },
+          "media_group_id": "8659005367259009564"
+        },
+        {
+          "message_id": 568,
+          "from": {
+            "id": 1342369143,
+            "is_bot": true,
+            "first_name": ""
+          },
+          "date": 1795891147,
+          "chat": {
+            "id": 0,
+            "type": "group",
+            "photo": null
+          },
+          "media_group_id": "8659005367259009564"
+        },
+        {
+          "message_id": 569,
+          "from": {
+            "id": 1342369143,
+            "is_bot": true,
+            "first_name": ""
+          },
+          "date": 1795891147,
+          "chat": {
+            "id": 0,
+            "type": "group",
+            "photo": null
+          },
+          "media_group_id": "8659005367259009564"
+        }
+      ]
     }
   }
 }
