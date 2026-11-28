@@ -3687,6 +3687,22 @@
       "content_key": "opportunity:r10:e5f429a465b12b63bf294f5f045ab40078de511666b7d62f349c771f0d75794e",
       "channel": "select_carr",
       "message_id": 388
+    },
+    "select_carr|opportunity:r10:9c323ef1dcf10ee5f811a8b9ae221440b8deb3a7fe53f4c6c46971c1e00a7bda": {
+      "status": "notified",
+      "notified_at": "2026-11-28T14:28:33.319182+03:30",
+      "published_at": "2026-11-28T10:56:33.818101+00:00",
+      "content_key": "opportunity:r10:9c323ef1dcf10ee5f811a8b9ae221440b8deb3a7fe53f4c6c46971c1e00a7bda",
+      "channel": "select_carr",
+      "message_id": 389
+    },
+    "select_carr|market:2026-11-28": {
+      "status": "notified",
+      "notified_at": "2026-11-28T14:28:33.860246+03:30",
+      "published_at": "2026-11-28T10:57:00.891327+00:00",
+      "content_key": "market:2026-11-28",
+      "channel": "select_carr",
+      "message_id": 390
     }
   },
   "last_health_report_date": "2026-11-27",
