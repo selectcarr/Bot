@@ -3727,6 +3727,14 @@
       "content_key": "opportunity:r10:d80e30906c4b68cb860e17597b2b1603c41570ebe31c316668eea84096f9d5a4",
       "channel": "select_carr",
       "message_id": 391
+    },
+    "select_carr|opportunity:r10:6bcee0479e6cc90971e9e8f85dc1afb60f85921991fb0f85da17cf321887123a": {
+      "status": "notified",
+      "notified_at": "2026-11-28T19:53:07.480420+03:30",
+      "published_at": "2026-11-28T16:22:16.277033+00:00",
+      "content_key": "opportunity:r10:6bcee0479e6cc90971e9e8f85dc1afb60f85921991fb0f85da17cf321887123a",
+      "channel": "select_carr",
+      "message_id": 395
     }
   },
   "last_health_report_date": "2026-11-28",
