@@ -3735,6 +3735,14 @@
       "content_key": "opportunity:r10:6bcee0479e6cc90971e9e8f85dc1afb60f85921991fb0f85da17cf321887123a",
       "channel": "select_carr",
       "message_id": 395
+    },
+    "select_carr|opportunity:r10:ef77cedbd0f31de1876979be98ba952a20a8404242db7173d20e8f738330f77a": {
+      "status": "notified",
+      "notified_at": "2026-11-28T21:26:18.129821+03:30",
+      "published_at": "2026-11-28T17:54:57.667669+00:00",
+      "content_key": "opportunity:r10:ef77cedbd0f31de1876979be98ba952a20a8404242db7173d20e8f738330f77a",
+      "channel": "select_carr",
+      "message_id": 396
     }
   },
   "last_health_report_date": "2026-11-28",
